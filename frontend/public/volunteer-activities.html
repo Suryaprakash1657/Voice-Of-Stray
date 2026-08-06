@@ -1,0 +1,2586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Activities - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        body {
+            background-color: #fff9f5;
+            background-image: radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Layered Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.05;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.15;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.4));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.1;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.25;
+            }
+        }
+
+        /* Nav Home Link */
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Back Navigation */
+        .back-btn-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: -16px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            transition: transform 0.25s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-4px);
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, #fff2e8 0%, #ffe3d1 100%);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 15px 35px -10px rgba(249, 115, 22, 0.12);
+        }
+
+        .hero-banner-content {
+            max-width: 60%;
+            z-index: 2;
+        }
+
+        .hero-banner-content h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+        }
+
+        .hero-banner-content h1 span {
+            color: var(--primary);
+        }
+
+        .hero-banner-content p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .hero-banner-illustration {
+            position: absolute;
+            right: 40px;
+            bottom: 0;
+            height: 110%;
+            width: auto;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.95;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .hero-banner-illustration img {
+            height: 100%;
+            max-height: 240px;
+            object-fit: contain;
+            border-radius: var(--radius-md) 0 var(--radius-md) 0;
+            box-shadow: -10px -10px 30px rgba(249, 115, 22, 0.08);
+        }
+
+        .hero-paws {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            opacity: 0.08;
+            color: var(--primary);
+            pointer-events: none;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .dashboard-main-col {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .dashboard-side-col {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.01);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -15px rgba(249, 115, 22, 0.12),
+                0 0 20px rgba(249, 115, 22, 0.02);
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        /* Card Section Styling */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .section-title-wrap i {
+            color: var(--primary);
+        }
+
+        .section-card-content {
+            padding: 0 0 8px 0;
+        }
+
+        /* Active List / Items */
+        .active-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .active-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.06);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .active-item:hover {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.15);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .active-item-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .active-item-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .active-item-icon.rescue {
+            background: #fff5f5;
+            color: #ef4444;
+        }
+
+        .active-item-icon.transport {
+            background: #fffaf0;
+            color: #f97316;
+        }
+
+        .active-item-icon.foster {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .active-item-info h5 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .active-item-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Status Pills */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            text-transform: capitalize;
+        }
+
+        .status-pill.active {
+            background: #ecfdf5;
+            color: #10b981;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-pill.pending {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        .status-pill.assigned {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* Button Styled for List Actions */
+        .btn-view-details {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.06);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .btn-view-details:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Table Styles for Volunteer History */
+        .history-table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .history-table th {
+            padding: 12px 16px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 2px solid rgba(249, 115, 22, 0.1);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.05);
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-outcome {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 700;
+            color: #10b981;
+            font-size: 0.85rem;
+        }
+
+        /* Recommended Opportunities Cards */
+        .opp-card-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .opp-row-item {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.06);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .opp-row-item:hover {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.15);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .opp-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .opp-tag-badge {
+            align-self: flex-start;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .opp-tag-badge.feeding {
+            background: #ffe4e6;
+            color: #e11d48;
+        }
+
+        .opp-tag-badge.transport {
+            background: #fffbeb;
+            color: #d97706;
+        }
+
+        .opp-tag-badge.foster {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .opp-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .opp-info-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .opp-info-line span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .opp-info-line i {
+            color: var(--primary);
+        }
+
+        /* Sidebar Panels */
+        .status-badge-wrap {
+            margin-bottom: 20px;
+        }
+
+        .volunteer-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .volunteer-status-badge.approved {
+            background: #dcfce7;
+            color: #156534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .volunteer-status-badge.pending {
+            background: #ffedd5;
+            color: #c2410c;
+            border: 1px solid #fed7aa;
+        }
+
+        .volunteer-status-badge.inactive {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.08);
+            font-size: 0.9rem;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .detail-val {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Impact Metrics Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .metric-card-box {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.06);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .metric-card-box:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .metric-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.1;
+        }
+
+        .metric-lbl {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        /* Achievements Badges */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .badge-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .badge-icon-holder {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fff2e8 0%, #ffedd5 100%);
+            border: 1.5px solid rgba(249, 115, 22, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+
+        .badge-box:hover .badge-icon-holder {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .badge-title-lbl {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Modals specifically in activity center */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            padding: 32px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .detail-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-modal-header i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .detail-modal-header h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .detail-modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .detail-modal-body p {
+            margin-bottom: 0;
+        }
+
+        .modal-info-list {
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .modal-info-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.88rem;
+        }
+
+        .modal-info-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .modal-info-value {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Quick Actions Section & Grid */
+        .quick-actions-section {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(249, 115, 22, 0.3);
+            background: white;
+            box-shadow: 0 20px 40px -15px rgba(249, 115, 22, 0.12);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-card.find .action-icon {
+            background: #fff7ed;
+            color: var(--primary);
+        }
+
+        .action-card.find:hover .action-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-card.availability .action-icon {
+            background: #f0fdf4;
+            color: #10b981;
+        }
+
+        .action-card.availability:hover .action-icon {
+            background: #10b981;
+            color: white;
+        }
+
+        .action-card.profile .action-icon {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .action-card.profile:hover .action-icon {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-card h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .action-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-banner {
+                padding: 24px;
+            }
+
+            .hero-banner-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-banner-illustration {
+                display: none;
+            }
+
+            .opp-row-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .opp-row-item button {
+                width: 100%;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background sparkles -->
+    <div class="bg-decorations">
+        <!-- Paws bottom-right -->
+        <svg class="decor-item" style="bottom: 15%; right: 4%; width: 120px; transform: rotate(25deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+        <!-- Sparkles -->
+        <svg class="decor-item sparkle" style="top: 30%; left: 45%; width: 22px;" viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="bottom: 35%; left: 15%; width: 26px; animation-delay: 1.5s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+    </div>
+
+    <!-- Header Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <!-- Home link pill button -->
+            <div class="nav-links">
+                <a href="index.html" class="nav-home-link">
+                    <i class="ph ph-house"></i>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <!-- Guest actions -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in actions -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <!-- Profile avatar with dropdown attached dynamically in navbar.js -->
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="dashboard-container">
+        <!-- Back navigation link -->
+        <div class="back-btn-container">
+            <a href="user-dashboard.html" class="back-link">
+                <i class="ph ph-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Hero welcome banner -->
+        <div class="hero-banner">
+            <i class="ph-fill ph-paw-print hero-paws" style="font-size: 15rem; transform: rotate(-10deg);"></i>
+            <i class="ph-fill ph-paw-print hero-paws"
+                style="font-size: 8rem; left: auto; right: 280px; bottom: 10px; top: auto; transform: rotate(15deg);"></i>
+
+            <div class="hero-banner-content">
+                <h1 id="hero-title">Welcome back, <span>Arjun</span> 👋</h1>
+                <p id="hero-subtitle">Thank you for being a lifeline for stray companion animals 🐾</p>
+                <p style="font-size: 0.95rem; color: var(--text-muted); opacity: 0.9;">Manage your ongoing rescue
+                    operations, view achievements, and accept recommendations.</p>
+            </div>
+
+            <div class="hero-banner-illustration">
+                <img src="https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=400"
+                    alt="Rescuer illustration">
+            </div>
+        </div>
+
+        <!-- Section: Quick Actions -->
+        <section class="quick-actions-section">
+            <div class="quick-actions-grid">
+                <!-- Action 1: Find Opportunities -->
+                <div class="action-card find"
+                    onclick="document.getElementById('recommended-opportunities-list').closest('section').scrollIntoView({ behavior: 'smooth' })">
+                    <div class="action-icon">
+                        <i class="ph-fill ph-magnifying-glass"></i>
+                    </div>
+                    <h3>Find Opportunities</h3>
+                    <p>Find new street feeding drives and rescue cases.</p>
+                </div>
+                <!-- Action 2: Update Availability -->
+                <div class="action-card availability" onclick="openAvailabilityModal()">
+                    <div class="action-icon">
+                        <i class="ph-fill ph-calendar"></i>
+                    </div>
+                    <h3>Update Availability</h3>
+                    <p>Change your volunteer hours and active days.</p>
+                </div>
+                <!-- Action 3: View Volunteer Profile -->
+                <div class="action-card profile" onclick="window.location.href='user-edit-profile.html'">
+                    <div class="action-icon">
+                        <i class="ph-fill ph-user"></i>
+                    </div>
+                    <h3>View Volunteer Profile</h3>
+                    <p>Manage your contact details and skills preferences.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main columns container -->
+        <div class="dashboard-grid">
+
+            <!-- Main (Left) Column -->
+            <div class="dashboard-main-col">
+                <!-- Section: Current Rescue Assignments -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-ambulance" style="color: var(--primary);"></i>
+                            <span>Current Rescue Assignments</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="active-list" id="rescue-assignments-list">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Available Rescue Opportunities -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-binoculars" style="color: var(--primary);"></i>
+                            <span>Available Rescue Opportunities</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="active-list" id="available-rescue-opportunities-list">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Current Assignments -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-first-aid"></i>
+                            <span>Current Assignments</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="active-list" id="active-assignments-list">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Volunteer History -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-clock-counter-clockwise"></i>
+                            <span>Volunteer History</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="history-table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Activity Type</th>
+                                        <th>Outcome</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-table-body">
+                                    <!-- Dynamic Content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Recommended Opportunities -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-sparkles"></i>
+                            <span>Recommended Opportunities</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="opp-card-grid" id="recommended-opportunities-list">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar (Right) Column -->
+            <div class="dashboard-side-col">
+                <!-- Section: Volunteer Status -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-shield-check"></i>
+                            <span>Volunteer Status</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="status-badge-wrap">
+                            <span class="volunteer-status-badge approved" id="status-badge">Approved Volunteer</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Volunteer Role</span>
+                            <span class="detail-val" id="status-role">Emergency Rescue</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date Joined</span>
+                            <span class="detail-val" id="status-joined">May 2026</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Availability</span>
+                            <span class="detail-val" id="status-availability">Weekends</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Volunteer Level -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-trophy"></i>
+                            <span>Volunteer Level</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content"
+                        style="display: flex; flex-direction: column; gap: 12px; padding: 4px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="font-size: 1.15rem; font-weight: 800; color: #1e293b; margin: 0;">Level 1
+                                </h4>
+                                <p
+                                    style="font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin: 2px 0 0 0;">
+                                    Community Helper</p>
+                            </div>
+                            <div style="font-size: 1.8rem; color: var(--primary); display: flex; align-items: center;">
+                                <i class="ph-fill ph-sparkles"></i>
+                            </div>
+                        </div>
+
+                        <!-- Progress indicator -->
+                        <div style="margin-top: 4px;">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+                                <span>LEVEL PROGRESS</span>
+                                <span id="level-progress-text">60%</span>
+                            </div>
+                            <div
+                                style="width: 100%; height: 8px; background: rgba(249, 115, 22, 0.1); border-radius: var(--radius-full); overflow: hidden;">
+                                <div id="level-progress-bar"
+                                    style="width: 60%; height: 100%; background: linear-gradient(90deg, var(--primary) 0%, #ea580c 100%); border-radius: var(--radius-full); transition: width 0.5s ease;">
+                                </div>
+                            </div>
+                            <p
+                                style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin: 8px 0 0 0; line-height: 1.4;">
+                                Complete <span id="level-tasks-remaining">2</span> more tasks to unlock <strong>Level 2:
+                                    Active Volunteer</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: My Volunteer Impact -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-chart-line-up"></i>
+                            <span>My Volunteer Impact</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="metrics-grid">
+                            <div class="metric-card-box">
+                                <span class="metric-val" id="metric-tasks">18</span>
+                                <span class="metric-lbl">Tasks Completed</span>
+                            </div>
+                            <div class="metric-card-box">
+                                <span class="metric-val" id="metric-hours">52</span>
+                                <span class="metric-lbl">Volunteer Hours</span>
+                            </div>
+                            <div class="metric-card-box">
+                                <span class="metric-val" id="metric-helped">14</span>
+                                <span class="metric-lbl">Animals Helped</span>
+                            </div>
+                            <div class="metric-card-box">
+                                <span class="metric-val" id="metric-responses">3</span>
+                                <span class="metric-lbl">Emergency Responses</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Achievements & Badges -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="section-header">
+                        <span class="section-title-wrap">
+                            <i class="ph-fill ph-medal"></i>
+                            <span>Achievements & Badges</span>
+                        </span>
+                    </div>
+                    <div class="section-card-content">
+                        <div class="badges-grid">
+                            <div class="badge-box"
+                                onclick="showBadgeDetails('First Rescue', 'Awarded for completing your first successful street rescue operation.')">
+                                <div class="badge-icon-holder">
+                                    <i class="ph-fill ph-first-aid"></i>
+                                </div>
+                                <span class="badge-title-lbl">First Rescue</span>
+                            </div>
+                            <div class="badge-box"
+                                onclick="showBadgeDetails('Animal First Aid', 'Certified in street emergency triage and animal resuscitation.')">
+                                <div class="badge-icon-holder">
+                                    <i class="ph-fill ph-heartbeat"></i>
+                                </div>
+                                <span class="badge-title-lbl">First Aid</span>
+                            </div>
+                            <div class="badge-box"
+                                onclick="showBadgeDetails('Emergency Responder', 'Completed 3 or more high-priority emergency rescue missions.')">
+                                <div class="badge-icon-holder">
+                                    <i class="ph-fill ph-warning-circle"></i>
+                                </div>
+                                <span class="badge-title-lbl">Responder</span>
+                            </div>
+                            <div class="badge-box"
+                                onclick="showBadgeDetails('Community Hero', 'Recognized for contributing more than 50 verified volunteer hours.')">
+                                <div class="badge-icon-holder">
+                                    <i class="ph-fill ph-star"></i>
+                                </div>
+                                <span class="badge-title-lbl">Hero</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="premium-footer"
+        style="background-color: #fcf6f0; padding: 64px 24px 32px; border-top: 1px solid rgba(249, 115, 22, 0.15);">
+        <div class="footer-grid"
+            style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px;">
+            <div class="footer-brand">
+                <h2 style="color: var(--primary); display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <i class="ph-fill ph-paw-print"></i> Voice of Stray
+                </h2>
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;">A certified non-profit
+                    advocating for a world where stray street animals are given a voice and the emergency support they
+                    deserve.</p>
+                <div class="social-links" style="display: flex; gap: 16px;">
+                    <a href="#"
+                        style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i
+                            class="ph-fill ph-instagram-logo"></i></a>
+                    <a href="#"
+                        style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i
+                            class="ph-fill ph-twitter-logo"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Programs</h4>
+                <ul
+                    style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="report.html">Stray Rescue</a></li>
+                    <li><a href="adopt.html">Adoption Drives</a></li>
+                    <li><a href="volunteer.html">Sterilization</a></li>
+                    <li><a href="donate.html">Sanctuary Support</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Rescue Hub</h4>
+                <ul
+                    style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="report.html">Report Stray</a></li>
+                    <li><a href="rescue.html">Rescue Cases</a></li>
+                    <li><a href="volunteer.html">Volunteer List</a></li>
+                    <li><a href="adopt.html">Adopt Pet</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Get Involved</h4>
+                <ul
+                    style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="volunteer.html">Volunteer</a></li>
+                    <li><a href="donate.html">Donate</a></li>
+                    <li><a href="signup.html">Join Us</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom"
+            style="max-width: 1200px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid rgba(249, 115, 22, 0.1); text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">Made with <i class="ph-fill ph-heart" style="color: var(--alert);"></i> for
+                our street companion animals</p>
+            <p>&copy; 2026 Voice of Stray NGO. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Details Modal -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-content">
+            <i class="ph-bold ph-x modal-close" onclick="closeModal('detail-modal')"></i>
+            <div class="detail-modal-header">
+                <i class="ph-fill ph-info" id="modal-header-icon"></i>
+                <h3 id="modal-title">Assignment Details</h3>
+            </div>
+            <div class="detail-modal-body" id="modal-body-content">
+                <!-- Dynamic Content -->
+            </div>
+            <div id="modal-action-btn-container">
+                <!-- Dynamic Button -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Availability Modal -->
+    <div class="modal-overlay" id="availability-modal">
+        <div class="modal-content">
+            <i class="ph-bold ph-x modal-close" onclick="closeModal('availability-modal')"></i>
+            <div class="detail-modal-header">
+                <i class="ph-fill ph-calendar" style="color: var(--primary);"></i>
+                <h3>Update Availability</h3>
+            </div>
+            <div class="detail-modal-body">
+                <p style="margin-bottom: 12px;">Select your availability window for volunteer tasks:</p>
+                <div class="modal-info-list" style="background: none; border: none; padding: 0;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+                        <label for="availability-select"
+                            style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Availability
+                            Status</label>
+                        <select id="availability-select"
+                            style="padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(249, 115, 22, 0.2); font-family: inherit; font-size: 0.95rem; outline: none; background: white; width: 100%;">
+                            <option value="Weekends">Weekends</option>
+                            <option value="Weekdays">Weekdays</option>
+                            <option value="Flexible">Flexible</option>
+                            <option value="Full-time">Full-time</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 24px;">
+                <button class="btn-full orange" style="width: 100%; justify-content: center;"
+                    onclick="saveAvailability()">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Controller -->
+    <script>
+        // Default Localized Datasets
+        const defaultAssignments = [
+            {
+                id: "assign-1",
+                type: "Emergency Rescue",
+                title: "Dog stuck near railway crossing",
+                status: "Active",
+                icon: "ph-fill ph-warning-circle",
+                iconClass: "rescue",
+                description: "A stray dog has been reported trapped in the brush next to the railway line. The dog seems frightened but alert. Rescue team needs to secure the area and bring them safely to the nearby clinic.",
+                location: "East Crossing Road, Block 4",
+                contact: "+1 (555) 019-2834"
+            },
+            {
+                id: "assign-2",
+                type: "Transport Assistance",
+                title: "Animal transfer requested",
+                status: "Pending",
+                icon: "ph-fill ph-car",
+                iconClass: "transport",
+                description: "Five recovering kittens need to be transferred from the emergency sanctuary unit to a certified foster parent residence. Care during transport is required.",
+                location: "Downtown Clinic to Brooklyn Heights foster",
+                contact: "+1 (555) 012-7744"
+            },
+            {
+                id: "assign-3",
+                type: "Foster Care Support",
+                title: "Active Foster Care Support",
+                status: "Assigned",
+                icon: "ph-fill ph-house",
+                iconClass: "foster",
+                description: "You have been assigned to provide supplementary feeding packages and vet-check coordination for foster parent Arjun's temporary household shelter cases.",
+                location: "Metro area, Zone 2",
+                contact: "+1 (555) 018-9922"
+            }
+        ];
+
+        const defaultHistory = [
+            { date: "May 18, 2026", type: "Flood Rescue Support", outcome: "Completed" },
+            { date: "May 02, 2026", type: "Community Feeding Drive", outcome: "Completed" },
+            { date: "Apr 15, 2026", type: "Transport Assistance", outcome: "Completed" }
+        ];
+
+        const defaultOpportunities = [
+            {
+                id: "opp-1",
+                tag: "Feeding Drive",
+                tagClass: "feeding",
+                title: "Weekend Feeding Drive",
+                time: "Saturday, 8:00 AM",
+                location: "Central Park South",
+                description: "Help distribute weekly food packs and fresh water to street dog colonies. Volunteers will form teams of three to cover scheduled grids."
+            },
+            {
+                id: "opp-2",
+                tag: "Transport",
+                tagClass: "transport",
+                title: "Emergency Transport Needed",
+                time: "As soon as possible",
+                location: "Brooklyn Sanctuary",
+                description: "Urgent vehicle transport required to take a mother dog and her newborns from an industrial yard to our main sanctuary vet."
+            },
+            {
+                id: "opp-3",
+                tag: "Foster",
+                tagClass: "foster",
+                title: "Temporary Foster Request",
+                time: "Next 2 weeks",
+                location: "Bronx Hub",
+                description: "A friendly 3-month-old pup needs temporary foster housing while recovering from mild paw bruising. Food and medical supplies will be fully provided."
+            }
+        ];
+
+        // State variables
+        let assignments = [];
+        let historyList = [];
+        let opportunities = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Guard
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            if (!isLoggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+            const currentRole = localStorage.getItem("role") || "user";
+            if (currentRole === "ngo") {
+                window.location.href = "ngo-dashboard.html";
+                return;
+            }
+
+            const isDefaultDemoUser = (localStorage.getItem("username") === "Arjun" || localStorage.getItem("email") === "user@voiceofstray.com");
+
+            // Load username
+            const name = localStorage.getItem("username") || "Arjun";
+            const heroSpan = document.querySelector("#hero-title span");
+            if (heroSpan) heroSpan.textContent = name;
+
+            // Initialize Lists from localStorage or Defaults
+            if (!localStorage.getItem("voiceOfStrayHistory")) {
+                localStorage.setItem("voiceOfStrayHistory", JSON.stringify(defaultHistory));
+            }
+            if (!localStorage.getItem("voiceOfStrayOpportunities")) {
+                localStorage.setItem("voiceOfStrayOpportunities", JSON.stringify(defaultOpportunities));
+            }
+
+            historyList = JSON.parse(localStorage.getItem("voiceOfStrayHistory"));
+            opportunities = JSON.parse(localStorage.getItem("voiceOfStrayOpportunities"));
+            assignments = []; // Unified under voiceOfStrayCases, assignments list hidden.
+
+            // Hide the placeholder assignments section to maintain typography and page design
+            const placeholderSection = document.getElementById("active-assignments-list")?.closest("section");
+            if (placeholderSection) {
+                placeholderSection.style.display = "none";
+            }
+
+            // Setup Profile Details based on user profile or volMeta
+            const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+            let userProfile = null;
+            if (storedProfile) {
+                try { userProfile = JSON.parse(storedProfile); } catch (e) { }
+            }
+
+            const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+            let volMeta = null;
+            if (storedVolMeta) {
+                try { volMeta = JSON.parse(storedVolMeta); } catch (e) { }
+            }
+
+            // Resolve dynamic volunteer status
+            const currentEmail = localStorage.getItem("email") || "user@voiceofstray.com";
+            const apps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            const userApp = apps.find(a => a.email === currentEmail);
+
+            let volStatus = "Pending Review";
+            const currentUserRaw = localStorage.getItem("currentUser");
+            if (currentUserRaw) {
+                try {
+                    const currentUser = JSON.parse(currentUserRaw);
+                    if (currentUser.volunteer && currentUser.volunteer.approved) {
+                        volStatus = "Active";
+                    } else if (currentUser.volunteer) {
+                        if (currentUser.volunteer.status === "Pending Review") volStatus = "Pending Review";
+                        else if (currentUser.volunteer.status === "Rejected") volStatus = "Rejected";
+                        else if (currentUser.volunteer.status === "Removed") volStatus = "Removed";
+                        else volStatus = "Not Applied";
+                    }
+                } catch(e){}
+            } else if (userApp) {
+                volStatus = userApp.status; // "Active", "Pending Review", "Rejected", "Removed", etc.
+            } else {
+                const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+                if (storedVolMeta) {
+                    try {
+                        const volMeta = JSON.parse(storedVolMeta);
+                        if (volMeta.status === "Approved" || volMeta.status === "Active" || volMeta.status === "Approved Volunteer" || volMeta.status === "Active Volunteer") {
+                            volStatus = "Active";
+                        } else {
+                            volStatus = volMeta.status;
+                        }
+                    } catch(e){}
+                }
+            }
+
+            const isApproved = volStatus === "Active" || volStatus === "Approved" || volStatus === "Approved Volunteer";
+
+            if (!isApproved) {
+                // Hide dashboard elements
+                const banner = document.querySelector(".hero-banner");
+                const quickActions = document.querySelector(".quick-actions-section");
+                const grid = document.querySelector(".dashboard-grid");
+                if (banner) banner.style.display = "none";
+                if (quickActions) quickActions.style.display = "none";
+                if (grid) grid.style.display = "none";
+
+                // Render status card
+                const container = document.querySelector(".dashboard-container");
+                let cardHtml = "";
+                if (volStatus === "Removed") {
+                    cardHtml = `
+                        <div class="glass-card" style="padding: 48px 32px; text-align: center; max-width: 600px; margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 24px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 3rem; box-shadow: var(--shadow-md);">
+                                <i class="ph-fill ph-x-circle"></i>
+                            </div>
+                            <div>
+                                <h2 style="font-size: 1.8rem; font-weight: 900; color: #1e293b; margin: 0 0 12px 0;">Volunteer Access Revoked</h2>
+                                <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin: 0; font-weight: 600;">Your volunteer membership is currently inactive.</p>
+                                <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin: 8px 0 0 0;">Please contact the NGO if you believe this was a mistake or submit a new application.</p>
+                            </div>
+                            <div style="display: flex; gap: 16px; width: 100%; justify-content: center; margin-top: 8px;">
+                                <button class="btn-view-details" onclick="window.location.href='volunteer.html'" style="padding: 12px 28px; font-weight: 700; border-radius: var(--radius-full); font-size: 0.95rem; background: var(--primary); color: white; border: none;">Apply Again</button>
+                                <button class="btn-view-details" onclick="window.location.href='user-dashboard.html'" style="padding: 12px 28px; font-weight: 700; border-radius: var(--radius-full); font-size: 0.95rem; background: white; border: 1px solid var(--border); color: var(--text-muted);">Back to Dashboard</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (volStatus === "Rejected") {
+                    cardHtml = `
+                        <div class="glass-card" style="padding: 48px 32px; text-align: center; max-width: 600px; margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 24px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 3rem; box-shadow: var(--shadow-md);">
+                                <i class="ph-fill ph-x-circle"></i>
+                            </div>
+                            <div>
+                                <h2 style="font-size: 1.8rem; font-weight: 900; color: #1e293b; margin: 0 0 12px 0;">Volunteer Application Rejected</h2>
+                                <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin: 0; font-weight: 600;">Your application was not approved.</p>
+                                <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin: 8px 0 0 0;">You may submit a new application in the future.</p>
+                            </div>
+                            <div style="display: flex; gap: 16px; width: 100%; justify-content: center; margin-top: 8px;">
+                                <button class="btn-view-details" onclick="window.location.href='volunteer.html'" style="padding: 12px 28px; font-weight: 700; border-radius: var(--radius-full); font-size: 0.95rem; background: var(--primary); color: white; border: none;">Apply Again</button>
+                                <button class="btn-view-details" onclick="window.location.href='user-dashboard.html'" style="padding: 12px 28px; font-weight: 700; border-radius: var(--radius-full); font-size: 0.95rem; background: white; border: 1px solid var(--border); color: var(--text-muted);">Back to Dashboard</button>
+                            </div>
+                        </div>
+                    `;
+                } else { // Pending
+                    cardHtml = `
+                        <div class="glass-card" style="padding: 48px 32px; text-align: center; max-width: 600px; margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 24px;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: #ffedd5; color: #ea580c; display: flex; align-items: center; justify-content: center; font-size: 3rem; box-shadow: var(--shadow-md);">
+                                <i class="ph-fill ph-hourglass"></i>
+                            </div>
+                            <div>
+                                <h2 style="font-size: 1.8rem; font-weight: 900; color: #1e293b; margin: 0 0 12px 0;">Application Under Review</h2>
+                                <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin: 0; font-weight: 600;">Your volunteer application is currently being reviewed by the NGO.</p>
+                                <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin: 8px 0 0 0;">Please wait for approval.</p>
+                            </div>
+                            <div style="display: flex; gap: 16px; width: 100%; justify-content: center; margin-top: 8px;">
+                                <button class="btn-view-details" onclick="window.location.href='user-dashboard.html'" style="padding: 12px 28px; font-weight: 700; border-radius: var(--radius-full); font-size: 0.95rem; background: white; border: 1px solid var(--border); color: var(--text-muted);">Back to Dashboard</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const cardWrapper = document.createElement("div");
+                cardWrapper.id = "status-card-container";
+                cardWrapper.innerHTML = cardHtml;
+                container.appendChild(cardWrapper);
+                return;
+            }
+
+            // Sync user avatar with stored Profile if exists
+            const customAvatar = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : localStorage.getItem("avatarUrl");
+            if (customAvatar) {
+                const profileImgs = document.querySelectorAll(".profile-pic img");
+                profileImgs.forEach(img => img.src = customAvatar);
+            }
+
+            const statusBadge = document.getElementById("status-badge");
+            const statusRole = document.getElementById("status-role");
+            const statusJoined = document.getElementById("status-joined");
+            const statusAvailability = document.getElementById("status-availability");
+
+            // Determine profile fields
+            let roleDisplay = "Emergency Rescue";
+            let joinedDisplay = "May 2026";
+            let availDisplay = "Weekends";
+            let defaultStatus = "Approved Volunteer";
+
+            if (isDefaultDemoUser) {
+                roleDisplay = (volMeta && volMeta.role) ? volMeta.role : "Emergency Rescue";
+                joinedDisplay = "May 2026";
+                availDisplay = (userProfile && userProfile.volunteerAvailability) ? userProfile.volunteerAvailability : (volMeta && volMeta.availability) ? volMeta.availability : "Weekends";
+                defaultStatus = "Approved Volunteer";
+            } else {
+                roleDisplay = (volMeta && volMeta.role) ? volMeta.role : (userProfile && userProfile.accountType) ? userProfile.accountType : "General Volunteer";
+                joinedDisplay = (userProfile && userProfile.memberSince) ? userProfile.memberSince : (volMeta && volMeta.joined) ? volMeta.joined : "June 2026";
+                availDisplay = (userProfile && userProfile.volunteerAvailability) ? userProfile.volunteerAvailability : (volMeta && volMeta.availability) ? volMeta.availability : "Weekends";
+                defaultStatus = (volMeta && volMeta.status) ? volMeta.status : "Pending Review";
+            }
+
+            // Set content in DOM
+            statusRole.textContent = roleDisplay;
+            statusJoined.textContent = joinedDisplay;
+            statusAvailability.textContent = availDisplay;
+
+            // Determine Volunteer Status dynamically (consistent status logic)
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+            let activeRescueCount = 0;
+            Object.keys(casesDb).forEach(id => {
+                const c = casesDb[id];
+                if (c && c.statusStep >= 1 && c.statusStep < 8) {
+                    if (c.assignedVolunteerId === currentUser.id) {
+                        activeRescueCount++;
+                    }
+                }
+            });
+
+            // If they have: assigned role, active assignments, and volunteer history, they are APPROVED/ACTIVE VOLUNTEER.
+            const hasAssignedRole = roleDisplay && roleDisplay !== "General Volunteer" && roleDisplay !== "Regular User" && roleDisplay !== "None";
+            const hasActiveAssignments = activeRescueCount > 0;
+            const hasHistory = historyList.length > 0;
+
+            let statusText = defaultStatus;
+            if (hasAssignedRole && hasActiveAssignments && hasHistory) {
+                statusText = "Approved Volunteer";
+            }
+
+            statusBadge.textContent = statusText;
+            const statusUpper = statusText.toUpperCase();
+            if (statusUpper.includes("APPROVED") || statusUpper.includes("ACTIVE")) {
+                statusBadge.className = "volunteer-status-badge approved";
+            } else if (statusUpper.includes("INACTIVE")) {
+                statusBadge.className = "volunteer-status-badge inactive";
+            } else {
+                statusBadge.className = "volunteer-status-badge pending";
+            }
+
+            // Render Page
+            renderRescueAssignments();
+            renderAssignments();
+            renderHistory();
+            renderOpportunities();
+            renderAvailableRescueOpportunities();
+
+            // Dynamic Updates
+            updateMetricsFromHistory();
+            updateLevelProgress();
+            renderAchievements();
+        });
+
+        // Rendering Engine
+        function renderAssignments() {
+            const listEl = document.getElementById("active-assignments-list");
+            listEl.innerHTML = "";
+
+            if (assignments.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; padding: 32px 24px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="ph ph-circle-dashed" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        <h4 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin: 4px 0 2px 0;">No assignments yet</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; max-width: 320px; line-height: 1.4;">Take a recommended opportunity below to start volunteering!</p>
+                    </div>
+                `;
+                return;
+            }
+        }
+
+        function renderRescueAssignments() {
+            const rescueListEl = document.getElementById("rescue-assignments-list");
+            if (!rescueListEl) return;
+            rescueListEl.innerHTML = "";
+
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+            const assignedRescueCases = [];
+
+            Object.keys(casesDb).forEach(id => {
+                const c = casesDb[id];
+                if (c && c.assignedVolunteerId === currentUser.id) {
+                    // Only active/non-completed cases
+                    if (c.statusStep >= 1 && c.statusStep < 8) {
+                        assignedRescueCases.push(c);
+                    }
+                }
+            });
+
+            if (assignedRescueCases.length === 0) {
+                rescueListEl.innerHTML = `
+                    <div style="text-align: center; padding: 32px 24px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="ph ph-shield-check" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        <h4 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin: 4px 0 2px 0;">No active rescue assignments</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; max-width: 320px; line-height: 1.4;">NGOs will assign you to active cases when dispatch is needed.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            assignedRescueCases.forEach(c => {
+                const el = document.createElement("div");
+                el.className = "active-item";
+
+                // Determine status pill color class
+                let statusPillClass = "assigned";
+                if (c.status === "Waiting for Volunteer" || c.status === "Reported") {
+                    statusPillClass = "pending";
+                } else if (c.status === "Volunteer Assigned" || c.status === "Volunteer En Route" || c.status === "Animal Rescued" || c.status === "Treatment" || c.status === "Recovery" || c.status === "Ready for Adoption") {
+                    statusPillClass = "active";
+                }
+
+                // Resolve volunteer role and assignedDate
+                let userRole = c.assignedVolunteerRole || "Volunteer Lead";
+                if (userRole === "Volunteer Lead") {
+                    try {
+                        const storedApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+                        const app = storedApps.find(a => a.volunteerId === currentUser.id || a.email === currentUser.email);
+                        if (app && app.role) {
+                            userRole = app.role;
+                        }
+                    } catch (e) {}
+                }
+                let assignedDate = c.assignedAt || "N/A";
+
+                el.innerHTML = `
+                    <div class="active-item-left">
+                        <div class="active-item-icon rescue" style="background: rgba(249, 115, 22, 0.08); color: var(--primary);">
+                            <i class="ph-fill ph-ambulance"></i>
+                        </div>
+                        <div class="active-item-info">
+                            <h5 style="font-weight: 800; color: #1e293b; font-size: 0.95rem; margin: 0 0 4px 0;">#RSC-${c.id}</h5>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                                <strong>Animal:</strong> ${c.animal} &bull; 
+                                <strong>Location:</strong> ${c.location} &bull; 
+                                <strong>NGO:</strong> ${c.team?.ngo || "Paws Haven NGO"} &bull; 
+                                <strong>Role:</strong> ${userRole} &bull; 
+                                <strong>Assigned:</strong> ${assignedDate}
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="status-pill ${statusPillClass}">${c.status}</span>
+                        <button class="btn-view-details" onclick="window.location.href='rescue.html?id=RSC-${c.id}'">View Details</button>
+                    </div>
+                `;
+                rescueListEl.appendChild(el);
+            });
+        }
+
+        function openCaseDetailsModal(id) {
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const c = casesDb[id];
+            if (!c) return;
+
+            document.getElementById("modal-header-icon").className = "ph-fill ph-ambulance";
+            document.getElementById("modal-title").textContent = "Rescue Case Details";
+
+            const currentEmail = localStorage.getItem("email") || "user@voiceofstray.com";
+            const currentName = localStorage.getItem("username") || "Arjun";
+
+            // Resolve role and date
+            let userRole = "Volunteer Dispatcher";
+            let assignedDate = "N/A";
+
+            const lead = c.team.lead;
+            if (lead) {
+                if (typeof lead === 'object' && ((currentEmail && lead.email === currentEmail) || lead.username === currentName)) {
+                    userRole = lead.role || "Volunteer Lead";
+                    assignedDate = lead.assignedDate || "N/A";
+                } else if (typeof lead === 'string' && lead === currentName) {
+                    userRole = c.team.leadRole || "Volunteer Lead";
+                    assignedDate = c.team.leadAssignedDate || "N/A";
+                }
+            }
+
+            if (c.team.volunteers) {
+                const helperObj = c.team.volunteers.find(v => {
+                    if (v && typeof v === 'object') {
+                        return (currentEmail && v.email === currentEmail) || v.username === currentName;
+                    } else if (typeof v === 'string') {
+                        return v === currentName;
+                    }
+                    return false;
+                });
+                if (helperObj) {
+                    if (typeof helperObj === 'object') {
+                        userRole = helperObj.role || "Volunteer Helper";
+                        assignedDate = helperObj.assignedDate || "N/A";
+                    } else {
+                        userRole = c.team.helperRole || "Volunteer Helper";
+                        assignedDate = c.team.helperAssignedDate || "N/A";
+                    }
+                }
+            }
+
+            const bodyContent = document.getElementById("modal-body-content");
+            bodyContent.innerHTML = `
+                <p style="margin-top: 0; font-size: 0.95rem; line-height: 1.5; color: #475569;">${c.condition || c.observedCondition || "No description provided."}</p>
+                <div class="modal-info-list" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="modal-info-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                        <span class="modal-info-label" style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">Case ID</span>
+                        <span class="modal-info-value" style="font-weight: 600; font-size: 0.85rem; color: #0f172a;">RSC-${c.id}</span>
+                    </div>
+                    <div class="modal-info-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                        <span class="modal-info-label" style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">Animal</span>
+                        <span class="modal-info-value" style="font-weight: 600; font-size: 0.85rem; color: #0f172a;">${c.animal}</span>
+                    </div>
+                    <div class="modal-info-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                        <span class="modal-info-label" style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">Location</span>
+                        <span class="modal-info-value" style="font-weight: 600; font-size: 0.85rem; color: #0f172a;">${c.location}</span>
+                    </div>
+                    <div class="modal-info-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                        <span class="modal-info-label" style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">NGO</span>
+                        <span class="modal-info-value" style="font-weight: 600; font-size: 0.85rem; color: #0f172a;">${c.team.ngo}</span>
+                    </div>
+                    <div class="modal-info-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                        <span class="modal-info-label" style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">Volunteer Role</span>
+                        <span class="modal-info-value" style="font-weight: 600; font-size: 0.85rem; color: #0f172a;">${userRole}</span>
+                    </div>
+                    <div class="modal-info-item" style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
+                        <span class="modal-info-label" style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">Assignment Date</span>
+                        <span class="modal-info-value" style="font-weight: 600; font-size: 0.85rem; color: #0f172a;">${assignedDate}</span>
+                    </div>
+                    <div class="modal-info-item" style="display: flex; justify-content: space-between; padding-bottom: 8px;">
+                        <span class="modal-info-label" style="font-weight: 700; font-size: 0.85rem; color: var(--text-muted);">Current Status</span>
+                        <span class="modal-info-value" style="font-weight: 600; font-size: 0.85rem; color: var(--primary);">${c.status}</span>
+                    </div>
+                </div>
+            `;
+
+            // Action: Mark as Completed
+            const btnContainer = document.getElementById("modal-action-btn-container");
+            btnContainer.innerHTML = `
+                <button class="btn-full orange" style="width: 100%; justify-content: center;" onclick="completeAssignment('${c.id}')">
+                    Mark Assignment as Completed
+                </button>
+            `;
+
+            openModal('detail-modal');
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById("history-table-body");
+            tbody.innerHTML = "";
+
+            if (historyList.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 32px 24px; color: var(--text-muted); font-weight: 500;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <i class="ph ph-clock-counter-clockwise" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                                <h4 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin: 4px 0 2px 0;">No completed volunteer activities yet</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; max-width: 320px; line-height: 1.4;">Your completed tasks and drives will be listed here.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            historyList.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${item.date}</td>
+                    <td>${item.type}</td>
+                    <td>
+                        <span class="history-outcome">
+                            <i class="ph-fill ph-check-circle"></i> ${item.outcome}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderOpportunities() {
+            const listEl = document.getElementById("recommended-opportunities-list");
+            if (!listEl) return;
+            listEl.innerHTML = "";
+
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const activeOpportunities = Object.keys(casesDb)
+                .map(id => casesDb[id])
+                .filter(c => c && c.id && c.status === "Waiting for Volunteer" && !c.assignedVolunteerId);
+
+            if (activeOpportunities.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; padding: 32px 24px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="ph ph-map-pin-line" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        <h4 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin: 4px 0 2px 0;">No rescue opportunities available in your area</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; max-width: 320px; line-height: 1.4;">NGOs will list opportunities here when reports are accepted and need responders.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activeOpportunities.forEach(c => {
+                const el = document.createElement("div");
+                el.className = "opp-row-item";
+                el.style.cursor = "pointer";
+                el.setAttribute("onclick", `openOpportunityDetails('${c.id}')`);
+                
+                // Determine tag and tagClass based on case parameters
+                const category = c.issueCategory || "Rescue";
+                let tagClass = "transport"; // default styling color
+                if (category.toLowerCase().includes("feeding")) tagClass = "feeding";
+                else if (category.toLowerCase().includes("foster")) tagClass = "foster";
+                
+                el.innerHTML = `
+                    <div class="opp-meta">
+                        <span class="opp-tag-badge ${tagClass}">${category}</span>
+                        <h4 class="opp-title">${c.animal}</h4>
+                        <div class="opp-info-line">
+                            <span><i class="ph ph-calendar"></i> ${c.reportedTime || 'Just now'}</span>
+                            <span><i class="ph ph-map-pin"></i> ${c.location}</span>
+                        </div>
+                    </div>
+                    <i class="ph ph-caret-right" style="color: var(--primary); font-size: 1.25rem; font-weight: bold; margin-left: 16px;"></i>
+                `;
+                listEl.appendChild(el);
+            });
+        }
+
+        // Modal triggers
+        function openAssignmentDetails(id) {
+            const item = assignments.find(a => a.id === id);
+            if (!item) return;
+
+            document.getElementById("modal-header-icon").className = item.icon;
+            document.getElementById("modal-title").textContent = item.type;
+
+            const bodyContent = document.getElementById("modal-body-content");
+            bodyContent.innerHTML = `
+                <p>${item.description}</p>
+                <div class="modal-info-list">
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Title</span>
+                        <span class="modal-info-value">${item.title}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Status</span>
+                        <span class="modal-info-value" style="color: var(--primary);">${item.status}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Location</span>
+                        <span class="modal-info-value">${item.location}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Contact Coordinator</span>
+                        <span class="modal-info-value">${item.contact}</span>
+                    </div>
+                </div>
+            `;
+
+            // Action: Mark as Completed
+            const btnContainer = document.getElementById("modal-action-btn-container");
+            btnContainer.innerHTML = `
+                <button class="btn-full orange" style="width: 100%; justify-content: center;" onclick="completeAssignment('${item.id}')">
+                    Mark Assignment as Completed
+                </button>
+            `;
+
+            openModal('detail-modal');
+        }
+
+        function openOpportunityDetails(id) {
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const c = casesDb[id];
+            if (!c) return;
+
+            document.getElementById("modal-header-icon").className = "ph-fill ph-paw-print";
+            document.getElementById("modal-title").textContent = "Rescue Opportunity Details";
+
+            // Compile timeline HTML
+            let timelineHtml = "";
+            if (c.timeline && c.timeline.length > 0) {
+                timelineHtml = `
+                    <div style="margin-top: 16px; border-top: 1px solid rgba(249, 115, 22, 0.1); padding-top: 12px;">
+                        <span class="modal-info-label" style="font-weight: 700; display: block; margin-bottom: 8px;">Rescue Timeline</span>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; line-height: 1.4;">
+                `;
+                c.timeline.forEach(t => {
+                    timelineHtml += `
+                        <div style="display: flex; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: 700; min-width: 60px;">${t.time}</span>
+                            <span style="color: #7c2d12;">${t.text}</span>
+                        </div>
+                    `;
+                });
+                timelineHtml += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            const bodyContent = document.getElementById("modal-body-content");
+            bodyContent.innerHTML = `
+                <div class="modal-info-list" style="margin-top: 0;">
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Case ID</span>
+                        <span class="modal-info-value">#RSC-${c.id}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Animal</span>
+                        <span class="modal-info-value">${c.animal}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Priority</span>
+                        <span class="modal-info-value" style="color: var(--alert); font-weight: 700;">${c.severity || c.priority || 'Normal'}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Current Status</span>
+                        <span class="modal-info-value" style="color: #3b82f6; font-weight: 700;">${c.status}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Assigned NGO</span>
+                        <span class="modal-info-value">${c.team?.ngo || "Paws Haven NGO"}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Location</span>
+                        <span class="modal-info-value">${c.location}</span>
+                    </div>
+                    <div class="modal-info-item">
+                        <span class="modal-info-label">Reported Time</span>
+                        <span class="modal-info-value">${c.reportedTime || 'N/A'}</span>
+                    </div>
+                    <div style="margin-top: 12px; border-top: 1px solid rgba(249, 115, 22, 0.1); padding-top: 12px;">
+                        <span class="modal-info-label" style="font-weight: 700; display: block; margin-bottom: 4px;">Reporter Notes</span>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">${c.reporter?.notes || c.condition || 'No additional notes provided.'}</p>
+                    </div>
+                    ${timelineHtml}
+                </div>
+            `;
+
+            // Setup buttons / request status
+            const btnContainer = document.getElementById("modal-action-btn-container");
+            const currentName = localStorage.getItem("username") || "Arjun";
+            const currentEmail = localStorage.getItem("email") || "user@voiceofstray.com";
+            
+            // Check if this volunteer has already submitted a request for this case
+            const requests = c.volunteerRequests || [];
+            const hasRequested = requests.some(r => r.volunteerName === currentName || r.volunteerEmail === currentEmail);
+
+            if (hasRequested) {
+                btnContainer.innerHTML = `
+                    <div style="text-align: center; margin-top: 16px;">
+                        <button class="btn-full" style="width: 100%; justify-content: center; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; cursor: not-allowed;" disabled>
+                            ✓ Request Submitted
+                        </button>
+                        <p style="font-size: 0.78rem; color: #166534; font-weight: 600; margin: 6px 0 0 0;">Waiting for NGO Approval</p>
+                    </div>
+                `;
+            } else {
+                btnContainer.innerHTML = `
+                    <button class="btn-full orange" style="width: 100%; justify-content: center; margin-top: 16px;" onclick="submitVolunteerRequest('${c.id}')">
+                        Request to Join
+                    </button>
+                `;
+            }
+
+            openModal('detail-modal');
+        }
+
+        function submitVolunteerRequest(caseId) {
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const c = casesDb[caseId];
+            if (!c) return;
+
+            const currentName = localStorage.getItem("username") || "Arjun";
+            const currentEmail = localStorage.getItem("email") || "user@voiceofstray.com";
+
+            if (!c.volunteerRequests) {
+                c.volunteerRequests = [];
+            }
+
+            const hasRequested = c.volunteerRequests.some(r => r.volunteerName === currentName || r.volunteerEmail === currentEmail);
+            if (hasRequested) {
+                alert("You have already submitted a request for this rescue case.");
+                return;
+            }
+
+            const userProfileRaw = localStorage.getItem("voiceOfStrayUserProfile");
+            let volunteerLevel = "Level 2 Rescuer";
+            if (userProfileRaw) {
+                try {
+                    const profile = JSON.parse(userProfileRaw);
+                    if (profile.badgeTitle) volunteerLevel = profile.badgeTitle;
+                } catch(e) {}
+            }
+
+            const newRequest = {
+                volunteerId: "VOL-" + Date.now(),
+                volunteerName: currentName,
+                volunteerEmail: currentEmail,
+                volunteerLevel: volunteerLevel,
+                requestedAt: "Just now",
+                requestedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                status: "Pending"
+            };
+
+            c.volunteerRequests.push(newRequest);
+
+            c.timeline.unshift({
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                text: `Volunteer ${currentName} requested to join the rescue operation.`
+            });
+
+            localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+
+            // Refresh modal state
+            openOpportunityDetails(caseId);
+
+            // Notify
+            if (typeof addLocalNotification === 'function') {
+                addLocalNotification(`Your request to join rescue case #RSC-${caseId} has been submitted.`);
+            }
+        }
+
+        function showBadgeDetails(title, description) {
+            document.getElementById("modal-header-icon").className = "ph-fill ph-medal";
+            document.getElementById("modal-title").textContent = "Achievement Earned";
+
+            const bodyContent = document.getElementById("modal-body-content");
+            bodyContent.innerHTML = `
+                <div style="text-align: center; padding: 8px 0 16px 0;">
+                    <div class="badge-icon-holder" style="width: 72px; height: 72px; font-size: 2.2rem; margin: 0 auto 16px;">
+                        <i class="ph-fill ph-medal"></i>
+                    </div>
+                    <h4 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 6px;">${title}</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">${description}</p>
+                </div>
+            `;
+
+            const btnContainer = document.getElementById("modal-action-btn-container");
+            btnContainer.innerHTML = `
+                <button class="btn-full orange" style="width: 100%; justify-content: center;" onclick="closeModal('detail-modal')">
+                    Awesome!
+                </button>
+            `;
+
+            openModal('detail-modal');
+        }
+
+        // Actions Engine
+        function acceptOpportunity(id) {
+            const item = opportunities.find(o => o.id === id);
+            if (!item) return;
+
+            // Remove from opportunities
+            opportunities = opportunities.filter(o => o.id !== id);
+            localStorage.setItem("voiceOfStrayOpportunities", JSON.stringify(opportunities));
+
+            // Resolve assignment values
+            let type = "General Task";
+            if (item.tagClass === 'feeding') {
+                type = "Feeding Drive";
+            } else if (item.tagClass === 'transport') {
+                type = "Transport Assistance";
+            } else if (item.tagClass === 'foster') {
+                type = "Foster Care Support";
+            }
+
+            // Create new rescue case in voiceOfStrayCases
+            const currentEmail = localStorage.getItem("email") || "user@voiceofstray.com";
+            const currentName = localStorage.getItem("username") || "Arjun";
+            const assignedDate = formatAssignmentDate(new Date());
+
+            const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const newCaseId = Math.floor(5000 + Math.random() * 5000).toString();
+
+            const newCase = {
+                id: newCaseId,
+                animal: type === "Feeding Drive" ? "Street Dog Colony (Feeding)" : (type === "Foster Care Support" ? "Rescue Animal (Foster)" : "Rescue Animal (Transport)"),
+                animalType: type === "Feeding Drive" ? "Dog" : "Animal",
+                breed: "Street Mix",
+                breedDesc: "Street Mix",
+                estimatedAge: "Adult",
+                issueCategory: type,
+                location: item.location,
+                reportedTime: item.time,
+                condition: item.description,
+                observedCondition: item.description,
+                severity: "Normal",
+                status: "Volunteer Assigned",
+                statusStep: 2,
+                assignedVolunteerId: currentUser.id || ("VOL-" + Date.now()),
+                assignedVolunteerName: currentName,
+                assignedVolunteerEmail: currentEmail,
+                assignedVolunteerRole: type,
+                assignedAt: assignedDate,
+                reporter: {
+                    name: "Opportunity System",
+                    phone: "+91 XXXXX XXXXX",
+                    notes: "Accepted from recommended opportunities roster."
+                },
+                team: {
+                    ngo: "Paws Haven NGO",
+                    volunteers: []
+                },
+                timeline: [
+                    { time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: `Opportunity accepted. Volunteer ${currentName} assigned en-route.` }
+                ],
+                notes: item.description,
+                photos: { before: "", during: "", treatment: "", recovery: "" }
+            };
+
+            casesDb[newCaseId] = newCase;
+            localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+
+            // Re-render & notify
+            renderRescueAssignments();
+            renderOpportunities();
+            closeModal('detail-modal');
+
+            // Add notification
+            addLocalNotification(`You accepted the opportunity: <strong>${item.title}</strong>! Coordinate now.`);
+        }
+
+        function completeAssignment(id) {
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const c = casesDb[id];
+            if (!c) return;
+
+            // Update status in voiceOfStrayCases
+            c.statusStep = 9;
+            c.status = "Completed";
+
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            c.timeline.unshift({
+                time: nowTime,
+                text: "Volunteer marked this assignment as completed."
+            });
+
+            localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+
+            // Add to completed history
+            const today = new Date();
+            const dateStr = today.toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' });
+
+            const newHistoryItem = {
+                date: dateStr,
+                type: (c.issueCategory || "Rescue Case") + " - " + c.animal,
+                outcome: "Completed"
+            };
+
+            historyList.unshift(newHistoryItem);
+            localStorage.setItem("voiceOfStrayHistory", JSON.stringify(historyList));
+
+            // Update stats, levels, and badges dynamically
+            updateMetricsFromHistory();
+            updateLevelProgress();
+            renderAchievements();
+
+            // Re-render & notify
+            renderRescueAssignments();
+            renderHistory();
+            closeModal('detail-modal');
+
+            addLocalNotification(`Congratulations! You completed the assignment for Case #RSC-${id}.`);
+        }
+
+        function updateMetricsFromHistory() {
+            const metricTasks = document.getElementById("metric-tasks");
+            const metricHours = document.getElementById("metric-hours");
+            const metricHelped = document.getElementById("metric-helped");
+            const metricResponses = document.getElementById("metric-responses");
+
+            if (!metricTasks || !metricHours || !metricHelped || !metricResponses) return;
+
+            let tasks = historyList.length;
+            let hours = 0;
+            let helped = 0;
+            let emergencyResponses = 0;
+
+            historyList.forEach(item => {
+                const type = item.type.toLowerCase();
+                if (type.includes("rescue") || type.includes("flood") || type.includes("emergency") || type.includes("first aid")) {
+                    emergencyResponses += 1;
+                    hours += 6;
+                    helped += 4;
+                } else if (type.includes("feeding") || type.includes("drive")) {
+                    hours += 4;
+                    helped += 3;
+                } else if (type.includes("transport")) {
+                    hours += 4;
+                    helped += 1;
+                } else {
+                    hours += 3;
+                    helped += 1;
+                }
+            });
+
+            metricTasks.textContent = String(tasks);
+            metricHours.textContent = String(hours);
+            metricHelped.textContent = String(helped);
+            metricResponses.textContent = String(emergencyResponses);
+        }
+
+        function updateLevelProgress() {
+            const progressText = document.getElementById("level-progress-text");
+            const progressBar = document.getElementById("level-progress-bar");
+            const tasksRemaining = document.getElementById("level-tasks-remaining");
+
+            if (!progressText || !progressBar || !tasksRemaining) return;
+
+            const tasksVal = historyList.length;
+            const targetTasks = 5; // Level 2 requires 5 tasks
+
+            if (tasksVal >= targetTasks) {
+                progressText.textContent = "100%";
+                progressBar.style.width = "100%";
+                tasksRemaining.closest('p').innerHTML = "You have met the requirements for Level 1! Level 2 advancement is pending review.";
+            } else {
+                const percentage = Math.round((tasksVal / targetTasks) * 100);
+                progressText.textContent = percentage + "%";
+                progressBar.style.width = percentage + "%";
+                tasksRemaining.textContent = String(targetTasks - tasksVal);
+            }
+        }
+
+        function renderAchievements() {
+            const container = document.querySelector(".badges-grid");
+            if (!container) return;
+
+            const count = historyList.length;
+
+            if (count === 0) {
+                container.style.display = "block";
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 16px 8px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="ph ph-lock" style="font-size: 2.2rem; color: #cbd5e1;"></i>
+                        <h4 style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin: 4px 0 2px 0;">No achievements unlocked</h4>
+                        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Complete your first activity to unlock achievements.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.style.display = "grid";
+            container.innerHTML = "";
+
+            const allBadges = [
+                {
+                    title: "First Rescue",
+                    desc: "Awarded for completing your first successful street rescue operation.",
+                    icon: "ph-fill ph-first-aid",
+                    req: 1
+                },
+                {
+                    title: "First Aid",
+                    desc: "Certified in street emergency triage and animal resuscitation.",
+                    icon: "ph-fill ph-heartbeat",
+                    req: 2
+                },
+                {
+                    title: "Responder",
+                    desc: "Completed 3 or more high-priority emergency rescue missions.",
+                    icon: "ph-fill ph-warning-circle",
+                    req: 3
+                },
+                {
+                    title: "Hero",
+                    desc: "Recognized for contributing more than 50 verified volunteer hours.",
+                    icon: "ph-fill ph-star",
+                    req: 5
+                }
+            ];
+
+            allBadges.forEach(badge => {
+                const isUnlocked = count >= badge.req;
+                const badgeBox = document.createElement("div");
+                badgeBox.className = "badge-box";
+                badgeBox.style.opacity = isUnlocked ? "1" : "0.45";
+                badgeBox.style.cursor = isUnlocked ? "pointer" : "not-allowed";
+
+                if (isUnlocked) {
+                    badgeBox.onclick = () => showBadgeDetails(badge.title, badge.desc);
+                } else {
+                    badgeBox.onclick = () => alert(`Complete ${badge.req} volunteer tasks to unlock this badge! (Currently completed: ${count})`);
+                }
+
+                badgeBox.innerHTML = `
+                    <div class="badge-icon-holder" style="${isUnlocked ? '' : 'background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8;'}">
+                        <i class="${isUnlocked ? badge.icon : 'ph-fill ph-lock'}"></i>
+                    </div>
+                    <span class="badge-title-lbl">${badge.title}</span>
+                `;
+                container.appendChild(badgeBox);
+            });
+        }
+
+        function openAvailabilityModal() {
+            const currentAvail = document.getElementById("status-availability").textContent.trim();
+            const selectEl = document.getElementById("availability-select");
+            if (selectEl) {
+                if (currentAvail === "Weekends") selectEl.value = "Weekends";
+                else if (currentAvail === "Weekdays") selectEl.value = "Weekdays";
+                else if (currentAvail === "Flexible") selectEl.value = "Flexible";
+                else if (currentAvail === "Full-time") selectEl.value = "Full-time";
+            }
+            openModal('availability-modal');
+        }
+
+        function saveAvailability() {
+            const selectEl = document.getElementById("availability-select");
+            const newAvail = selectEl.value;
+
+            // Update UI
+            document.getElementById("status-availability").textContent = newAvail;
+
+            // Save to localStorage voiceOfStrayVolunteer
+            let volMeta = {};
+            const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+            if (storedVolMeta) {
+                try { volMeta = JSON.parse(storedVolMeta); } catch (e) { }
+            }
+            volMeta.availability = newAvail;
+            localStorage.setItem("voiceOfStrayVolunteer", JSON.stringify(volMeta));
+
+            // Also update voiceOfStrayUserProfile if present
+            let userProfile = {};
+            const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+            if (storedProfile) {
+                try {
+                    userProfile = JSON.parse(storedProfile);
+                    userProfile.volunteerAvailability = newAvail;
+                    localStorage.setItem("voiceOfStrayUserProfile", JSON.stringify(userProfile));
+                } catch (e) { }
+            }
+
+            closeModal('availability-modal');
+            addLocalNotification(`Your availability has been updated to <strong>${newAvail}</strong>.`);
+        }
+
+        function addLocalNotification(message) {
+            const notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            notifications.unshift({
+                id: "notif-" + Date.now(),
+                message: message,
+                time: "Just now",
+                unread: true,
+                icon: "ph-fill ph-bell"
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+        }
+
+        function renderAvailableRescueOpportunities() {
+            const listEl = document.getElementById("available-rescue-opportunities-list");
+            if (!listEl) return;
+            listEl.innerHTML = "";
+
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const availCases = [];
+
+            Object.keys(casesDb).forEach(id => {
+                const c = casesDb[id];
+                // Display rules:
+                // 1. NGO has accepted the report.
+                // 2. Rescue status is "Waiting for Volunteer".
+                // 3. No volunteer has yet been assigned.
+                if (c && c.status === "Waiting for Volunteer" && !c.assignedVolunteerId) {
+                    availCases.push(c);
+                }
+            });
+
+            if (availCases.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; padding: 32px 24px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="ph ph-circle-dashed" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        <h4 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin: 4px 0 2px 0;">All caught up!</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; max-width: 320px; line-height: 1.4;">There are no active rescue cases waiting for volunteers at this time.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            availCases.forEach(c => {
+                const severity = c.severity || c.priority || "Normal";
+                let priorityBadgeStyle = "background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0;";
+                if (severity.toLowerCase().includes("emergency")) {
+                    priorityBadgeStyle = "background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; animation: pulseGlow 1.5s infinite alternate ease-in-out;";
+                } else if (severity.toLowerCase().includes("high")) {
+                    priorityBadgeStyle = "background: #fffbeb; color: #d97706; border: 1px solid #fde68a;";
+                }
+
+                const breedVal = c.breed || c.breedDesc || "Other / Unknown";
+                const animalType = c.animalType || "Animal";
+                const displayTitle = c.animal || `${animalType} (${breedVal})`;
+
+                const el = document.createElement("div");
+                el.className = "active-item";
+                el.id = `rescue-opp-${c.id}`;
+                el.innerHTML = `
+                    <div class="active-item-left">
+                        <div class="active-item-icon rescue" style="background: rgba(249, 115, 22, 0.08); color: var(--primary);">
+                            <i class="ph-fill ph-ambulance"></i>
+                        </div>
+                        <div class="active-item-info">
+                            <h5 style="font-weight: 800; color: #1e293b; font-size: 0.95rem; margin: 0 0 4px 0;">
+                                #RSC-${c.id} - ${displayTitle}
+                                <span class="status-pill" style="${priorityBadgeStyle} margin-left: 8px; font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-weight: 800;">${severity}</span>
+                            </h5>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                                <strong>NGO:</strong> ${c.team.ngo || 'Paws Haven NGO'} &bull; 
+                                <strong>Reported:</strong> ${c.reportedTime || 'N/A'} &bull; 
+                                <strong>Location:</strong> ${c.location}
+                            </p>
+                            <p style="margin: 6px 0 0 0; font-size: 0.82rem; color: #475569; font-style: italic; line-height: 1.4;">
+                                "${c.condition || c.observedCondition || 'No description provided.'}"
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+                        <span class="status-pill pending" style="background: #fffbeb; color: #ea580c; border: 1px solid #fed7aa; padding: 4px 10px; font-weight: 700; border-radius: var(--radius-full); font-size: 0.75rem;"><i class="ph ph-hourglass" style="vertical-align: middle;"></i> Waiting for Volunteer</span>
+                    </div>
+                `;
+                listEl.appendChild(el);
+            });
+        }
+
+        // Modal engine utils
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Handle overlay clicks
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.addEventListener("click", function (e) {
+                if (e.target === el) {
+                    el.classList.remove('active');
+                }
+            });
+        });
+
+        // Global Storage Event Listener to automatically refresh assignments and opportunities rosters dynamically
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'voiceOfStrayCases') {
+                renderRescueAssignments();
+                renderOpportunities();
+                renderAvailableRescueOpportunities();
+            }
+        });
+    </script>
+</body>
+
+</html>

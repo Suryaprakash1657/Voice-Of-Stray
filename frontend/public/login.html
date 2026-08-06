@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #fff9f5;
+            background-image:
+                radial-gradient(circle at center, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Beautiful Mockup Replicated Layered Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.07;
+            /* Soft blend to match the mockup */
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.leaves {
+            opacity: 0.11;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.22;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.4));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.15;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.35;
+            }
+        }
+
+        .auth-logo-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--primary);
+            padding-top: 32px;
+            z-index: 1;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-top: 24px;
+            margin-bottom: 32px;
+            padding: 0 24px;
+            z-index: 1;
+        }
+
+        .auth-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .auth-header h1 span {
+            color: var(--primary);
+        }
+
+        .auth-header p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .auth-layout-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 24px 64px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Floating statistics card layout */
+        .floating-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            flex-shrink: 0;
+            width: 180px;
+        }
+
+        .floating-sidebar.left {
+            margin-right: 48px;
+        }
+
+        .floating-sidebar.right {
+            margin-left: 48px;
+        }
+
+        .stat-bubble {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 24px 16px;
+            box-shadow: 0 10px 25px -10px rgba(249, 115, 22, 0.08),
+                0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            animation: floatSlow 6s ease-in-out infinite alternate;
+        }
+
+        .stat-bubble:nth-child(2) {
+            animation-delay: -3s;
+        }
+
+        .stat-bubble:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -10px rgba(249, 115, 22, 0.15);
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        @keyframes floatSlow {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .bubble-icon-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            background: #ffedd5;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .stat-bubble.ngo-bubble .bubble-icon-wrap {
+            background: #ccfbf1;
+            color: var(--secondary);
+        }
+
+        .stat-bubble h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .stat-bubble p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Central Glass Card */
+        .glass-auth-card {
+            flex: 1;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(249, 115, 22, 0.06),
+                0 0 40px 0 rgba(249, 115, 22, 0.02);
+            text-align: center;
+        }
+
+        .glass-auth-card h2 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .glass-auth-card .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        /* Segmented tab controller */
+        .segmented-tab-control {
+            display: flex;
+            background: rgba(249, 115, 22, 0.06);
+            border-radius: var(--radius-full);
+            padding: 4px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+        }
+
+        .segmented-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .segmented-btn.active {
+            background: linear-gradient(135deg, var(--primary), #ea580c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .input-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-box i {
+            position: absolute;
+            left: 16px;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: white;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .input-box input:focus+i {
+            color: var(--primary);
+        }
+
+        .password-toggle {
+            position: absolute !important;
+            right: 16px;
+            left: auto !important;
+            cursor: pointer;
+            pointer-events: auto !important;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-main);
+        }
+
+        /* Checkbox row */
+        .check-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .forgot-link {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Google button */
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-google:hover {
+            background: var(--bg-main);
+            transform: translateY(-1px);
+        }
+
+        .btn-google img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .or-divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+        .or-divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        .auth-alt-footer {
+            margin-top: 24px;
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .auth-alt-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .auth-alt-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Trust badges below form */
+        .trust-footer-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .trust-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .trust-badge-item i {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .consent-footer-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 20px;
+            padding-bottom: 32px;
+            z-index: 1;
+        }
+
+        .consent-footer-note a {
+            color: var(--text-muted);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        /* Corner pets vectors illustrations */
+        .corner-pet {
+            position: absolute;
+            bottom: 0;
+            width: 160px;
+            height: auto;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.95;
+            transition: all 0.3s;
+        }
+
+        .corner-pet.left {
+            left: 20px;
+            transform-origin: bottom left;
+        }
+
+        .corner-pet.right {
+            right: 20px;
+            transform-origin: bottom right;
+        }
+
+        @media (max-width: 992px) {
+            .floating-sidebar {
+                display: none;
+            }
+
+            .corner-pet {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Beautiful Mockup Replicated Layered Background Decorations -->
+    <div class="bg-decorations">
+        <!-- Large Paw Top Left -->
+        <svg class="decor-item" style="top: 5%; left: 3%; width: 140px; transform: rotate(-15deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <!-- Large Paw Top Right -->
+        <svg class="decor-item" style="top: 15%; right: 18%; width: 100px; transform: rotate(20deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <!-- Paw Print Middle Left -->
+        <svg class="decor-item" style="top: 45%; left: 2%; width: 80px; transform: rotate(10deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <!-- Paw Print Middle Right -->
+        <svg class="decor-item" style="top: 52%; right: 3%; width: 90px; transform: rotate(-25deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <!-- Golden Retriever Dog Silhouette Top Right -->
+        <svg class="decor-item" style="top: 8%; right: 2%; width: 180px; transform: scaleX(-1) rotate(-8deg);"
+            viewBox="0 0 200 200">
+            <path
+                d="M 80,45 C 80,38 85,32 92,30 C 100,28 108,32 110,40 C 112,48 108,55 106,62 C 104,70 108,76 112,80 C 118,85 125,92 128,100 C 132,110 134,122 134,135 C 134,148 130,160 120,165 C 112,168 102,168 95,165 C 85,160 80,148 80,135 C 80,122 82,110 86,100 C 90,92 88,85 84,80 C 80,76 76,70 76,62 C 76,55 78,48 80,45 Z M 120,165 C 122,166 128,168 135,168 C 142,168 150,162 152,152 C 154,142 148,135 142,135 C 135,135 130,145 128,155 Z" />
+        </svg>
+
+        <!-- Leaves Bottom Left -->
+        <svg class="decor-item leaves" style="bottom: -20px; left: -20px; width: 240px; transform: rotate(15deg);"
+            viewBox="0 0 100 100">
+            <path d="M10,90 Q30,70 50,50 Q70,30 90,10" stroke="currentColor" stroke-width="2" fill="none" />
+            <path d="M50,50 Q45,30 30,30 Q40,45 50,50" />
+            <path d="M70,30 Q65,10 50,10 Q60,25 70,30" />
+            <path d="M30,70 Q25,50 10,50 Q20,65 30,70" />
+        </svg>
+
+        <!-- Leaves Bottom Right -->
+        <svg class="decor-item leaves"
+            style="bottom: -20px; right: -20px; width: 240px; transform: scaleX(-1) rotate(15deg);"
+            viewBox="0 0 100 100">
+            <path d="M10,90 Q30,70 50,50 Q70,30 90,10" stroke="currentColor" stroke-width="2" fill="none" />
+            <path d="M50,50 Q45,30 30,30 Q40,45 50,50" />
+            <path d="M70,30 Q65,10 50,10 Q60,25 70,30" />
+            <path d="M30,70 Q25,50 10,50 Q20,65 30,70" />
+        </svg>
+
+        <!-- Glowing Bokeh Stars scattered -->
+        <svg class="decor-item sparkle" style="top: 25%; left: 30%; width: 24px;" viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="top: 30%; right: 28%; width: 30px; animation-delay: 1s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="bottom: 28%; left: 25%; width: 20px; animation-delay: 0.5s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="bottom: 22%; right: 26%; width: 28px; animation-delay: 1.5s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+    </div>
+
+    <!-- 1. Top Branding Logo bar -->
+    <div class="auth-logo-bar">
+        <i class="ph-fill ph-paw-print"></i>
+        <span>Voice of Stray</span>
+    </div>
+
+    <!-- 2. Header Content -->
+    <header class="auth-header">
+        <h1>Welcome Back to the <span>Rescue Mission</span></h1>
+        <p>Continue helping strays through rescue, adoption, volunteering, and community support.</p>
+    </header>
+
+    <!-- 3. Layout Grid wrapper -->
+    <div class="auth-layout-wrapper">
+        <!-- Floating Left Bubbles -->
+        <div class="floating-sidebar left">
+            <div class="stat-bubble">
+                <div class="bubble-icon-wrap">
+                    <i class="ph-fill ph-paw-print"></i>
+                </div>
+                <h3>15,000+</h3>
+                <p>Animals Rescued</p>
+            </div>
+            <div class="stat-bubble">
+                <div class="bubble-icon-wrap">
+                    <i class="ph-fill ph-users"></i>
+                </div>
+                <h3>7,000+</h3>
+                <p>Active Volunteers</p>
+            </div>
+        </div>
+
+        <!-- Central Card form -->
+        <main class="glass-auth-card" id="form-container">
+            <h2>Login Your Account</h2>
+            <p class="card-subtitle">Choose the account type that suits you best</p>
+
+            <!-- Segmented selector slider -->
+            <div class="segmented-tab-control">
+                <button type="button" class="segmented-btn active" id="user-tab" onclick="switchRole('user')">
+                    <i class="ph-fill ph-user"></i> User
+                </button>
+                <button type="button" class="segmented-btn" id="ngo-tab" onclick="switchRole('ngo')">
+                    <i class="ph-fill ph-buildings"></i> NGO-Shelter
+                </button>
+            </div>
+
+            <!-- Error message container -->
+            <div class="auth-error-msg" id="error-box">
+                <i class="ph-bold ph-warning-circle" style="font-size: 1.25rem;"></i>
+                <span id="error-text">Invalid email or password</span>
+            </div>
+
+            <!-- Login form inputs -->
+            <form id="login-form">
+                <!-- Full name placeholder/saved input -->
+                <div class="input-group">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Saved
+                        Profile</label>
+                    <div class="input-box">
+                        <input type="text" id="fullname"
+                            placeholder="Full Name (placeholder or autofill value (e.g. for a saved login))">
+                        <i class="ph ph-user"></i>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Email
+                        Address</label>
+                    <div class="input-box">
+                        <input type="email" id="email" placeholder="Email Address" required>
+                        <i class="ph ph-envelope"></i>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Password</label>
+                    <div class="input-box">
+                        <input type="password" id="password" placeholder="Password" required>
+                        <i class="ph ph-lock"></i>
+                        <i class="ph ph-eye-slash password-toggle" id="toggle-pwd-icon"
+                            onclick="togglePasswordVisibility()"></i>
+                    </div>
+                </div>
+
+                <!-- Checkbox checkbox row -->
+                <div class="check-row">
+                    <label class="checkbox-container">
+                        <input type="checkbox" checked>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-premium primary"
+                    style="width: 100%; justify-content: center; padding: 14px; font-size: 1.05rem; box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);">
+                    Login
+                </button>
+
+                <button type="button" class="btn-google">
+                    <img src="https://img.icons8.com/?size=100&id=V5cGWnc9R4xj&format=png&color=000000"
+                        style="border-radius: 50%; width: 18px; height: 18px;" alt="G">
+                    Continue with Google
+                </button>
+            </form>
+
+            <div class="or-divider">OR</div>
+
+            <div class="auth-alt-footer">
+                Don't have an account? <a href="signup.html">Sign Up</a>
+            </div>
+        </main>
+
+        <!-- Floating Right Bubbles -->
+        <div class="floating-sidebar right">
+            <div class="stat-bubble ngo-bubble">
+                <div class="bubble-icon-wrap">
+                    <i class="ph-fill ph-shield-check"></i>
+                </div>
+                <h3>450+</h3>
+                <p>NGO Partners</p>
+            </div>
+            <div class="stat-bubble">
+                <div class="bubble-icon-wrap">
+                    <i class="ph-fill ph-clock"></i>
+                </div>
+                <h3>24/7</h3>
+                <p>Rescue Network</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trust Badges below central wrapper -->
+    <div class="trust-footer-badges">
+        <div class="trust-badge-item">
+            <i class="ph-fill ph-seal-check"></i>
+            <span>Verified NGOs (Trusted partners)</span>
+        </div>
+        <div class="trust-badge-item">
+            <i class="ph-fill ph-shield-lock"></i>
+            <span>Safe Authentication (Your data is secure)</span>
+        </div>
+        <div class="trust-badge-item">
+            <i class="ph-fill ph-users-three"></i>
+            <span>Community Trusted (Loved by thousands)</span>
+        </div>
+    </div>
+
+    <!-- Consent note -->
+    <div class="consent-footer-note">
+        By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+    </div>
+
+    <!-- Decorative Corner Animals -->
+
+    <script>
+        // Track the active role selector
+        let currentRole = 'user';
+
+        function switchRole(role) {
+            currentRole = role;
+            const userTab = document.getElementById('user-tab');
+            const ngoTab = document.getElementById('ngo-tab');
+            const fullnameField = document.getElementById('fullname');
+
+            if (role === 'user') {
+                userTab.classList.add('active');
+                ngoTab.classList.remove('active');
+                fullnameField.placeholder = "Full Name (placeholder or autofill value (e.g. for a saved login))";
+            } else {
+                userTab.classList.remove('active');
+                ngoTab.classList.add('active');
+                fullnameField.placeholder = "NGO Shelter Organization Name";
+            }
+        }
+
+        // Toggle password field eye-toggle visibility
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('password');
+            const pwdIcon = document.getElementById('toggle-pwd-icon');
+
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                pwdIcon.classList.remove('ph-eye-slash');
+                pwdIcon.classList.add('ph-eye');
+            } else {
+                pwdInput.type = 'password';
+                pwdIcon.classList.remove('ph-eye');
+                pwdIcon.classList.add('ph-eye-slash');
+            }
+        }
+
+        // Form Login logic
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const emailInput = document.getElementById('email').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
+            const errorBox = document.getElementById('error-box');
+            const formContainer = document.getElementById('form-container');
+
+            // Initialize default users if not present
+            if (!localStorage.getItem("voiceOfStrayUsers")) {
+                const defaultUsers = [
+                    {
+                        id: "usr-arjun",
+                        name: "Arjun",
+                        email: "user@voiceofstray.com",
+                        password: "user123",
+                        role: "user",
+                        volunteer: {
+                            approved: false,
+                            status: "Not Applied"
+                        }
+                    },
+                    {
+                        id: "ngo-paws",
+                        name: "Paws Haven NGO",
+                        email: "ngo@voiceofstray.com",
+                        password: "ngo123",
+                        role: "ngo",
+                        volunteer: {
+                            approved: false,
+                            status: "Not Applied"
+                        }
+                    }
+                ];
+                localStorage.setItem("voiceOfStrayUsers", JSON.stringify(defaultUsers));
+            }
+
+            // Find matching user
+            const users = JSON.parse(localStorage.getItem("voiceOfStrayUsers") || "[]");
+            const matchedUser = users.find(u => u.email.toLowerCase() === emailInput.toLowerCase() && u.password === passwordInput);
+
+            if (matchedUser) {
+                // Clear any error states
+                errorBox.style.display = 'none';
+                formContainer.classList.remove('shake');
+
+                // Set credentials and status in localStorage
+                localStorage.setItem('currentUser', JSON.stringify(matchedUser));
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('role', matchedUser.role);
+                localStorage.setItem('username', matchedUser.name);
+                localStorage.setItem('email', matchedUser.email);
+
+                // Set beautiful matching avatarUrl
+                const bgClr = matchedUser.role === 'ngo' ? '14b8a6' : 'f97316';
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedUser.name)}&background=${bgClr}&color=fff&bold=true`;
+                localStorage.setItem('avatarUrl', avatarUrl);
+
+                alert(`Welcome back, ${matchedUser.name}! Successfully logged in as ${matchedUser.role === 'ngo' ? 'NGO Shelter' : 'User'}.`);
+
+                // Future-ready dashboard router redirection
+                const dashboardUrl = matchedUser.role === 'ngo' ? 'ngo-dashboard.html' : 'user-dashboard.html';
+                window.location.href = dashboardUrl;
+            } else {
+                // Trigger input shake animation and show error box
+                errorBox.style.display = 'flex';
+
+                // Force layout reflow to repeat shake animation
+                formContainer.classList.remove('shake');
+                void formContainer.offsetWidth;
+                formContainer.classList.add('shake');
+            }
+        });
+    </script>
+</body>
+
+</html>

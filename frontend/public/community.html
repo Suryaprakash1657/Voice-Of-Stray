@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Feed - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <!-- Post Creation Modal Component -->
+    <script src="CreatePostModal.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html" class="active">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- Main Feed Column -->
+        <section class="feed-column">
+            <header class="feed-header">
+                <h1>Community Feed</h1>
+                <p>Connect, rescue, inspire, and support stray animals together.</p>
+            </header>
+
+            <!-- Search Bar Placeholder -->
+            <div class="community-search-container">
+                <i class="ph ph-magnifying-glass search-icon"></i>
+                <input type="text" id="community-search-input" placeholder="Search posts, people, locations or hashtags...">
+                <button id="community-search-clear" class="search-clear-btn" style="display: none;" aria-label="Clear search">&times;</button>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="tab active">For You</button>
+                <button class="tab">Rescue</button>
+                <button class="tab">Feeding</button>
+                <button class="tab">Adoption</button>
+                <button class="tab">Stories</button>
+                <button class="tab alert-tab">Alerts</button>
+            </div>
+
+             <!-- Create Post Section -->
+             <div class="create-post-card card">
+                 <div class="create-post-top">
+                     <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile"
+                         class="avatar">
+                     <textarea id="post-description" placeholder="Share your impact or ask for help..."></textarea>
+                 </div>
+                 
+                 <!-- Hidden file input for photo uploads -->
+                 <input type="file" id="post-image-input" accept="image/*" style="display: none;">
+                 
+                 <!-- Image preview container -->
+                 <div id="image-preview-container" style="display: none; position: relative; margin: 0 16px 16px 16px; border-radius: 8px; overflow: hidden; max-height: 250px;">
+                     <img id="image-preview" src="" style="width: 100%; height: auto; max-height: 250px; object-fit: cover; border-radius: 8px;">
+                     <button id="remove-image-btn" type="button" style="position: absolute; top: 8px; right: 8px; background: rgba(15, 23, 42, 0.7); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: background 0.2s;"><i class="ph ph-x"></i></button>
+                 </div>
+                 
+                 <!-- Selected Location display -->
+                 <div id="post-location-display" style="display: none; align-items: center; gap: 4px; margin: 0 16px 16px 16px; font-size: 0.85rem; color: var(--primary); font-weight: 600;">
+                     <i class="ph ph-map-pin"></i> <span id="post-location-text"></span>
+                     <button id="remove-location-btn" type="button" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; display: inline-flex; align-items: center; margin-left: 2px;"><i class="ph ph-x-circle"></i></button>
+                 </div>
+
+                 <div class="create-post-categories">
+                     <button class="category-pill active">Rescue</button>
+                     <button class="category-pill">Feeding</button>
+                     <button class="category-pill">Adoption</button>
+                     <button class="category-pill">Story</button>
+                     <button class="category-pill alert">Alert</button>
+                 </div>
+                 <div class="create-post-actions">
+                     <div class="action-buttons">
+                         <button id="add-photo-btn" class="icon-text-btn"><i class="ph ph-image"></i> Photo/Video</button>
+                         <button id="add-location-btn" class="icon-text-btn"><i class="ph ph-map-pin"></i> Location</button>
+                     </div>
+                     <button id="share-post-btn" class="btn-primary">Share</button>
+                 </div>
+             </div>
+
+            <!-- Feed Stream -->
+            <div id="feed-stream-container" class="feed-stream">
+                <!-- Dynamic posts will render here -->
+            </div>
+        </section>
+
+        <!-- Sidebar Column -->
+        <aside class="sidebar-column">
+            <!-- Alert Widget -->
+            <div class="widget alert-widget card">
+                <h3><i class="ph-fill ph-warning-circle"></i> Nearby Alerts</h3>
+                <div class="widget-scroll-container">
+                    <div class="alert-item">
+                        <div class="alert-item-content">
+                            <div class="alert-icon"><i class="ph ph-siren"></i></div>
+                            <div class="alert-info">
+                                <strong>Injured cat reported</strong>
+                                <span>0.5 miles away • 10 mins ago</span>
+                            </div>
+                        </div>
+                        <button class="alert-cta">Help Now</button>
+                    </div>
+                    <div class="alert-item">
+                        <div class="alert-item-content">
+                            <div class="alert-icon"><i class="ph ph-siren"></i></div>
+                            <div class="alert-info">
+                                <strong>Lost golden retriever spotted</strong>
+                                <span>1.2 miles away • 25 mins ago</span>
+                            </div>
+                        </div>
+                        <button class="alert-cta">Help Now</button>
+                    </div>
+                    <div class="alert-item">
+                        <div class="alert-item-content">
+                            <div class="alert-icon"><i class="ph ph-siren"></i></div>
+                            <div class="alert-info">
+                                <strong>Puppies found in cardboard box</strong>
+                                <span>2.0 miles away • 1 hour ago</span>
+                            </div>
+                        </div>
+                        <button class="alert-cta">Help Now</button>
+                    </div>
+                    <div class="widget-scroll-indicator"><i class="ph ph-caret-down"></i></div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts -->
+            <div class="widget card" style="border-left: 4px solid var(--alert);">
+                <h3 style="margin-bottom: 12px;"><i class="ph-fill ph-phone-call" style="color: var(--alert);"></i>
+                    Emergency Contacts</h3>
+                <div class="contributor-item" style="margin-bottom: 12px;">
+                    <div class="contributor-info">
+                        <strong style="color: var(--text-main);">City Animal Control</strong>
+                        <span>1-800-555-0199 (24/7)</span>
+                    </div>
+                </div>
+                <div class="contributor-item" style="margin-bottom: 0;">
+                    <div class="contributor-info">
+                        <strong style="color: var(--text-main);">Paws Vet Clinic</strong>
+                        <span>1-800-555-0122 (8AM - 8PM)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trending Widget -->
+            <div class="widget trending-widget card">
+                <h3>Trending Rescues</h3>
+                <div class="widget-scroll-container">
+                    <div class="trending-item">
+                        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=100"
+                            alt="Dog">
+                        <div class="trending-info">
+                            <strong>Luna's Recovery Journey</strong>
+                            <span>12.5k interactions</span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=100"
+                            alt="Cat">
+                        <div class="trending-info">
+                            <strong>5 Kittens found in barn</strong>
+                            <span>8.2k interactions</span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=100"
+                            alt="Dog">
+                        <div class="trending-info">
+                            <strong>Abandoned dog rescued</strong>
+                            <span>5.4k interactions</span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <img src="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&q=80&w=100"
+                            alt="Puppy">
+                        <div class="trending-info">
+                            <strong>Puppy needs foster home</strong>
+                            <span>3.1k interactions</span>
+                        </div>
+                    </div>
+                    <div class="widget-scroll-indicator"><i class="ph ph-caret-down"></i></div>
+                </div>
+            </div>
+
+            <!-- Suggested NGOs -->
+            <div class="widget suggested-widget card">
+                <h3>Suggested NGOs</h3>
+                <div class="widget-scroll-container">
+                    <div class="contributor-item">
+                        <img src="https://images.unsplash.com/photo-1542838686-37ed7a9efc78?auto=format&fit=crop&q=80&w=100"
+                            alt="Paws NGO" class="avatar-sm">
+                        <div class="contributor-info">
+                            <strong>Paws & Claws NGO</strong>
+                            <span>2.1k followers</span>
+                        </div>
+                    </div>
+                    <div class="widget-scroll-indicator"><i class="ph ph-caret-down"></i></div>
+                </div>
+            </div>
+
+            <!-- Top Contributors -->
+            <div class="widget contributors-widget card">
+                <h3>Top Contributors</h3>
+                <div class="widget-scroll-container">
+                    <div class="contributor-item">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=100"
+                            alt="Dr Aris" class="avatar-sm">
+                        <div class="contributor-info">
+                            <strong>Dr. Aris (Emergency Vet)</strong>
+                            <span>Helped 45 strays this month</span>
+                        </div>
+                    </div>
+                    <div class="contributor-item">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100"
+                            alt="Priya S" class="avatar-sm">
+                        <div class="contributor-info">
+                            <strong>Priya Sharma (Rescue)</strong>
+                            <span>Organized 3 feeding drives</span>
+                        </div>
+                    </div>
+                    <div class="widget-scroll-indicator"><i class="ph ph-caret-down"></i></div>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <a href="#">About</a> • <a href="#">Privacy</a> • <a href="#">Terms</a>
+                <p>&copy; 2026 Voice of Stray</p>
+            </div>
+
+        </aside>
+    </main>
+
+    <button class="floating-action-btn">
+        <i class="ph ph-plus"></i> Share Your Impact
+    </button>
+
+    <!-- Additional Inline Styling for Story Badge -->
+    <style>
+        .badge-story {
+            background-color: #10b981 !important;
+            color: white !important;
+        }
+        
+        /* Toast notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 10005;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="community-toast">
+        <span>✅ Your impact has been shared.</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollContainers = document.querySelectorAll('.widget-scroll-container');
+
+            scrollContainers.forEach(container => {
+                const indicator = container.querySelector('.widget-scroll-indicator');
+                if (!indicator) return;
+
+                const checkScroll = () => {
+                    // Check if scrollable
+                    if (container.scrollHeight <= container.clientHeight + 2) {
+                        indicator.style.opacity = '0';
+                        return;
+                    }
+
+                    // Hide when near bottom
+                    if (container.scrollHeight - container.scrollTop <= container.clientHeight + 20) {
+                        indicator.style.opacity = '0';
+                    } else {
+                        indicator.style.opacity = '1';
+                    }
+                };
+
+                container.addEventListener('scroll', checkScroll);
+                window.addEventListener('resize', checkScroll);
+                // Initial check after a slight delay
+                setTimeout(checkScroll, 100);
+            });
+
+            // --- COMMUNITY FEED DYNAMIC LOGIC ---
+
+            // 1. Get Logged In User Info
+            let currentUserName = localStorage.getItem("username") || "Arjun";
+            let currentUserEmail = localStorage.getItem("email") || "user@voiceofstray.com";
+            let currentUserRole = "User";
+            const currentUserRaw = localStorage.getItem("currentUser");
+            if (currentUserRaw) {
+                try {
+                    const currentUser = JSON.parse(currentUserRaw);
+                    if (currentUser.role === "ngo") {
+                        currentUserRole = "NGO";
+                    } else if (currentUser.volunteer && currentUser.volunteer.approved) {
+                        currentUserRole = "Volunteer";
+                    }
+                } catch (e) {}
+            } else {
+                const role = localStorage.getItem("role") || "user";
+                if (role === "ngo") {
+                    currentUserRole = "NGO";
+                }
+            }
+
+            const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+            if (storedProfile) {
+                try {
+                    const parsed = JSON.parse(storedProfile);
+                    if (parsed.fullName) currentUserName = parsed.fullName;
+                    if (parsed.email) currentUserEmail = parsed.email;
+                    if (parsed.accountType) {
+                        currentUserRole = parsed.accountType;
+                    }
+                } catch (e) {}
+            }
+
+            const currentUserAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserName)}&background=f97316&color=fff`;
+
+            // Update user interface icons with logged in user avatar
+            const createPostAvatar = document.querySelector(".create-post-card .avatar");
+            if (createPostAvatar) {
+                createPostAvatar.src = currentUserAvatar;
+            }
+            const navProfilePic = document.querySelector(".nav-actions.logged-in-actions .profile-pic img");
+            if (navProfilePic) {
+                navProfilePic.src = currentUserAvatar;
+            }
+
+            // 2. Category Selector Toggle Logic
+            const categoryPills = document.querySelectorAll(".create-post-categories .category-pill");
+            categoryPills.forEach(pill => {
+                pill.addEventListener("click", () => {
+                    categoryPills.forEach(p => p.classList.remove("active"));
+                    pill.classList.add("active");
+                });
+            });
+
+            // 2b. Feed Filter Tabs Logic
+            let activeFeedFilter = "For You";
+            let activeSearchQuery = "";
+            const sessionCreatedPostIds = new Set();
+            const filterTabs = document.querySelectorAll(".filter-tabs .tab");
+            filterTabs.forEach(tab => {
+                tab.addEventListener("click", () => {
+                    filterTabs.forEach(t => t.classList.remove("active"));
+                    tab.classList.add("active");
+                    activeFeedFilter = tab.textContent.trim();
+                    renderCommunityFeed();
+                });
+            });
+
+            // 2c. Real-Time Search Logic
+            const searchInput = document.getElementById("community-search-input");
+            const searchClearBtn = document.getElementById("community-search-clear");
+            if (searchInput && searchClearBtn) {
+                searchInput.addEventListener("input", (e) => {
+                    activeSearchQuery = e.target.value;
+                    if (activeSearchQuery.trim().length > 0) {
+                        searchClearBtn.style.display = "block";
+                    } else {
+                        searchClearBtn.style.display = "none";
+                    }
+                    renderCommunityFeed();
+                });
+
+                searchClearBtn.addEventListener("click", () => {
+                    searchInput.value = "";
+                    activeSearchQuery = "";
+                    searchClearBtn.style.display = "none";
+                    renderCommunityFeed();
+                });
+            }
+
+            // 3. Image Upload Logic
+            const addPhotoBtn = document.getElementById("add-photo-btn");
+            const postImageInput = document.getElementById("post-image-input");
+            const imagePreviewContainer = document.getElementById("image-preview-container");
+            const imagePreview = document.getElementById("image-preview");
+            const removeImageBtn = document.getElementById("remove-image-btn");
+            let selectedImageBase64 = null;
+
+            if (addPhotoBtn && postImageInput) {
+                addPhotoBtn.addEventListener("click", () => postImageInput.click());
+            }
+
+            if (postImageInput) {
+                postImageInput.addEventListener("change", (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            selectedImageBase64 = event.target.result;
+                            if (imagePreview) imagePreview.src = selectedImageBase64;
+                            if (imagePreviewContainer) imagePreviewContainer.style.display = "block";
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            if (removeImageBtn) {
+                removeImageBtn.addEventListener("click", () => {
+                    selectedImageBase64 = null;
+                    if (postImageInput) postImageInput.value = "";
+                    if (imagePreview) imagePreview.src = "";
+                    if (imagePreviewContainer) imagePreviewContainer.style.display = "none";
+                });
+            }
+
+            // 4. Location Mapping Logic
+            const addLocationBtn = document.getElementById("add-location-btn");
+            const postLocationDisplay = document.getElementById("post-location-display");
+            const postLocationText = document.getElementById("post-location-text");
+            const removeLocationBtn = document.getElementById("remove-location-btn");
+            let selectedLocation = null;
+
+            if (addLocationBtn) {
+                addLocationBtn.addEventListener("click", () => {
+                    const loc = prompt("Enter location (e.g. Downtown Park, Westside Shelter):");
+                    if (loc && loc.trim()) {
+                        selectedLocation = loc.trim();
+                        if (postLocationText) postLocationText.textContent = selectedLocation;
+                        if (postLocationDisplay) postLocationDisplay.style.display = "inline-flex";
+                    }
+                });
+            }
+
+            if (removeLocationBtn) {
+                removeLocationBtn.addEventListener("click", () => {
+                    selectedLocation = null;
+                    if (postLocationText) postLocationText.textContent = "";
+                    if (postLocationDisplay) postLocationDisplay.style.display = "none";
+                });
+            }
+
+            // 5. Future-Ready Asynchronous Community API
+            const CommunityAPI = {
+                toggleLike: async function(postId, username) {
+                    const posts = JSON.parse(localStorage.getItem("voiceOfStrayCommunityPosts") || "[]");
+                    const post = posts.find(p => p.id === postId);
+                    if (!post) return null;
+
+                    if (!post.likedBy) post.likedBy = [];
+                    const idx = post.likedBy.indexOf(username);
+                    if (idx === -1) {
+                        post.likedBy.push(username);
+                        post.likes = (post.likes || 0) + 1;
+                    } else {
+                        post.likedBy.splice(idx, 1);
+                        post.likes = Math.max(0, (post.likes || 0) - 1);
+                    }
+                    localStorage.setItem("voiceOfStrayCommunityPosts", JSON.stringify(posts));
+                    return post;
+                },
+
+                addComment: async function(postId, comment) {
+                    const posts = JSON.parse(localStorage.getItem("voiceOfStrayCommunityPosts") || "[]");
+                    const post = posts.find(p => p.id === postId);
+                    if (!post) return null;
+
+                    if (!post.comments) post.comments = [];
+                    post.comments.unshift(comment); // Display newest comments first
+                    localStorage.setItem("voiceOfStrayCommunityPosts", JSON.stringify(posts));
+                    return post;
+                },
+
+                deleteComment: async function(postId, commentId) {
+                    const posts = JSON.parse(localStorage.getItem("voiceOfStrayCommunityPosts") || "[]");
+                    const post = posts.find(p => p.id === postId);
+                    if (!post) return null;
+
+                    if (post.comments) {
+                        post.comments = post.comments.filter(c => c.commentId !== commentId);
+                    }
+                    localStorage.setItem("voiceOfStrayCommunityPosts", JSON.stringify(posts));
+                    return post;
+                },
+
+                toggleSave: async function(postId, username) {
+                    let savedPosts = JSON.parse(localStorage.getItem("voiceOfStraySavedPosts") || "[]");
+                    const idx = savedPosts.indexOf(postId);
+                    let isSaved = false;
+                    if (idx === -1) {
+                        savedPosts.push(postId);
+                        isSaved = true;
+                    } else {
+                        savedPosts.splice(idx, 1);
+                    }
+                    localStorage.setItem("voiceOfStraySavedPosts", JSON.stringify(savedPosts));
+                    return { postId, isSaved };
+                }
+            };
+
+            // Track IDs of open comment sections
+            const openCommentPosts = new Set();
+
+            // 6. Window Action Mappings
+            window.toggleLikeClick = async function(postId) {
+                await CommunityAPI.toggleLike(postId, currentUserName);
+                renderCommunityFeed();
+            };
+
+            window.toggleCommentsSection = function(postId) {
+                const el = document.getElementById("comments-section-" + postId);
+                if (!el) return;
+                if (openCommentPosts.has(postId)) {
+                    openCommentPosts.delete(postId);
+                    el.style.display = "none";
+                } else {
+                    openCommentPosts.add(postId);
+                    el.style.display = "flex";
+                    // Focus comment input field
+                    const input = document.getElementById("comment-input-" + postId);
+                    if (input) input.focus();
+                }
+            };
+
+            window.submitCommentClick = async function(postId) {
+                const input = document.getElementById("comment-input-" + postId);
+                if (!input) return;
+                const text = input.value.trim();
+                if (!text) return;
+
+                const commentData = {
+                    commentId: "COM-" + Date.now() + "-" + Math.floor(1000 + Math.random() * 9000),
+                    author: currentUserName,
+                    avatar: currentUserAvatar,
+                    role: currentUserRole,
+                    text: text,
+                    timestamp: Date.now()
+                };
+
+                await CommunityAPI.addComment(postId, commentData);
+                renderCommunityFeed();
+            };
+
+            window.deleteCommentClick = async function(postId, commentId) {
+                if (confirm("Are you sure you want to delete your comment?")) {
+                    await CommunityAPI.deleteComment(postId, commentId);
+                    renderCommunityFeed();
+                }
+            };
+
+            window.toggleSaveClick = async function(postId) {
+                await CommunityAPI.toggleSave(postId, currentUserName);
+                renderCommunityFeed();
+            };
+
+            window.sharePostClick = function(postId) {
+                const shareUrl = window.location.href.split("#")[0] + "#" + postId;
+                if (navigator.share) {
+                    navigator.share({
+                        title: "Voice of Stray Community Post",
+                        text: "Check out this community post on Voice of Stray!",
+                        url: shareUrl
+                    }).catch(err => console.log("Error sharing", err));
+                } else {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert("Post link copied successfully.");
+                    });
+                }
+            };
+
+            window.deletePost = function(postId) {
+                if (confirm("Are you sure you want to delete this post?")) {
+                    let posts = JSON.parse(localStorage.getItem("voiceOfStrayCommunityPosts") || "[]");
+                    posts = posts.filter(p => p.id !== postId);
+                    localStorage.setItem("voiceOfStrayCommunityPosts", JSON.stringify(posts));
+                    renderCommunityFeed();
+                }
+            };
+
+            // Toast notification trigger
+            window.showToast = function(msg) {
+                const toast = document.getElementById("community-toast");
+                if (toast) {
+                    toast.querySelector("span").textContent = msg;
+                    toast.classList.add("show");
+                    setTimeout(() => {
+                        toast.classList.remove("show");
+                    }, 3000);
+                }
+            };
+
+            // 7. Submit Post Logic (Shared API)
+            window.submitNewCommunityPost = function({ description, category, images, video, location }) {
+                if (!description && (!images || images.length === 0) && !video) {
+                    return false;
+                }
+
+                const newPost = {
+                    id: "POST-" + Date.now() + "-" + Math.floor(1000 + Math.random() * 9000),
+                    authorName: currentUserName,
+                    authorAvatar: currentUserAvatar,
+                    authorRole: currentUserRole,
+                    description: description || "",
+                    category: category || "Rescue",
+                    images: images || [],
+                    video: video || "",
+                    location: location || "",
+                    timestamp: Date.now(),
+                    likes: 0,
+                    likedBy: [],
+                    comments: [],
+                    savedBy: [],
+                    createdBy: currentUserName
+                };
+
+                sessionCreatedPostIds.add(newPost.id); // Track session-created posts for animations
+
+                const posts = JSON.parse(localStorage.getItem("voiceOfStrayCommunityPosts") || "[]");
+                posts.unshift(newPost);
+                localStorage.setItem("voiceOfStrayCommunityPosts", JSON.stringify(posts));
+
+                renderCommunityFeed();
+                return true;
+            };
+
+            // Hook static card inputs to use shared submit logic
+            const sharePostBtn = document.getElementById("share-post-btn");
+            const postDescriptionTextarea = document.getElementById("post-description");
+
+            if (sharePostBtn && postDescriptionTextarea) {
+                sharePostBtn.addEventListener("click", () => {
+                    const content = postDescriptionTextarea.value.trim();
+                    if (!content && !selectedImageBase64) {
+                        alert("Please enter a description or upload a photo to share your post.");
+                        return;
+                    }
+
+                    let activeCategory = "Rescue";
+                    const activePill = document.querySelector(".create-post-categories .category-pill.active");
+                    if (activePill) {
+                        activeCategory = activePill.textContent.trim();
+                    }
+
+                    const success = window.submitNewCommunityPost({
+                        description: content,
+                        category: activeCategory,
+                        images: selectedImageBase64 ? [selectedImageBase64] : [],
+                        video: "",
+                        location: selectedLocation || ""
+                    });
+
+                    if (success) {
+                        // Reset form
+                        postDescriptionTextarea.value = "";
+                        selectedImageBase64 = null;
+                        if (postImageInput) postImageInput.value = "";
+                        if (imagePreview) imagePreview.src = "";
+                        if (imagePreviewContainer) imagePreviewContainer.style.display = "none";
+
+                        selectedLocation = null;
+                        if (postLocationText) postLocationText.textContent = "";
+                        if (postLocationDisplay) postLocationDisplay.style.display = "none";
+
+                        categoryPills.forEach(p => p.classList.remove("active"));
+                        if (categoryPills[0]) categoryPills[0].classList.add("active");
+                    }
+                });
+            }
+
+            // Hook floating action button to CreatePostModal instance
+            const floatingBtn = document.querySelector(".floating-action-btn");
+            if (floatingBtn) {
+                const createPostModal = new CreatePostModal({
+                    currentUserName,
+                    currentUserAvatar,
+                    currentUserRole,
+                    onShare: (postData) => {
+                        const success = window.submitNewCommunityPost(postData);
+                        if (success) {
+                            window.showToast("✅ Your impact has been shared.");
+                        }
+                    }
+                });
+
+                floatingBtn.addEventListener("click", () => {
+                    createPostModal.open();
+                });
+            }
+
+            // 8. Relative Time Helper
+            function getPostRelativeTime(timestamp) {
+                const diffMs = Date.now() - timestamp;
+                const diffSec = Math.floor(diffMs / 1000);
+                if (diffSec < 60) return "Just now";
+                const diffMin = Math.floor(diffSec / 60);
+                if (diffMin < 60) return `${diffMin} min${diffMin > 1 ? 's' : ''} ago`;
+                const diffHr = Math.floor(diffMin / 60);
+                if (diffHr < 24) return `${diffHr} hour${diffHr > 1 ? 's' : ''} ago`;
+                const diffDay = Math.floor(diffHr / 24);
+                if (diffDay === 1) return "Yesterday";
+                return `${diffDay} days ago`;
+            }
+
+            // 9. Render Feed Logic
+            function renderCommunityFeed() {
+                const feedContainer = document.getElementById("feed-stream-container");
+                if (!feedContainer) return;
+
+                let posts = localStorage.getItem("voiceOfStrayCommunityPosts");
+                let needsDefault = false;
+
+                if (posts) {
+                    try {
+                        const parsed = JSON.parse(posts);
+                        if (!Array.isArray(parsed) || parsed.length === 0) {
+                            needsDefault = true;
+                        }
+                    } catch (e) {
+                        needsDefault = true;
+                    }
+                } else {
+                    needsDefault = true;
+                }
+
+                if (needsDefault) {
+                    const defaultPosts = [
+                        {
+                            id: "POST-DEFAULT-1",
+                            authorName: "Sarah Jenkins",
+                            authorAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100",
+                            authorRole: "Volunteer",
+                            description: "Found this little guy hiding under a car during the rain. He's safe now and eating well! If anyone recognizes him, please let me know. We are calling him Max for now. 🐶🌧️ #StrayRescue #DogRescue",
+                            category: "Rescue",
+                            images: ["https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800"],
+                            location: "Downtown Park",
+                            timestamp: Date.now() - 2 * 60 * 60 * 1000,
+                            likes: 245,
+                            likedBy: [],
+                            comments: [
+                                {
+                                    commentId: "COM-DEFAULT-1",
+                                    author: "Animal Rescue Squad",
+                                    avatar: "https://ui-avatars.com/api/?name=Animal+Rescue&background=3b82f6&color=fff",
+                                    role: "Volunteer",
+                                    text: "Thank you for saving him! Let me know if you need dog food.",
+                                    timestamp: Date.now() - 1.5 * 60 * 60 * 1000
+                                }
+                            ],
+                            savedBy: [],
+                            createdBy: "Sarah Jenkins"
+                        },
+                        {
+                            id: "POST-DEFAULT-2",
+                            authorName: "Animal Hope NGO",
+                            authorAvatar: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=100",
+                            authorRole: "NGO",
+                            description: "Our weekly feeding drive was a huge success! We fed over 150 strays today. A big shoutout to our volunteers who made this happen. Join us next week! 🐾🍲",
+                            category: "Feeding",
+                            images: ["https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=400", "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=400"],
+                            location: "Westside Shelter",
+                            timestamp: Date.now() - 5 * 60 * 60 * 1000,
+                            likes: 890,
+                            likedBy: [],
+                            comments: [],
+                            savedBy: [],
+                            createdBy: "Animal Hope NGO"
+                        },
+                        {
+                            id: "POST-DEFAULT-3",
+                            authorName: "Priya Sharma",
+                            authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100",
+                            authorRole: "User",
+                            description: "We are urgently looking for a temporary foster home for a mother dog and her 3 newborn puppies! 🐶🏠 The shelter is currently full. We will provide all food and medical supplies. Please DM me if you can help!",
+                            category: "Adoption",
+                            images: [],
+                            location: "Northside Foster Care",
+                            timestamp: Date.now() - 8 * 60 * 60 * 1000,
+                            likes: 432,
+                            likedBy: [],
+                            comments: [],
+                            savedBy: [],
+                            createdBy: "Priya Sharma"
+                        }
+                    ];
+                    localStorage.setItem("voiceOfStrayCommunityPosts", JSON.stringify(defaultPosts));
+                    posts = JSON.stringify(defaultPosts);
+                }
+
+                let postList = JSON.parse(posts);
+
+                // Filter posts case-insensitively based on active tab AND active search query
+                const filterText = activeFeedFilter.toLowerCase();
+                const searchQueryLower = activeSearchQuery.toLowerCase().trim();
+
+                postList = postList.filter(p => {
+                    // 1. Category Filter Check
+                    let matchesCategory = false;
+                    if (filterText === "for you") {
+                        matchesCategory = true;
+                    } else {
+                        const postCategory = (p.category || "").toLowerCase();
+                        if (filterText === "stories" || filterText === "story") {
+                            matchesCategory = (postCategory === "stories" || postCategory === "story");
+                        } else if (filterText === "alerts" || filterText === "alert") {
+                            matchesCategory = (postCategory === "alerts" || postCategory === "alert");
+                        } else {
+                            matchesCategory = (postCategory === filterText);
+                        }
+                    }
+
+                    // 2. Search Query Check
+                    let matchesSearch = true;
+                    if (searchQueryLower.length > 0) {
+                        const description = (p.description || "").toLowerCase();
+                        const author = (p.authorName || "").toLowerCase();
+                        const location = (p.location || "").toLowerCase();
+                        const category = (p.category || "").toLowerCase();
+
+                        matchesSearch = description.includes(searchQueryLower) ||
+                                        author.includes(searchQueryLower) ||
+                                        location.includes(searchQueryLower) ||
+                                        category.includes(searchQueryLower);
+                    }
+
+                    return matchesCategory && matchesSearch;
+                });
+
+                // Display friendly empty state if no matching posts found
+                if (postList.length === 0) {
+                    feedContainer.innerHTML = `
+                        <div class="feed-empty-state">
+                            <div class="feed-empty-state-icon">
+                                <i class="ph ph-magnifying-glass"></i>
+                            </div>
+                            <h3>No matching posts found</h3>
+                            <p>Try another keyword or switch to a different category.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const savedPostIds = JSON.parse(localStorage.getItem("voiceOfStraySavedPosts") || "[]");
+                let feedHtml = "";
+
+                postList.forEach(p => {
+                    const relativeTime = getPostRelativeTime(p.timestamp);
+                    const isCreator = (p.createdBy === currentUserName);
+                    
+                    const categoryLower = (p.category || "rescue").toLowerCase();
+                    let badgeClass = `badge-${categoryLower}`;
+                    if (categoryLower === "alert") badgeClass = "badge-alert";
+
+                    const locationInfo = p.location ? ` • <i class="ph ph-map-pin"></i> ${p.location}` : "";
+
+                    let mediaHtml = "";
+                    if (p.video) {
+                        mediaHtml = `
+                            <div class="post-media">
+                                <video src="${p.video}" controls style="width: 100%; border-radius: var(--radius-md); max-height: 450px; object-fit: cover;"></video>
+                            </div>
+                        `;
+                    } else if (p.images && p.images.length === 1) {
+                        mediaHtml = `
+                            <div class="post-media">
+                                <img src="${p.images[0]}" alt="Post media">
+                            </div>
+                        `;
+                    } else if (p.images && p.images.length > 1) {
+                        mediaHtml = `
+                            <div class="post-media split">
+                                <img src="${p.images[0]}" alt="Post media 1">
+                                <img src="${p.images[1]}" alt="Post media 2">
+                            </div>
+                        `;
+                    }
+
+                    const isVerified = (p.authorRole === "NGO" || p.authorRole === "Volunteer");
+                    const verifiedHtml = isVerified ? `<i class="ph-fill ph-seal-check verified-badge"></i>` : "";
+
+                    const optionsHtml = isCreator ? 
+                        `<div style="display: flex; align-items: center; gap: 8px;">
+                            <button class="delete-post-btn" onclick="deletePost('${p.id}')" style="font-size: 0.85rem; font-weight: 600; color: var(--alert); border: none; background: none; cursor: pointer; transition: opacity 0.2s; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 4px;"><i class="ph ph-trash"></i> Delete</button>
+                            <button class="icon-btn"><i class="ph ph-dots-three"></i></button>
+                        </div>` :
+                        `<button class="icon-btn"><i class="ph ph-dots-three"></i></button>`;
+
+                    // 1. Likes Rendering
+                    const isLiked = p.likedBy && p.likedBy.includes(currentUserName);
+                    const likesButtonClass = isLiked ? "action-btn liked" : "action-btn";
+                    const likesIconClass = isLiked ? "ph-fill ph-heart" : "ph ph-heart";
+
+                    // 2. Saved (Bookmark) Rendering
+                    const isSaved = savedPostIds.includes(p.id);
+                    const saveIconClass = isSaved ? "ph-fill ph-bookmark-simple" : "ph ph-bookmark-simple";
+                    const saveStyle = isSaved ? "color: var(--primary);" : "";
+
+                    // Comments block rendering
+                    let commentItems = "";
+                    if (p.comments && p.comments.length > 0) {
+                        p.comments.forEach(c => {
+                            const isCommentCreator = (c.author === currentUserName);
+                            const commentDeleteButton = isCommentCreator ? 
+                                `<button onclick="deleteCommentClick('${p.id}', '${c.commentId}')" style="color: var(--alert); margin-left: 8px; font-size: 0.8rem; font-weight: 600;">Delete</button>` : 
+                                "";
+
+                            commentItems += `
+                                <div class="comment">
+                                    <img src="${c.avatar}" alt="${c.author}" class="avatar-sm">
+                                    <div class="comment-content">
+                                        <strong>${c.author}</strong> <span>${c.text}</span>
+                                        <div class="comment-actions">
+                                            <button>Like</button>
+                                            <button>Reply</button>
+                                            ${commentDeleteButton}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    const commentsHtml = `
+                        <div id="comments-section-${p.id}" class="post-comments" style="display: ${openCommentPosts.has(p.id) ? 'flex' : 'none'}; flex-direction: column; gap: 16px; margin-top: 16px;">
+                            ${commentItems}
+                            <div class="comment-input-area" style="margin-top: 4px;">
+                                <img src="${currentUserAvatar}" alt="Profile" class="avatar-sm">
+                                <input type="text" id="comment-input-${p.id}" placeholder="Add a comment..." onkeydown="if(event.key === 'Enter') submitCommentClick('${p.id}')">
+                                <button class="btn-text" onclick="submitCommentClick('${p.id}')">Post</button>
+                            </div>
+                        </div>
+                    `;
+
+                    const cardAnimClass = sessionCreatedPostIds.has(p.id) ? "new-post-animation" : "";
+                    feedHtml += `
+                        <article class="post-card card ${cardAnimClass}">
+                            <div class="post-header">
+                                <div class="post-author">
+                                    <img src="${p.authorAvatar}" alt="${p.authorName}" class="avatar">
+                                    <div class="author-info">
+                                        <h4>${p.authorName} ${verifiedHtml} <span class="badge ${badgeClass}">${p.category}</span></h4>
+                                        <span class="post-meta">${relativeTime}${locationInfo}</span>
+                                    </div>
+                                </div>
+                                ${optionsHtml}
+                            </div>
+                            <div class="post-content">
+                                <p>${p.description}</p>
+                                ${mediaHtml}
+                            </div>
+                            <div class="post-actions">
+                                <div class="left-actions">
+                                    <button class="${likesButtonClass}" onclick="toggleLikeClick('${p.id}')"><i class="${likesIconClass}"></i> ${p.likes || 0}</button>
+                                    <button class="action-btn" onclick="toggleCommentsSection('${p.id}')"><i class="ph ph-chat-circle"></i> ${p.comments ? p.comments.length : 0}</button>
+                                </div>
+                                <div class="right-actions">
+                                    <button class="action-btn" onclick="toggleSaveClick('${p.id}')" style="${saveStyle}"><i class="${saveIconClass}"></i></button>
+                                    <button class="action-btn" onclick="sharePostClick('${p.id}')"><i class="ph ph-share-network"></i></button>
+                                </div>
+                            </div>
+                            ${commentsHtml}
+                        </article>
+                    `;
+                });
+
+                feedContainer.innerHTML = feedHtml;
+            }
+
+            renderCommunityFeed();
+            setInterval(renderCommunityFeed, 30000);
+        });
+    </script>
+</body>
+
+</html>

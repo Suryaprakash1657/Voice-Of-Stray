@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Pet Profile Builder - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="pet-details.css">
+    <link rel="stylesheet" href="ngo-pet-manage.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+</head>
+
+<body>
+    <!-- Shared Background Sparkles -->
+    <div class="bg-decorations">
+        <svg class="decor-item sparkle" style="top: 15%; left: 8%; width: 40px; height: 40px;" viewBox="0 0 256 256">
+            <path d="M243,128.5A115,115,0,0,1,128.5,243,115,115,0,0,1,14,128.5,115,115,0,0,1,128.5,14,115,115,0,0,1,243,128.5Z" fill="none" stroke="currentColor" stroke-width="16"/>
+            <path d="M128,80v96M80,128h96" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+        </svg>
+        <svg class="decor-item sparkle" style="top: 60%; right: 5%; width: 50px; height: 50px;" viewBox="0 0 256 256">
+            <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z"/>
+        </svg>
+    </div>
+
+    <!-- Navbar (Shared) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html" class="active">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <a href="ngo-dashboard.html" class="nav-home-link">
+                    <i class="ph-bold ph-layout"></i>
+                    <span>NGO Dashboard</span>
+                </a>
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+                <button class="icon-btn"><i class="ph ph-bell"></i></button>
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=City+Rescue&background=f97316&color=fff" alt="NGO Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- STICKY TOP NGO ACTION BAR -->
+    <header class="editor-action-bar">
+        <div class="action-bar-container">
+            <div class="editor-mode-label">
+                <h2><i class="ph ph-note-pencil"></i> Pet Profile Builder</h2>
+                <span class="editor-mode-tag">WYSIWYG Editor</span>
+            </div>
+            <div class="bar-actions">
+                <div class="status-select-wrap">
+                    <label for="profile-status">Profile Status</label>
+                    <select id="profile-status" class="status-select">
+                        <option value="Draft" selected>Draft</option>
+                        <option value="Ready for Adoption">Ready for Adoption</option>
+                        <option value="Adoption Pending">Adoption Pending</option>
+                        <option value="Adopted">Adopted</option>
+                    </select>
+                </div>
+                <button class="btn-editor preview" id="btn-preview"><i class="ph ph-eye"></i> Preview Public View</button>
+                <button class="btn-editor save" id="btn-save"><i class="ph ph-floppy-disk"></i> Save Changes</button>
+                <button class="btn-editor publish" id="btn-publish"><i class="ph ph-rocket-launch"></i> Publish Profile</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="pet-details-main" style="position: relative; z-index: 1;">
+
+        <div class="back-btn-container">
+            <a href="ngo-dashboard.html" class="back-link">
+                <i class="ph ph-arrow-left"></i> Back to NGO Dashboard
+            </a>
+        </div>
+
+        <!-- 1. HERO PROFILE EDITOR -->
+        <section class="hero-profile card" style="background: rgba(255,255,255,0.75); backdrop-filter: blur(15px); padding: 32px; border: 1px solid rgba(249,115,22,0.1);">
+            <!-- Image Gallery Panel -->
+            <div class="hero-gallery">
+                <!-- Gallery Empty State -->
+                <div id="gallery-empty-state" class="empty-gallery-state" onclick="openPhotoSelector('main')">
+                    <i class="ph ph-camera-plus"></i>
+                    <h4>No Pet Photos Uploaded Yet</h4>
+                    <p>Click here to select a main showcase photo. You can add up to 4 support photos below.</p>
+                </div>
+
+                <!-- Gallery Active Workspace -->
+                <div id="gallery-active-workspace" class="active-gallery-container" style="display: none;">
+                    <div class="uploader-main-image">
+                        <img id="display-main-image" src="" alt="Showcase">
+                        <div class="photo-overlay-actions">
+                            <div class="overlay-btn" onclick="openPhotoSelector('main')" title="Replace Photo"><i class="ph ph-pencil-simple"></i></div>
+                            <div class="overlay-btn delete" onclick="deletePhoto('main')" title="Delete Photo"><i class="ph ph-trash"></i></div>
+                        </div>
+                        <div class="image-badge-edit">
+                            <i class="ph ph-tag" style="color: white; font-size: 0.9rem; margin-right: 4px;"></i>
+                            <input type="text" id="pet-foster-badge" placeholder="e.g. Urgent Foster Needed" value="">
+                        </div>
+                    </div>
+                    <div class="uploader-thumb-grid">
+                        <div class="uploader-thumb-slot" id="thumb-slot-0" onclick="openPhotoSelector(0)">
+                            <i class="ph ph-plus plus-icon"></i>
+                        </div>
+                        <div class="uploader-thumb-slot" id="thumb-slot-1" onclick="openPhotoSelector(1)">
+                            <i class="ph ph-plus plus-icon"></i>
+                        </div>
+                        <div class="uploader-thumb-slot" id="thumb-slot-2" onclick="openPhotoSelector(2)">
+                            <i class="ph ph-plus plus-icon"></i>
+                        </div>
+                        <div class="uploader-thumb-slot" id="thumb-slot-3" onclick="openPhotoSelector(3)">
+                            <i class="ph ph-plus plus-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pet Vital Headers Grid -->
+            <div class="hero-info">
+                <div class="breadcrumb">
+                    <a href="adopt.html">Adopt</a> 
+                    <i class="ph ph-caret-right"></i> 
+                    <span>Dogs</span> 
+                    <i class="ph ph-caret-right"></i> 
+                    <span id="breadcrumb-pet-name" style="font-weight: 700; color: var(--primary);">New Profile</span>
+                </div>
+
+                <div class="pet-title-area">
+                    <input type="text" id="pet-name" class="wysiwyg-title-input" placeholder="Enter Pet Name..." value="">
+                    
+                    <div class="pet-vital-stats" style="margin-top: 12px;">
+                        <span class="editable-stat-pill">
+                            <i class="ph ph-paw-print" style="color: var(--text-muted);"></i>
+                            <input type="text" id="pet-breed" placeholder="Breed/Mix..." style="width: 140px;" value="">
+                        </span>
+                        <span class="editable-stat-pill">
+                            <i class="ph ph-hourglass" style="color: var(--text-muted);"></i>
+                            <input type="text" id="pet-age" placeholder="Age (e.g. 2 Years)..." style="width: 120px;" value="">
+                        </span>
+                        <span class="editable-stat-pill">
+                            <i class="ph ph-gender-intercellular" style="color: var(--text-muted);"></i>
+                            <select id="pet-gender">
+                                <option value="" disabled selected>Gender...</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </span>
+                        <span class="editable-stat-pill distance-pill">
+                            <i class="ph ph-map-pin"></i>
+                            <input type="text" id="pet-location" placeholder="Pet Location (e.g. Paws Haven Shelter)..." style="width: 240px;" value="">
+                        </span>
+                    </div>
+                </div>
+
+                <div class="rescue-date-line">
+                    <i class="ph ph-calendar"></i> 
+                    <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-right: 8px;">Rescued on</span>
+                    <input type="text" id="pet-rescue-date" class="input-glass" placeholder="e.g. October 12, 2025" style="width: 200px; padding: 4px 8px; font-size: 0.9rem; font-weight: 600;">
+                </div>
+
+                <!-- Attributes badging editor -->
+                <div class="badges-grid-edit">
+                    <div class="feature-badge-toggle healthy" id="badge-vaccinated" onclick="toggleBadge('vaccinated')">
+                        <span class="badge-left-side">
+                            <i class="ph-fill ph-check-circle"></i> Vaccinated
+                        </span>
+                        <span class="badge-checkbox"><i class="ph ph-check"></i></span>
+                    </div>
+                    <div class="feature-badge-toggle healthy" id="badge-vetchecked" onclick="toggleBadge('vetchecked')">
+                        <span class="badge-left-side">
+                            <i class="ph-fill ph-stethoscope"></i> Vet Checked
+                        </span>
+                        <span class="badge-checkbox"><i class="ph ph-check"></i></span>
+                    </div>
+                    <div class="feature-badge-toggle healthy" id="badge-neutered" onclick="toggleBadge('neutered')">
+                        <span class="badge-left-side">
+                            <i class="ph-fill ph-scissors"></i> Neutered
+                        </span>
+                        <span class="badge-checkbox"><i class="ph ph-check"></i></span>
+                    </div>
+                    <div class="feature-badge-toggle behavioral" id="badge-goodkids" onclick="toggleBadge('goodkids')">
+                        <span class="badge-left-side">
+                            <i class="ph-fill ph-baby"></i> Good with Kids
+                        </span>
+                        <span class="badge-checkbox"><i class="ph ph-check"></i></span>
+                    </div>
+                    <div class="feature-badge-toggle behavioral" id="badge-goodpets" onclick="toggleBadge('goodpets')">
+                        <span class="badge-left-side">
+                            <i class="ph-fill ph-paw-print"></i> Good with Pets
+                        </span>
+                        <span class="badge-checkbox"><i class="ph ph-check"></i></span>
+                    </div>
+                    <div class="feature-badge-toggle behavioral" id="badge-housetrained" onclick="toggleBadge('housetrained')">
+                        <span class="badge-left-side">
+                            <i class="ph-fill ph-house"></i> House Trained
+                        </span>
+                        <span class="badge-checkbox"><i class="ph ph-check"></i></span>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label for="pet-short-desc" style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Short Summary Highlight</label>
+                    <textarea id="pet-short-desc" class="story-textarea-editor" placeholder="Write a short catchy summary for adopters (appears on the main adoption card)..." style="min-height: 80px; margin-bottom: 0;"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-split-layout">
+
+            <!-- LEFT COLUMN (Details Editor) -->
+            <div class="details-column">
+
+                <!-- 2. FULL RESCUE STORY -->
+                <section class="detail-section card" id="story" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+                    <h2>Rescue & Story Editor</h2>
+                    <textarea id="pet-story" class="story-textarea-editor" placeholder="Write the pet's story here... Include rescue background details, personality remarks, recovery highlights, and the type of home they would thrive in. Guidance: A warm, authentic tone helps adopters connect emotionally."></textarea>
+
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px;">Rescue Timeline Tracker</h3>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 24px;">The workflow checkpoints below are automatically managed through operational logs. Placeholder nodes are displayed below to visualize what adopters will track.</p>
+                    
+                    <div class="rescue-timeline">
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-warning-circle"></i></div>
+                            <div class="tl-content">
+                                <h5>Reported</h5>
+                                <span>Timeline Verified</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-ambulance"></i></div>
+                            <div class="tl-content">
+                                <h5>Rescued</h5>
+                                <span>Operations Completed</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-first-aid"></i></div>
+                            <div class="tl-content">
+                                <h5>Treated</h5>
+                                <span>Medical Cleared</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-house-line"></i></div>
+                            <div class="tl-content">
+                                <h5>Fostered</h5>
+                                <span>Socialization Logged</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item active">
+                            <div class="tl-icon"><i class="ph-fill ph-heart"></i></div>
+                            <div class="tl-content">
+                                <h5>Ready for Adoption</h5>
+                                <span>Awaiting Matching</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. PERSONALITY PROFILE -->
+                <section class="detail-section card" id="personality" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+                    <h2>Personality Profile</h2>
+
+                    <div class="personality-bars">
+                        <div class="trait-row">
+                            <div class="trait-label">
+                                <i class="ph ph-lightning"></i>
+                                <span>Energy Level</span>
+                            </div>
+                            <div class="range-slider-wrap">
+                                <input type="range" id="trait-energy" min="0" max="100" value="50" class="range-input energy-fill-med" oninput="updateSliderLabel('energy')">
+                            </div>
+                            <span class="trait-value" id="label-energy">Medium</span>
+                        </div>
+
+                        <div class="trait-row">
+                            <div class="trait-label">
+                                <i class="ph ph-coffee"></i>
+                                <span>Temperament</span>
+                            </div>
+                            <div style="flex: 1; display: flex; align-items: center;">
+                                <select id="trait-temperament" class="trait-dropdown-edit">
+                                    <option value="" disabled selected>Select Temperament...</option>
+                                    <option value="Friendly/Calm">Friendly/Calm</option>
+                                    <option value="Playful/Active">Playful/Active</option>
+                                    <option value="Shy/Gentle">Shy/Gentle</option>
+                                    <option value="Protective/Loyal">Protective/Loyal</option>
+                                    <option value="Independent/Quiet">Independent/Quiet</option>
+                                </select>
+                            </div>
+                            <span class="trait-value">Dropdown Selector</span>
+                        </div>
+
+                        <div class="trait-row">
+                            <div class="trait-label">
+                                <i class="ph ph-graduation-cap"></i>
+                                <span>Training Level</span>
+                            </div>
+                            <div style="flex: 1; display: flex; align-items: center;">
+                                <select id="trait-training" class="trait-dropdown-edit">
+                                    <option value="" disabled selected>Select Training...</option>
+                                    <option value="Knows Commands">Knows Commands</option>
+                                    <option value="Basic Training">Basic Training</option>
+                                    <option value="Advanced Training">Advanced Training</option>
+                                    <option value="Needs Training">Needs Training</option>
+                                </select>
+                            </div>
+                            <span class="trait-value">Dropdown Selector</span>
+                        </div>
+                    </div>
+
+                    <div class="behavior-grid">
+                        <div class="behavior-item" style="background: rgba(255,255,255,0.45);">
+                            <div class="b-icon" style="color: #ea580c; box-shadow: var(--shadow-sm);"><i class="ph ph-sneaker"></i></div>
+                            <div class="b-text" style="flex: 1;">
+                                <strong>Daily Behavior Notes</strong>
+                                <textarea id="behavior-daily" class="behavior-input" placeholder="e.g. Loves morning walks, naps in the afternoon sun..."></textarea>
+                            </div>
+                        </div>
+                        <div class="behavior-item" style="background: rgba(255,255,255,0.45);">
+                            <div class="b-icon" style="color: #0ea5e9; box-shadow: var(--shadow-sm);"><i class="ph ph-house"></i></div>
+                            <div class="b-text" style="flex: 1;">
+                                <strong>Lifestyle Fit Notes</strong>
+                                <textarea id="behavior-lifestyle" class="behavior-input" placeholder="e.g. Active family, hiking companion, house with yard..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. MEDICAL & CARE NEEDS -->
+                <section class="detail-section card" id="medical" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+                    <h2>Medical & Care Log Cards</h2>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 24px;">Configure specific diagnostic reports, treatments, surgeries, and nutrition directives for this pet profile below. Cards can be updated independently.</p>
+                    
+                    <div class="medical-grid">
+                        <!-- Vaccine Card -->
+                        <div class="med-card-edit">
+                            <i class="ph ph-syringe"></i>
+                            <input type="text" class="med-card-title-input" id="med-vaccines-title" placeholder="Vaccine Status..." value="Vaccines">
+                            <textarea class="med-card-desc-input" id="med-vaccines-desc" placeholder="e.g. Fully up to date (Rabies, DHPP)..."></textarea>
+                        </div>
+                        <!-- Treatments Card -->
+                        <div class="med-card-edit">
+                            <i class="ph ph-bug-droid" style="color: #0284c7;"></i>
+                            <input type="text" class="med-card-title-input" id="med-treatments-title" placeholder="Treatments Log..." value="Treatments">
+                            <textarea class="med-card-desc-input" id="med-treatments-desc" placeholder="e.g. Monthly flea/tick preventative needed..."></textarea>
+                        </div>
+                        <!-- Surgeries Card -->
+                        <div class="med-card-edit">
+                            <i class="ph ph-scissors" style="color: #e11d48;"></i>
+                            <input type="text" class="med-card-title-input" id="med-surgeries-title" placeholder="Surgeries Log..." value="Surgeries">
+                            <textarea class="med-card-desc-input" id="med-surgeries-desc" placeholder="e.g. Neutered, healed perfectly..."></textarea>
+                        </div>
+                        <!-- Dietary Card -->
+                        <div class="med-card-edit special">
+                            <i class="ph ph-bowl-food"></i>
+                            <input type="text" class="med-card-title-input" id="med-diet-title" placeholder="Dietary Guidelines..." value="Dietary Notes">
+                            <textarea class="med-card-desc-input" id="med-diet-desc" placeholder="e.g. Grain-free diet required due to mild allergies..."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. ADOPTION REQUIREMENTS -->
+                <section class="detail-section card" id="requirements" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+                    <h2>Adoption Requirements</h2>
+                    <p class="req-intro">Formulate the optimal family match requirements for this pet below:</p>
+
+                    <ul class="req-list">
+                        <!-- Family -->
+                        <li class="req-item-edit">
+                            <i class="ph-fill ph-users-three"></i>
+                            <div class="req-edit-inputs">
+                                <input type="text" class="req-title-input" id="req-family-title" placeholder="Family Requirement Category..." value="Family Type">
+                                <textarea class="req-desc-input" id="req-family-desc" placeholder="e.g. Great for active families, couples, or singles. Good with older children..."></textarea>
+                            </div>
+                        </li>
+                        <!-- Yard -->
+                        <li class="req-item-edit">
+                            <i class="ph-fill ph-house-line"></i>
+                            <div class="req-edit-inputs">
+                                <input type="text" class="req-title-input" id="req-yard-title" placeholder="Yard Requirement Category..." value="Yard / Home">
+                                <textarea class="req-desc-input" id="req-yard-desc" placeholder="e.g. Fenced yard required. Not highly suitable for small apartments..."></textarea>
+                            </div>
+                        </li>
+                        <!-- Experience -->
+                        <li class="req-item-edit">
+                            <i class="ph-fill ph-medal"></i>
+                            <div class="req-edit-inputs">
+                                <input type="text" class="req-title-input" id="req-exp-title" placeholder="Experience Requirement Category..." value="Experience">
+                                <textarea class="req-desc-input" id="req-exp-desc" placeholder="e.g. First-time owners welcome, but large-breed experience is a plus..."></textarea>
+                            </div>
+                        </li>
+                        <!-- Other pets -->
+                        <li class="req-item-edit">
+                            <i class="ph-fill ph-cat"></i>
+                            <div class="req-edit-inputs">
+                                <input type="text" class="req-title-input" id="req-pets-title" placeholder="Other Animal Match Rules..." value="Other Pets">
+                                <textarea class="req-desc-input" id="req-pets-desc" placeholder="e.g. Gets along great with other dogs. Has not been tested with cats..."></textarea>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+            </div>
+
+            <!-- RIGHT COLUMN (NGO Profile Details - Read-Only Layout Context) -->
+            <aside class="sidebar-column">
+                <div class="ngo-profile-card card sticky-card" style="background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); border-top: 4px solid var(--primary); box-shadow: var(--shadow-sm); top: 160px;">
+                    <div class="ngo-header">
+                        <div class="ngo-avatar" id="ngo-card-avatar" style="background: var(--primary);">CR</div>
+                        <div class="ngo-title">
+                            <h3 id="ngo-card-name">City Rescue NGO</h3>
+                            <span class="verified-badge"><i class="ph-fill ph-seal-check"></i> NGO Operations Owner</span>
+                        </div>
+                    </div>
+
+                    <div class="ngo-stats">
+                        <div class="n-stat">
+                            <strong>4.8</strong>
+                            <span><i class="ph-fill ph-star"></i> Rating</span>
+                        </div>
+                        <div class="n-stat">
+                            <strong>1.2k</strong>
+                            <span>Adoptions</span>
+                        </div>
+                        <div class="n-stat">
+                            <strong>15</strong>
+                            <span>Active Pets</span>
+                        </div>
+                    </div>
+
+                    <p class="ngo-desc" id="ngo-card-desc">You are editing this profile as City Rescue NGO. Once saved and published, this profile will become visible to hundreds of verified adopters searching the active database.</p>
+
+                    <div class="ngo-contact-info">
+                        <p><i class="ph ph-map-pin"></i> 124 Rescue Ave, North District</p>
+                        <p><i class="ph ph-clock"></i> Open Today: 10AM - 6PM</p>
+                    </div>
+
+                    <div class="ngo-actions" style="opacity: 0.65; pointer-events: none;">
+                        <button class="btn-primary w-full"><i class="ph ph-chat-circle-text"></i> Chat (Disabled in Editor)</button>
+                        <button class="btn-secondary outline w-full"><i class="ph ph-calendar-plus"></i> Schedule (Disabled)</button>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <!-- Shared Footer -->
+    <div style="text-align: center; padding: 40px 20px 100px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); position: relative; z-index: 1;">
+        <p>&copy; 2026 Voice of Stray NGO Workspace</p>
+    </div>
+
+    <!-- MOCK PHOTO SELECTOR MODAL DIALOG -->
+    <div class="photo-selector-overlay" id="photo-modal-overlay">
+        <div class="photo-modal-card">
+            <div class="modal-header-row">
+                <h3><i class="ph ph-images-square"></i> Select Pet Photo</h3>
+                <span class="modal-close-btn" onclick="closePhotoSelector()"><i class="ph ph-x"></i></span>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Choose one of our premium, pre-configured shelter pet photos to simulate uploader assets immediately, or paste a custom image URL below:</p>
+                
+                <div class="image-options-grid">
+                    <div class="image-option-item" onclick="selectMockPhoto('https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800')">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200" alt="Dog 1">
+                    </div>
+                    <div class="image-option-item" onclick="selectMockPhoto('https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800')">
+                        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=200" alt="Dog 2">
+                    </div>
+                    <div class="image-option-item" onclick="selectMockPhoto('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=800')">
+                        <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=200" alt="Dog 3">
+                    </div>
+                    <div class="image-option-item" onclick="selectMockPhoto('https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=800')">
+                        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=200" alt="Dog 4">
+                    </div>
+                    <div class="image-option-item" onclick="selectMockPhoto('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=800')">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=200" alt="Cat 1">
+                    </div>
+                    <div class="image-option-item" onclick="selectMockPhoto('https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&q=80&w=800')">
+                        <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&q=80&w=200" alt="Cat 2">
+                    </div>
+                </div>
+
+                <div class="url-input-wrap">
+                    <label for="custom-image-url">Or Paste Custom Image URL</label>
+                    <div class="url-input-row">
+                        <input type="text" id="custom-image-url" class="input-glass" style="flex: 1;" placeholder="https://example.com/pet.jpg">
+                        <button class="btn-editor save" style="border-radius: var(--radius-sm); padding: 8px 16px;" onclick="applyCustomImageUrl()">Apply</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions-row">
+                <button class="btn-editor preview" style="padding: 8px 18px;" onclick="closePhotoSelector()">Cancel</button>
+                <button class="btn-editor save" style="padding: 8px 20px;" onclick="saveSelectedPhoto()">Select Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION SLIDE-UP BUBBLE -->
+    <div class="editor-notification" id="save-notification">
+        <i class="ph ph-check-circle"></i>
+        <span id="notification-message">Changes saved successfully!</span>
+    </div>
+
+    <!-- CLIENT SIDE STATE LOGIC -->
+    <script>
+        // State manager
+        let petState = {
+            id: null,
+            name: "",
+            breed: "",
+            age: "",
+            gender: "",
+            location: "",
+            rescueDate: "",
+            fosterBadge: "",
+            status: "Draft",
+            shortDesc: "",
+            story: "",
+            attributes: {
+                vaccinated: false,
+                vetchecked: false,
+                neutered: false,
+                goodkids: false,
+                goodpets: false,
+                housetrained: false
+            },
+            images: {
+                main: "",
+                thumbs: [null, null, null, null]
+            },
+            personality: {
+                energy: 50,
+                temperament: "",
+                training: "",
+                dailyNotes: "",
+                lifestyleNotes: ""
+            },
+            medical: {
+                vaccines: { title: "Vaccines", desc: "" },
+                treatments: { title: "Treatments", desc: "" },
+                surgeries: { title: "Surgeries", desc: "" },
+                diet: { title: "Dietary Notes", desc: "" }
+            },
+            requirements: {
+                family: { title: "Family Type", desc: "" },
+                yard: { title: "Yard / Home", desc: "" },
+                exp: { title: "Experience", desc: "" },
+                pets: { title: "Other Pets", desc: "" }
+            }
+        };
+
+        // Active slot target for uploader
+        let currentUploadSlotTarget = null;
+        let selectedModalPhotoUrl = null;
+
+        // Helper to generate NGO initials
+        function getNgoInitials(name) {
+            if (!name) return "";
+            const words = name.trim().split(/\s+/);
+            if (words.length === 1) {
+                return words[0].slice(0, 2).toUpperCase();
+            }
+            return (words[0][0] + words[1][0]).toUpperCase();
+        }
+
+        // Init page load
+        document.addEventListener("DOMContentLoaded", () => {
+            // Strict Auth Guard
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const role = localStorage.getItem("role") || "user";
+            if (!isLoggedIn || role !== "ngo") {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Sync dynamic NGO identity
+            const orgName = localStorage.getItem("username") || "City Rescue NGO";
+            const orgLogo = localStorage.getItem("avatarUrl") || `https://ui-avatars.com/api/?name=${encodeURIComponent(orgName)}&background=f97316&color=fff`;
+
+            // Update navbar profile pic
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => img.src = orgLogo);
+
+            // Update the right NGO profile card
+            const initials = getNgoInitials(orgName);
+            const avatarEl = document.getElementById("ngo-card-avatar");
+            if (avatarEl) {
+                avatarEl.textContent = initials;
+            }
+            const nameEl = document.getElementById("ngo-card-name");
+            if (nameEl) {
+                nameEl.textContent = orgName;
+            }
+            const descEl = document.getElementById("ngo-card-desc");
+            if (descEl) {
+                descEl.textContent = `You are editing this profile as ${orgName}. Once saved and published, this profile will become visible to hundreds of verified adopters searching the active database.`;
+            }
+
+            // Load state from localStorage if exists
+            const savedState = localStorage.getItem("voiceOfStrayCurrentPet");
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    // Make sure we carry forward uploader details or default keys if missing
+                    petState = { ...petState, ...parsed };
+                    
+                    // Show a toast that draft is loaded
+                    showNotification("Loaded unsaved draft profile", "info");
+                } catch (e) {
+                    console.error("Error loading localStorage draft", e);
+                }
+            } else {
+                // Pristine empty state first!
+                // Enforced by planning guidelines - no defaults loaded
+            }
+
+            renderStateToUI();
+
+            // Setup input triggers to update state on-the-fly and bind breadcrumb name updates
+            document.getElementById("pet-name").addEventListener("input", (e) => {
+                const val = e.target.value;
+                petState.name = val;
+                document.getElementById("breadcrumb-pet-name").innerText = val.trim() !== "" ? val : "New Profile";
+            });
+
+            // Status dropdown binder
+            document.getElementById("profile-status").addEventListener("change", (e) => {
+                petState.status = e.target.value;
+            });
+
+            // Action triggers
+            document.getElementById("btn-save").addEventListener("click", saveChanges);
+            document.getElementById("btn-preview").addEventListener("click", previewProfile);
+            document.getElementById("btn-publish").addEventListener("click", publishProfile);
+        });
+
+        // Push state model details back into visual DOM inputs
+        function renderStateToUI() {
+            document.getElementById("pet-name").value = petState.name;
+            document.getElementById("breadcrumb-pet-name").innerText = petState.name.trim() !== "" ? petState.name : "New Profile";
+            
+            document.getElementById("pet-breed").value = petState.breed;
+            document.getElementById("pet-age").value = petState.age;
+            document.getElementById("pet-gender").value = petState.gender;
+            document.getElementById("pet-location").value = petState.location || "";
+            document.getElementById("pet-rescue-date").value = petState.rescueDate;
+            document.getElementById("pet-short-desc").value = petState.shortDesc;
+            
+            document.getElementById("profile-status").value = petState.status;
+
+            // Badges
+            for (const key in petState.attributes) {
+                const element = document.getElementById(`badge-${key}`);
+                if (element) {
+                    if (petState.attributes[key]) {
+                        element.classList.add("active");
+                    } else {
+                        element.classList.remove("active");
+                    }
+                }
+            }
+
+            // Image Gallery empty state vs active state uploader grids
+            const mainImg = petState.images.main;
+            const hasAnyThumbs = petState.images.thumbs.some(t => t !== null && t !== "");
+            
+            if (mainImg) {
+                document.getElementById("gallery-empty-state").style.display = "none";
+                document.getElementById("gallery-active-workspace").style.display = "flex";
+                document.getElementById("display-main-image").src = mainImg;
+                
+                // foster badge
+                document.getElementById("pet-foster-badge").value = petState.fosterBadge;
+
+                // Render thumbnails
+                for (let i = 0; i < 4; i++) {
+                    const slot = document.getElementById(`thumb-slot-${i}`);
+                    const thumbUrl = petState.images.thumbs[i];
+                    if (thumbUrl) {
+                        slot.classList.add("has-image");
+                        // check if img element inside
+                        let img = slot.querySelector("img");
+                        if (!img) {
+                            img = document.createElement("img");
+                            slot.appendChild(img);
+                        }
+                        img.src = thumbUrl;
+                        
+                        // add overlays
+                        let overlay = slot.querySelector(".photo-overlay-actions");
+                        if (!overlay) {
+                            overlay = document.createElement("div");
+                            overlay.className = "photo-overlay-actions";
+                            overlay.innerHTML = `
+                                <div class="overlay-btn" onclick="event.stopPropagation(); openPhotoSelector(${i})" title="Replace"><i class="ph ph-pencil-simple"></i></div>
+                                <div class="overlay-btn delete" onclick="event.stopPropagation(); deletePhoto(${i})" title="Delete"><i class="ph ph-trash"></i></div>
+                            `;
+                            slot.appendChild(overlay);
+                        }
+                    } else {
+                        slot.classList.remove("has-image");
+                        const img = slot.querySelector("img");
+                        if (img) img.remove();
+                        const overlay = slot.querySelector(".photo-overlay-actions");
+                        if (overlay) overlay.remove();
+                    }
+                }
+            } else {
+                document.getElementById("gallery-empty-state").style.display = "flex";
+                document.getElementById("gallery-active-workspace").style.display = "none";
+            }
+
+            // Story
+            document.getElementById("pet-story").value = petState.story;
+
+            // Personality Trait Values
+            document.getElementById("trait-energy").value = petState.personality.energy;
+            updateSliderLabel("energy");
+
+            document.getElementById("trait-temperament").value = petState.personality.temperament;
+            document.getElementById("trait-training").value = petState.personality.training;
+            document.getElementById("behavior-daily").value = petState.personality.dailyNotes;
+            document.getElementById("behavior-lifestyle").value = petState.personality.lifestyleNotes;
+
+            // Medical
+            document.getElementById("med-vaccines-title").value = petState.medical.vaccines.title;
+            document.getElementById("med-vaccines-desc").value = petState.medical.vaccines.desc;
+            document.getElementById("med-treatments-title").value = petState.medical.treatments.title;
+            document.getElementById("med-treatments-desc").value = petState.medical.treatments.desc;
+            document.getElementById("med-surgeries-title").value = petState.medical.surgeries.title;
+            document.getElementById("med-surgeries-desc").value = petState.medical.surgeries.desc;
+            document.getElementById("med-diet-title").value = petState.medical.diet.title;
+            document.getElementById("med-diet-desc").value = petState.medical.diet.desc;
+
+            // Requirements
+            document.getElementById("req-family-title").value = petState.requirements.family.title;
+            document.getElementById("req-family-desc").value = petState.requirements.family.desc;
+            document.getElementById("req-yard-title").value = petState.requirements.yard.title;
+            document.getElementById("req-yard-desc").value = petState.requirements.yard.desc;
+            document.getElementById("req-exp-title").value = petState.requirements.exp.title;
+            document.getElementById("req-exp-desc").value = petState.requirements.exp.desc;
+            document.getElementById("req-pets-title").value = petState.requirements.pets.title;
+            document.getElementById("req-pets-desc").value = petState.requirements.pets.desc;
+        }
+
+        // Write uploader inputs back into JS State before saving
+        function captureUIState() {
+            petState.name = document.getElementById("pet-name").value;
+            petState.breed = document.getElementById("pet-breed").value;
+            petState.age = document.getElementById("pet-age").value;
+            petState.gender = document.getElementById("pet-gender").value;
+            petState.location = document.getElementById("pet-location").value;
+            petState.rescueDate = document.getElementById("pet-rescue-date").value;
+            petState.shortDesc = document.getElementById("pet-short-desc").value;
+            petState.status = document.getElementById("profile-status").value;
+
+            if (petState.images.main) {
+                petState.fosterBadge = document.getElementById("pet-foster-badge").value;
+            }
+
+            petState.story = document.getElementById("pet-story").value;
+
+            petState.personality.energy = parseInt(document.getElementById("trait-energy").value);
+            petState.personality.temperament = document.getElementById("trait-temperament").value;
+            petState.personality.training = document.getElementById("trait-training").value;
+            petState.personality.dailyNotes = document.getElementById("behavior-daily").value;
+            petState.personality.lifestyleNotes = document.getElementById("behavior-lifestyle").value;
+
+            // Medical
+            petState.medical.vaccines.title = document.getElementById("med-vaccines-title").value;
+            petState.medical.vaccines.desc = document.getElementById("med-vaccines-desc").value;
+            petState.medical.treatments.title = document.getElementById("med-treatments-title").value;
+            petState.medical.treatments.desc = document.getElementById("med-treatments-desc").value;
+            petState.medical.surgeries.title = document.getElementById("med-surgeries-title").value;
+            petState.medical.surgeries.desc = document.getElementById("med-surgeries-desc").value;
+            petState.medical.diet.title = document.getElementById("med-diet-title").value;
+            petState.medical.diet.desc = document.getElementById("med-diet-desc").value;
+
+            // Requirements
+            petState.requirements.family.title = document.getElementById("req-family-title").value;
+            petState.requirements.family.desc = document.getElementById("req-family-desc").value;
+            petState.requirements.yard.title = document.getElementById("req-yard-title").value;
+            petState.requirements.yard.desc = document.getElementById("req-yard-desc").value;
+            petState.requirements.exp.title = document.getElementById("req-exp-title").value;
+            petState.requirements.exp.desc = document.getElementById("req-exp-desc").value;
+            petState.requirements.pets.title = document.getElementById("req-pets-title").value;
+            petState.requirements.pets.desc = document.getElementById("req-pets-desc").value;
+        }
+
+        // Toggle attribute clicker
+        function toggleBadge(key) {
+            petState.attributes[key] = !petState.attributes[key];
+            const badge = document.getElementById(`badge-${key}`);
+            if (badge) {
+                if (petState.attributes[key]) {
+                    badge.classList.add("active");
+                } else {
+                    badge.classList.remove("active");
+                }
+            }
+        }
+
+        // Update range slider labels
+        function updateSliderLabel(trait) {
+            if (trait === 'energy') {
+                const slider = document.getElementById("trait-energy");
+                const val = parseInt(slider.value);
+                const label = document.getElementById("label-energy");
+                
+                // Color updates
+                slider.className = "range-input";
+                if (val < 33) {
+                    label.innerText = "Low Energy";
+                    slider.classList.add("energy-fill-low");
+                } else if (val < 66) {
+                    label.innerText = "Medium Energy";
+                    slider.classList.add("energy-fill-med");
+                } else {
+                    label.innerText = "High Energy";
+                    slider.classList.add("energy-fill-high");
+                }
+            }
+        }
+
+        // PHOTO SELECTOR MODAL DIALOG CONTROL
+        function openPhotoSelector(slot) {
+            currentUploadSlotTarget = slot;
+            selectedModalPhotoUrl = null;
+            
+            // clear custom url
+            document.getElementById("custom-image-url").value = "";
+            
+            // clear selected highlights
+            const items = document.querySelectorAll(".image-option-item");
+            items.forEach(i => i.classList.remove("selected"));
+            
+            document.getElementById("photo-modal-overlay").classList.add("show");
+        }
+
+        function closePhotoSelector() {
+            document.getElementById("photo-modal-overlay").classList.remove("show");
+            currentUploadSlotTarget = null;
+            selectedModalPhotoUrl = null;
+        }
+
+        function selectMockPhoto(url) {
+            selectedModalPhotoUrl = url;
+            
+            // Highlight selected option
+            const items = document.querySelectorAll(".image-option-item");
+            items.forEach(item => {
+                const img = item.querySelector("img");
+                if (img && img.src.includes(url.split('q=80&w=')[0])) {
+                    item.classList.add("selected");
+                } else {
+                    item.classList.remove("selected");
+                }
+            });
+        }
+
+        function applyCustomImageUrl() {
+            const val = document.getElementById("custom-image-url").value.trim();
+            if (val !== "") {
+                selectedModalPhotoUrl = val;
+                saveSelectedPhoto();
+            } else {
+                showNotification("Please select an image option or paste a URL", "info");
+            }
+        }
+
+        function saveSelectedPhoto() {
+            if (!selectedModalPhotoUrl) {
+                showNotification("Please select an image asset", "info");
+                return;
+            }
+
+            if (currentUploadSlotTarget === 'main') {
+                petState.images.main = selectedModalPhotoUrl;
+            } else {
+                petState.images.thumbs[currentUploadSlotTarget] = selectedModalPhotoUrl;
+            }
+
+            renderStateToUI();
+            closePhotoSelector();
+            showNotification("Photo updated in workspace gallery", "success");
+        }
+
+        function deletePhoto(slot) {
+            if (slot === 'main') {
+                petState.images.main = "";
+                // delete thumbnails as well for uploader alignment
+                petState.images.thumbs = [null, null, null, null];
+            } else {
+                petState.images.thumbs[slot] = null;
+            }
+            renderStateToUI();
+            showNotification("Photo removed from gallery", "info");
+        }
+
+        // SAVE STATE
+        function saveChanges() {
+            captureUIState();
+            localStorage.setItem("voiceOfStrayCurrentPet", JSON.stringify(petState));
+            showNotification("Profile draft changes saved to database!", "success");
+        }
+
+        // PREVIEW ADOPTER PAGE
+        function previewProfile() {
+            captureUIState();
+            
+            // Check if name is entered at least to preview
+            if (!petState.name.trim()) {
+                showNotification("Please specify a Pet Name before previewing!", "info");
+                return;
+            }
+            
+            // Save state first
+            localStorage.setItem("voiceOfStrayCurrentPet", JSON.stringify(petState));
+            
+            // Notify and redirect to public pet details with ?preview=true
+            showNotification("Generating adopter preview...", "success");
+            setTimeout(() => {
+                window.location.href = "pet-details.html?preview=true";
+            }, 1000);
+        }
+
+        // PUBLISH PROFILE
+        function publishProfile() {
+            captureUIState();
+            
+            if (!petState.name.trim()) {
+                showNotification("Error: Pet Name cannot be blank when publishing!", "info");
+                return;
+            }
+            
+            if (!petState.images.main) {
+                showNotification("Error: Showcase photo is required to publish!", "info");
+                return;
+            }
+
+            // Save state
+            petState.status = "Ready for Adoption";
+            petState.ngoName = orgName;
+            petState.ngoInitials = initials;
+            localStorage.setItem("voiceOfStrayCurrentPet", JSON.stringify(petState));
+            
+            // Also append to local list of custom published pets so adopt.html can render it!
+            let customPets = [];
+            const savedList = localStorage.getItem("voiceOfStrayCustomPets");
+            if (savedList) {
+                try {
+                    customPets = JSON.parse(savedList);
+                } catch(e) {}
+            }
+            
+            // Check if this pet already exists in list (by matching uploader tags)
+            if (!petState.id) {
+                petState.id = "PET-" + Math.floor(1000 + Math.random() * 9000);
+            }
+            const existingIdx = customPets.findIndex(p => p.id === petState.id);
+            if (existingIdx >= 0) {
+                customPets[existingIdx] = petState;
+            } else {
+                customPets.push(petState);
+            }
+            
+            localStorage.setItem("voiceOfStrayCustomPets", JSON.stringify(customPets));
+            
+            showNotification("Profile Published! Ready for adopters.", "success");
+            
+            // Clear current draft so we load clean empty state next time or let NGO manage it
+            setTimeout(() => {
+                window.location.href = "adopt.html";
+            }, 1200);
+        }
+
+        // Notification system toast controller
+        function showNotification(msg, type = "success") {
+            const container = document.getElementById("save-notification");
+            const text = document.getElementById("notification-message");
+            const icon = container.querySelector("i");
+            
+            text.innerText = msg;
+            
+            // Reset categories
+            container.className = "editor-notification";
+            
+            if (type === "success") {
+                container.classList.add("success");
+                icon.className = "ph ph-check-circle";
+            } else if (type === "info") {
+                container.classList.add("info");
+                icon.className = "ph ph-info";
+            }
+            
+            container.classList.add("show");
+            
+            setTimeout(() => {
+                container.classList.remove("show");
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>
