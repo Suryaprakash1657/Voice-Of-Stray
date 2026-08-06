@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Voice of Stray</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="donate.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        /* Donation Modals Overlay styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.show .modal-card {
+            transform: scale(1);
+        }
+        /* Style updates for progress values */
+        .progress-fill {
+            transition: width 1s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+        /* Spinner & Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spinner-loader {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(249, 115, 22, 0.15);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        /* Read-only field details confirm row */
+        .confirm-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .confirm-row:last-child {
+            border-bottom: none;
+        }
+        .confirm-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .confirm-value {
+            font-size: 0.92rem;
+            color: #0f172a;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar from index.html, with Donate active -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html" class="active">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="donate-main">
+        <!-- 1. Hero Section -->
+        <section class="donate-hero">
+            <div class="hero-left">
+                <div class="tax-badge"><i class="ph-fill ph-shield-check"></i> 80G Tax Exempted NGO</div>
+                <h1 class="hero-title">Small acts,<br><span class="highlight">Life-changing</span> impact.</h1>
+                <p class="hero-subtitle">Every dollar donated to Voice of Stray goes directly to rescue operations, medical supplies, and sanctuary upkeep. Track every cent from payment to paws.</p>
+                
+                <div class="stats-row">
+                    <div class="stat-box alert">
+                        <h3>12</h3>
+                        <span>AWAITING SURGERY</span>
+                    </div>
+                    <div class="stat-box primary">
+                        <h3>350</h3>
+                        <span>MEALS NEEDED THIS WEEK</span>
+                    </div>
+                </div>
+                
+                <div class="donation-toggle">
+                    <button class="toggle-btn active">Monthly</button>
+                    <button class="toggle-btn">One-time</button>
+                </div>
+                
+                <div class="quick-donation-btns">
+                    <button class="quick-btn outline fade-in" style="transition-delay: 0.1s;">₹100</button>
+                    <button class="quick-btn outline fade-in" style="transition-delay: 0.2s;">₹500</button>
+                    <button class="quick-btn outline fade-in" style="transition-delay: 0.3s;">₹1000</button>
+                    <button class="quick-btn outline fade-in" style="transition-delay: 0.4s;">₹5000</button>
+                    <button class="quick-btn dashed fade-in" style="transition-delay: 0.5s;">Custom Amount</button>
+                </div>
+
+                <button class="btn-donate-now fade-in" style="transition-delay: 0.6s;">
+                    Donate Now <i class="ph-bold ph-arrow-right"></i>
+                </button>
+
+                <div class="trust-element fade-in" style="transition-delay: 0.7s;">
+                    <i class="ph-fill ph-heart" style="color: var(--alert); font-size: 1.2rem;"></i>
+                    <span><strong>15,000+</strong> monthly supporters giving animals a second chance.</span>
+                </div>
+            </div>
+            <div class="hero-right fade-in">
+                <div style="position: relative;" class="img-zoom-container">
+                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800" alt="Dog looking at camera" class="hero-image">
+                    <div class="impact-card">
+                        <div class="impact-icon"><i class="ph-bold ph-shield-check"></i></div>
+                        <div class="impact-info">
+                            <strong>Impact Score: A+</strong>
+                            <span>Transparency certified</span>
+                            <div class="impact-badges">
+                                <span class="small-badge">TAX EXEMPT</span>
+                                <span class="small-badge">VERIFIED NGO</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recent-donations-card">
+                    <h4 style="font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;"><div class="live-dot-green"></div> Recent Donations</h4>
+                    <div id="recent-donations-list" style="display: flex; flex-direction: column; gap: 14px;">
+                        <!-- Dynamic Recent Donations will render here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Urgent Campaigns -->
+        <section class="urgent-campaigns fade-in">
+            <div class="section-header">
+                <div class="header-text">
+                    <h2>Urgent Campaigns</h2>
+                    <p>Real-time funding needs for our most critical rescue missions.</p>
+                </div>
+                <a href="#" class="view-all">View all campaigns <i class="ph-bold ph-arrow-right"></i></a>
+            </div>
+            
+            <div class="campaigns-grid">
+                <!-- Large Card -->
+                <div class="campaign-card large">
+                    <div class="campaign-image-wrapper img-zoom-container">
+                        <img src="https://images.unsplash.com/photo-1628009368231-7710bc311215?auto=format&fit=crop&q=80&w=600" alt="Vet treating cat" class="campaign-img">
+                        <span class="urgent-badge">URGENT</span>
+                    </div>
+                    <div class="campaign-content">
+                        <h3>Emergency Medical Fund</h3>
+                        <p>Supporting critical surgeries, vaccinations, and recovery for animals rescued from high-risk environments.</p>
+                        
+                        <div class="funded-status">
+                            <i class="ph-fill ph-check-circle"></i> Status: Funded 48 surgeries this month.
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-labels" style="margin-bottom: 6px;">
+                                <span style="color: var(--primary); font-weight: 800; font-size: 1.15rem;">33% Funded</span>
+                                <span style="font-weight: 600; color: var(--alert); font-size: 0.9rem; background: #fef2f2; padding: 4px 8px; border-radius: 4px;"><i class="ph-bold ph-clock"></i> 12 Days Left</span>
+                            </div>
+                            <div class="progress-bar" style="margin-bottom: 8px; height: 10px; border-radius: 5px;">
+                                <div class="progress-fill" style="width: 33%; border-radius: 5px; background: linear-gradient(90deg, var(--primary), #fb923c);"></div>
+                            </div>
+                            <div class="progress-labels">
+                                <span style="font-size: 0.9rem; color: var(--text-muted);"><strong>₹49,000</strong> raised</span>
+                                <span style="font-size: 0.9rem; color: var(--text-muted);"><strong>₹1,50,000</strong> goal</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary w-100" style="background-color: #9a3412; color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: background 0.2s;">Support Medical Care</button>
+                    </div>
+                </div>
+                
+                <!-- Small Card -->
+                <div class="campaign-card small">
+                    <div class="spotlight-badge">IMPACT SPOTLIGHT</div>
+                    <h3>Milo's Journey</h3>
+                    <div class="before-after img-zoom-container">
+                        <div class="ba-image">
+                            <img src="https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?auto=format&fit=crop&q=80&w=300" alt="Milo Before">
+                            <span class="ba-label">BEFORE</span>
+                        </div>
+                        <div class="ba-image">
+                            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=300" alt="Milo After">
+                            <span class="ba-label">AFTER</span>
+                        </div>
+                    </div>
+                    <div class="progress-container" style="margin-top: 0; margin-bottom: 16px;">
+                        <div class="progress-labels" style="margin-bottom: 4px;">
+                            <span style="color: var(--primary); font-weight: 700; font-size: 0.95rem;">100% Funded</span>
+                            <span style="font-weight: 600; color: #10b981; font-size: 0.8rem; background: #dcfce7; padding: 2px 6px; border-radius: 4px;"><i class="ph-bold ph-check"></i> Completed</span>
+                        </div>
+                        <div class="progress-bar" style="margin-bottom: 8px; height: 6px; border-radius: 3px;">
+                            <div class="progress-fill" style="width: 100%; border-radius: 3px; background: #10b981;"></div>
+                        </div>
+                    </div>
+                    <p class="quote">"One month after his rescue, Milo is healthy, active, and looking for a home. This was made possible by donors like you."</p>
+                    <button class="btn-outline w-100">Support Dogs Like Milo</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Monthly Guardian -->
+        <section class="guardian-section fade-in">
+            <div class="guardian-left">
+                <h2>Become a Monthly Guardian</h2>
+                <p>Sustained support allows us to plan long-term rescue operations and maintain sanctuary facilities.</p>
+                <div class="joined-badge" style="margin-bottom: 24px;">
+                    <div class="icon-circle"><i class="ph-bold ph-share-network"></i></div>
+                    <span>Joined by 2,000+ Guardians</span>
+                </div>
+                <div class="avatar-group">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100" alt="Supporter">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100" alt="Supporter">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" alt="Supporter">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" alt="Supporter">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ea580c; margin-left: -10px; background: white; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; position: relative; z-index: 5;">+2k</div>
+                </div>
+            </div>
+            <div class="guardian-right">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="ph-fill ph-file-text"></i></div>
+                    <div class="benefit-content">
+                        <h4>Digital Care Reports</h4>
+                        <p>Weekly personalized updates on animals you help support.</p>
+                    </div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="ph-fill ph-files"></i></div>
+                    <div class="benefit-content">
+                        <h4>Annual Impact Statement</h4>
+                        <p>Simplified tax-ready reports for all your contributions.</p>
+                    </div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="ph-fill ph-users"></i></div>
+                    <div class="benefit-content">
+                        <h4>Community Invites</h4>
+                        <p>Exclusive quarterly webinars with our rescue ground teams.</p>
+                    </div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="ph-fill ph-medal"></i></div>
+                    <div class="benefit-content">
+                        <h4>Digital Badge</h4>
+                        <p>A custom badge for your profile and social media impact.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Financial Dashboard -->
+        <section class="financial-dashboard fade-in">
+            <div class="transparency-badge"><i class="ph-bold ph-lock-key"></i> RADICAL TRANSPARENCY</div>
+            <h2>Financial Dashboard 2024</h2>
+            <p class="dashboard-subtitle">Live allocation of every dollar donated. We maintain a lean operation to ensure maximum impact for animals.</p>
+            
+            <div class="dashboard-grid">
+                <div class="allocation-card">
+                    <div class="card-header-split">
+                        <h3>FUND ALLOCATION BREAKDOWN</h3>
+                        <span class="live-audit"><span class="dot"></span> Live Audit</span>
+                    </div>
+                    
+                    <div class="allocation-content">
+                        <div class="allocation-chart">
+                            <div class="chart-center">
+                                <div class="big-percent">100%</div>
+                                <div class="small-text">FUNDED</div>
+                            </div>
+                        </div>
+                        <div class="allocation-list">
+                            <div class="alloc-item">
+                                <div class="alloc-label"><span class="color-dot brown"></span> Rescue & Meds</div>
+                                <div class="alloc-val brown-text">55%</div>
+                            </div>
+                            <div class="alloc-line"></div>
+                            <div class="alloc-item">
+                                <div class="alloc-label"><span class="color-dot blue"></span> Sanctuary Care</div>
+                                <div class="alloc-val blue-text">20%</div>
+                            </div>
+                            <div class="alloc-line"></div>
+                            <div class="alloc-item">
+                                <div class="alloc-label"><span class="color-dot green"></span> Feeding Programs</div>
+                                <div class="alloc-val green-text">15%</div>
+                            </div>
+                            <div class="alloc-line"></div>
+                            <div class="alloc-item">
+                                <div class="alloc-label"><span class="color-dot red"></span> Admin</div>
+                                <div class="alloc-val red-text">10%</div>
+                            </div>
+                            <div class="alloc-line"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="audit-cards">
+                    <div class="audit-files-card">
+                        <div class="card-header-split">
+                            <h3>Recent Audit Files</h3>
+                            <i class="ph-bold ph-arrows-clockwise" style="color: var(--text-muted);"></i>
+                        </div>
+                        <div class="file-list">
+                            <div class="file-item">
+                                <div class="file-name"><i class="ph-fill ph-file-pdf brown-text"></i> FY 2023-24 Annual Report</div>
+                                <i class="ph-bold ph-download-simple"></i>
+                            </div>
+                            <div class="file-item">
+                                <div class="file-name"><i class="ph-fill ph-file-pdf brown-text"></i> Q1 Transparency Statement</div>
+                                <i class="ph-bold ph-download-simple"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="verified-status-card">
+                        <div class="status-icon"><i class="ph-fill ph-check-circle"></i></div>
+                        <div class="status-text">
+                            <h4>Verified NGO Status</h4>
+                            <p>We are a registered 501(c)(3) equivalent organization. Your donations are fully tax-deductible.</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-outline w-100" style="padding: 16px; border: 2px solid var(--primary); color: var(--primary); border-radius: var(--radius-md); font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; background: white; cursor: pointer; transition: all 0.2s; font-size: 1.05rem;">
+                        <i class="ph-bold ph-download-simple"></i> Download Full Transparency Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Trust Indicators Row -->
+            <div class="trust-indicators-row">
+                <div class="trust-item">
+                    <i class="ph-fill ph-shield-check"></i>
+                    <strong>Verified NGO</strong>
+                </div>
+                <div class="trust-item">
+                    <i class="ph-fill ph-file-text"></i>
+                    <strong>80G Tax Benefit</strong>
+                </div>
+                <div class="trust-item">
+                    <i class="ph-fill ph-lock-key"></i>
+                    <strong>Secure Payments</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Newsletter -->
+        <section class="newsletter-section fade-in" style="background: linear-gradient(135deg, #ffedd5 0%, #ffe4e6 100%); position: relative; overflow: hidden;">
+            <i class="ph-fill ph-paw-print" style="position: absolute; right: -5%; top: -20%; font-size: 15rem; color: rgba(249, 115, 22, 0.05); transform: rotate(15deg); pointer-events: none;"></i>
+            <div class="newsletter-content" style="position: relative; z-index: 1;">
+                <div class="newsletter-text">
+                    <h2 style="display: flex; align-items: center; gap: 12px;"><i class="ph-fill ph-heart" style="color: var(--alert);"></i> Stay Updated on the Impact</h2>
+                    <p>Join 15,000+ supporters receiving weekly reports on rescue lives and funding allocations.</p>
+                </div>
+                <div style="flex: 1;">
+                    <form id="newsletter-form" class="newsletter-form-large" style="box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); background: white; transition: all 0.3s ease;">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email" style="background: transparent;" required>
+                        <button type="submit" class="btn-primary" style="background-color: var(--primary); color: white; border: none; cursor: pointer; font-weight: 700; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); transition: transform 0.2s, box-shadow 0.2s;">Subscribe</button>
+                    </form>
+                    <div id="newsletter-success" class="success-message">
+                        <i class="ph-bold ph-check-circle"></i> Thank you! You've been subscribed to our updates.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer from index.html -->
+    <footer class="premium-footer" style="background-color: #f1f5f9; padding: 64px 24px 32px; border-top: 1px solid var(--border);">
+        <div class="footer-grid" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px;">
+            <div class="footer-brand">
+                <h2 style="color: var(--primary); display: flex; align-items: center; gap: 8px; margin-bottom: 16px;"><i class="ph-fill ph-paw-print"></i> Voice of Stray</h2>
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;">A registered non-profit organization dedicated to creating a world where every animal is treated with dignity and care.</p>
+                <div class="social-links" style="display: flex; gap: 16px;">
+                    <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i class="ph-fill ph-instagram-logo"></i></a>
+                    <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i class="ph-fill ph-twitter-logo"></i></a>
+                    <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i class="ph-fill ph-linkedin-logo"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Programs</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="#">Street Feeding</a></li>
+                    <li><a href="#">Emergency Rescue</a></li>
+                    <li><a href="#">Spay & Neuter</a></li>
+                    <li><a href="#">Sanctuary Stays</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Transparency</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="#">Annual Reports</a></li>
+                    <li><a href="#">Tax Documents</a></li>
+                    <li><a href="#">Board of Directors</a></li>
+                    <li><a href="#">Donor Rights</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Get Involved</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="volunteer.html">Volunteer</a></li>
+                    <li><a href="donate.html">Donate</a></li>
+                    <li><a href="#">Register NGO</a></li>
+                    <li><a href="#">Foster Program</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom" style="max-width: 1200px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid #e2e8f0; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">Made with <i class="ph-fill ph-heart" style="color: var(--alert);"></i> for stray animals</p>
+            <p>&copy; 2026 Voice of Stray NGO. All rights reserved.</p>
+            <div style="margin-top: 8px; display: flex; justify-content: center; gap: 16px;">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Donation Form Modal -->
+    <div id="donation-modal" class="modal-overlay" onclick="closeDonationModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div style="padding: 20px 24px; background: rgba(249, 115, 22, 0.03); border-bottom: 1px solid rgba(249, 115, 22, 0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-hand-heart" style="color: var(--primary);"></i> Make a Donation</h3>
+                <button onclick="closeDonationModal()" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="donation-form" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; margin: 0;">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Donor Name</label>
+                    <input type="text" id="donate-donor-name" required placeholder="e.g. Arjun Mehta" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s;" />
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Donor Email</label>
+                    <input type="email" id="donate-donor-email" required placeholder="e.g. user@voiceofstray.com" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; outline: none; transition: border-color 0.2s;" />
+                </div>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #475569; margin-top: 4px;">
+                    <input type="checkbox" id="donate-anonymous" style="width: 18px; height: 18px; accent-color: var(--primary);">
+                    <span style="font-size: 0.85rem; font-weight: 600;">Donate Anonymously (Hide my details from public view)</span>
+                </label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Select NGO</label>
+                        <select id="donate-ngo" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: white; outline: none;">
+                            <option value="Paws Haven NGO">Paws Haven NGO</option>
+                            <option value="Stray Safe Shelter">Stray Safe Shelter</option>
+                            <option value="Happy Paws Sanctuary">Happy Paws Sanctuary</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Campaign</label>
+                        <select id="donate-campaign" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: white; outline: none;">
+                            <option value="Emergency Medical Fund">Emergency Medical Fund</option>
+                            <option value="General Fund">General Fund</option>
+                            <option value="Medical Supplies">Medical Supplies</option>
+                            <option value="Sanctuary Maintenance">Sanctuary Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Amount (₹)</label>
+                        <input type="number" id="donate-amount" min="1" required placeholder="e.g. 1000" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; outline: none;" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Frequency</label>
+                        <select id="donate-type" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: white; outline: none;">
+                            <option value="One-time">One-time</option>
+                            <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Payment Method (Prototype)</label>
+                    <select id="donate-payment" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: white; outline: none;">
+                        <option value="Credit Card (Mock)">Credit Card (Mock)</option>
+                        <option value="UPI (Mock)">UPI (Mock)</option>
+                        <option value="Net Banking (Mock)">Net Banking (Mock)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-premium primary" style="width: 100%; justify-content: center; padding: 14px; margin-top: 10px; font-size: 1rem; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); border-radius: 8px; font-weight: 700; background: var(--primary); color: white;">Submit Donation</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Donation Modal -->
+    <div id="confirm-modal" class="modal-overlay" onclick="closeConfirmModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div style="padding: 20px 24px; background: rgba(249, 115, 22, 0.03); border-bottom: 1px solid rgba(249, 115, 22, 0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-check-circle" style="color: var(--primary);"></i> Confirm Donation</h3>
+                <button onclick="closeConfirmModal()" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
+            </div>
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="background: rgba(15, 23, 42, 0.02); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 4px;">
+                    <div class="confirm-row"><span class="confirm-label">Donor Name</span><span class="confirm-value" id="confirm-donor-name">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">NGO</span><span class="confirm-value" id="confirm-ngo">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Campaign</span><span class="confirm-value" id="confirm-campaign">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-value" id="confirm-amount" style="color: #15803d;">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Donation Frequency</span><span class="confirm-value" id="confirm-type">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Payment Method</span><span class="confirm-value" id="confirm-payment">-</span></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+                    <button onclick="closeConfirmModal()" class="btn-premium secondary" style="justify-content: center; padding: 12px; font-size: 0.95rem; border: 1px solid #e2e8f0; border-radius: 8px; font-weight: 700; cursor: pointer; background: white; color: #475569;">Cancel</button>
+                    <button id="pay-confirm-btn" onclick="executePayment()" class="btn-premium primary" style="justify-content: center; padding: 12px; font-size: 0.95rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);">Pay ₹0</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Processing Modal -->
+    <div id="processing-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 360px; text-align: center; border: none; background: rgba(255, 255, 255, 0.95);">
+            <div style="padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <div class="spinner-loader"></div>
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 1.2rem; font-weight: 800; color: #0f172a;">Processing Payment...</h3>
+                    <p style="margin: 0; font-size: 0.88rem; color: #64748b; font-weight: 500;">Please wait...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Success Modal -->
+    <div id="success-modal" class="modal-overlay" onclick="closeSuccessModal()">
+        <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 440px;">
+            <div style="padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin-bottom: 8px;">
+                    <i class="ph-bold ph-check"></i>
+                </div>
+                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #0f172a;">Donation Successful</h2>
+                <p style="margin: 0; font-size: 0.95rem; color: #64748b; line-height: 1.5;">Thank you! Your contribution gives stray animals a second chance at life.</p>
+                
+                <div style="background: rgba(249, 115, 22, 0.03); border: 1px dashed rgba(249, 115, 22, 0.15); border-radius: 12px; padding: 16px; width: 100%; display: flex; flex-direction: column; gap: 10px; margin: 8px 0; text-align: left; font-size: 0.9rem; box-sizing: border-box;">
+                    <div style="display: flex; justify-content: space-between;"><span style="color: #64748b; font-weight: 600;">Donation ID</span><strong style="color: #0f172a;" id="success-donation-id"></strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: #64748b; font-weight: 600;">Amount</span><strong style="color: #15803d; font-size: 1rem;" id="success-amount"></strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: #64748b; font-weight: 600;">Campaign</span><strong style="color: #0f172a;" id="success-campaign"></strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: #64748b; font-weight: 600;">NGO</span><strong style="color: #0f172a;" id="success-ngo"></strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: #64748b; font-weight: 600;">Date</span><strong style="color: #0f172a;" id="success-date"></strong></div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;">
+                    <button onclick="openReceiptModal()" class="btn-premium secondary" style="justify-content: center; padding: 12px; font-size: 0.95rem; border: 1px solid #e2e8f0; border-radius: 8px; font-weight: 700; cursor: pointer; background: white; color: #475569;">View Receipt</button>
+                    <button onclick="closeSuccessModal()" class="btn-premium primary" style="justify-content: center; padding: 12px; font-size: 0.95rem; border: none; cursor: pointer; border-radius: 8px; font-weight: 700; background: var(--primary); color: white;">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Receipt Modal -->
+    <div id="receipt-modal" class="modal-overlay" onclick="closeReceiptModal()">
+        <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 440px;">
+            <div style="padding: 20px 24px; background: rgba(249, 115, 22, 0.03); border-bottom: 1px solid rgba(249, 115, 22, 0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-file-text" style="color: var(--primary);"></i> Donation Receipt</h3>
+                <button onclick="closeReceiptModal()" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="ph ph-x"></i></button>
+            </div>
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="text-align: center; margin-bottom: 8px;">
+                    <i class="ph-fill ph-paw-print" style="font-size: 3rem; color: var(--primary);"></i>
+                    <h4 style="margin: 8px 0 2px 0; font-size: 1.1rem; font-weight: 800; color: #0f172a;">Voice of Stray</h4>
+                    <p style="margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 600;">80G TAX EXEMPTION RECEIPT</p>
+                </div>
+                <div style="background: rgba(15, 23, 42, 0.02); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box;">
+                    <div class="confirm-row"><span class="confirm-label">Donation ID</span><span class="confirm-value" id="receipt-id">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Donor Name</span><span class="confirm-value" id="receipt-donor-name">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">NGO</span><span class="confirm-value" id="receipt-ngo">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Campaign</span><span class="confirm-value" id="receipt-campaign">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-value" id="receipt-amount" style="color: #15803d;">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Payment Method</span><span class="confirm-value" id="receipt-payment">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Date</span><span class="confirm-value" id="receipt-date">-</span></div>
+                    <div class="confirm-row"><span class="confirm-label">Status</span><span class="confirm-value" style="color: #15803d;"><i class="ph-bold ph-check"></i> Completed</span></div>
+                </div>
+                <button onclick="closeReceiptModal()" class="btn-premium primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; border: none; cursor: pointer; border-radius: 8px; font-weight: 700; background: var(--primary); color: white; margin-top: 8px;">Close Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form submission success state for newsletter
+        const newsletterForm = document.getElementById('newsletter-form');
+        const successMessage = document.getElementById('newsletter-success');
+
+        if(newsletterForm) {
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                newsletterForm.style.display = 'none';
+                successMessage.classList.add('show');
+            });
+        }
+
+        // Quick donation buttons toggle active state
+        const quickBtns = document.querySelectorAll('.quick-btn:not(.dashed)');
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                quickBtns.forEach(b => {
+                    b.classList.remove('filled');
+                    b.classList.add('outline');
+                });
+                btn.classList.remove('outline');
+                btn.classList.add('filled');
+            });
+        });
+
+        // Toggle donation frequency buttons
+        const toggleBtns = document.querySelectorAll('.donation-toggle .toggle-btn');
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                toggleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Campaign Goals Configuration
+        const CAMPAIGN_GOALS = {
+            "Emergency Medical Fund": 150000,
+            "General Fund": 200000,
+            "Medical Supplies": 100000,
+            "Sanctuary Maintenance": 120000
+        };
+
+        // Calculate and sync Campaign Goals Progress dynamically
+        function syncCampaignProgress() {
+            const donations = JSON.parse(localStorage.getItem("voiceOfStrayDonations") || "[]");
+            
+            // Calculate Emergency Rescue Fund (Emergency Medical Fund) progress
+            const emergencyDonations = donations.filter(d => d.purpose === "Emergency Rescue Fund" || d.campaign === "Emergency Medical Fund");
+            const emergencyTotal = emergencyDonations.reduce((sum, d) => sum + Number(d.amount), 0);
+            const goal = CAMPAIGN_GOALS["Emergency Medical Fund"];
+            const percent = Math.min(100, Math.round((emergencyTotal / goal) * 100));
+
+            // Update progress elements in donate.html
+            const progressLabels = document.querySelector(".progress-labels span");
+            if (progressLabels) {
+                progressLabels.innerHTML = `${percent}% Funded`;
+            }
+            const progressFill = document.querySelector(".progress-fill");
+            if (progressFill) {
+                progressFill.style.width = `${percent}%`;
+            }
+            const raisedLabel = document.querySelector(".progress-labels:last-child span:first-child strong");
+            if (raisedLabel) {
+                raisedLabel.textContent = `₹${emergencyTotal.toLocaleString("en-IN")}`;
+            }
+            const goalLabel = document.querySelector(".progress-labels:last-child span:last-child strong");
+            if (goalLabel) {
+                goalLabel.textContent = `₹${goal.toLocaleString("en-IN")}`;
+            }
+        }
+
+        // Pre-fill and open donation modal
+        function openDonationModal(defaultCampaign = null) {
+            const donorNameInput = document.getElementById("donate-donor-name");
+            const donorEmailInput = document.getElementById("donate-donor-email");
+            const amountInput = document.getElementById("donate-amount");
+            const typeSelect = document.getElementById("donate-type");
+            const campaignSelect = document.getElementById("donate-campaign");
+
+            // Get logged in user details if available
+            let name = "";
+            let email = "";
+            const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+            if (storedProfile) {
+                try {
+                    const parsed = JSON.parse(storedProfile);
+                    name = parsed.fullName || "";
+                    email = parsed.email || "";
+                } catch(e){}
+            }
+            if (!name) name = localStorage.getItem("username") || "";
+            if (!email) email = localStorage.getItem("email") || "";
+
+            donorNameInput.value = name;
+            donorEmailInput.value = email;
+
+            // Reset anonymous checkbox
+            const anonymousCheckbox = document.getElementById("donate-anonymous");
+            if (anonymousCheckbox) {
+                anonymousCheckbox.checked = false;
+            }
+
+            // Determine amount
+            let amount = 1000; // default fallback
+            const activeBtn = document.querySelector('.quick-btn.filled');
+            if (activeBtn) {
+                amount = parseInt(activeBtn.textContent.replace('₹', ''), 10);
+            }
+            amountInput.value = amount;
+
+            // Determine frequency
+            const activeToggle = document.querySelector('.donation-toggle .toggle-btn.active');
+            if (activeToggle) {
+                typeSelect.value = activeToggle.textContent.trim() === "Monthly" ? "Monthly" : "One-time";
+            }
+
+            // Set Campaign
+            if (defaultCampaign) {
+                campaignSelect.value = defaultCampaign;
+            }
+
+            const modal = document.getElementById("donation-modal");
+            modal.style.display = "flex";
+            setTimeout(() => modal.classList.add("show"), 10);
+        }
+
+        function closeDonationModal() {
+            const modal = document.getElementById("donation-modal");
+            modal.classList.remove("show");
+            setTimeout(() => modal.style.display = "none", 300);
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById("success-modal");
+            modal.classList.remove("show");
+            setTimeout(() => {
+                modal.style.display = "none";
+                // Reload window to sync everything
+                window.location.reload();
+            }, 300);
+        }
+
+        // Hook up donation buttons click handlers
+        document.addEventListener("DOMContentLoaded", () => {
+            // Hero Donation Button
+            const heroBtn = document.querySelector(".btn-donate-now");
+            if (heroBtn) {
+                heroBtn.removeAttribute("onclick"); // clear any potential inline alerts
+                heroBtn.addEventListener("click", () => openDonationModal());
+            }
+
+            // Campaign 1: Emergency Medical Fund card Support Medical Care
+            const medBtn = document.querySelector(".campaign-card.large button");
+            if (medBtn) {
+                medBtn.addEventListener("click", () => openDonationModal("Emergency Medical Fund"));
+            }
+
+            // Campaign 2: Milo's card Support dogs like Milo
+            const miloBtn = document.querySelector(".campaign-card.small button");
+            if (miloBtn) {
+                miloBtn.addEventListener("click", () => openDonationModal("General Fund"));
+            }
+
+            // Sync initial progress bars
+            syncCampaignProgress();
+
+            // Load and render dynamic recent donations
+            loadRecentDonations();
+        });
+
+        // Future-ready API layer for donations
+        const DonationsAPI = {
+            getRecentDonations: async function() {
+                try {
+                    // Currently reads from localStorage, can be replaced by backend API fetch later
+                    const donations = JSON.parse(localStorage.getItem("voiceOfStrayDonations") || "[]");
+                    return donations;
+                } catch (e) {
+                    console.error("Error reading donations from localStorage", e);
+                    return [];
+                }
+            }
+        };
+
+        // Relative time helper matching reference date 2026-06-18
+        function getDonationRelativeTime(donation) {
+            if (donation.timestamp) {
+                const diffMs = Date.now() - donation.timestamp;
+                const diffSec = Math.floor(diffMs / 1000);
+                if (diffSec < 60) return "Just now";
+                const diffMin = Math.floor(diffSec / 60);
+                if (diffMin < 60) return `${diffMin} min${diffMin > 1 ? 's' : ''} ago`;
+                const diffHr = Math.floor(diffMin / 60);
+                if (diffHr < 24) return `${diffHr} hr${diffHr > 1 ? 's' : ''} ago`;
+                const diffDay = Math.floor(diffHr / 24);
+                if (diffDay === 1) return "Yesterday";
+                return `${diffDay} days ago`;
+            }
+
+            // Fallback to date comparison (mocking "today" as 2026-06-18)
+            const refDateStr = "2026-06-18";
+            if (donation.date === refDateStr) {
+                if (donation.time) {
+                    return donation.time; // e.g. "09:50 AM"
+                }
+                return "Today";
+            }
+            if (donation.date === "2026-06-17") return "Yesterday";
+
+            try {
+                const donationDate = new Date(donation.date + "T00:00:00");
+                const today = new Date(refDateStr + "T00:00:00");
+                const diffTime = today - donationDate;
+                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays > 0) {
+                    return `${diffDays} days ago`;
+                }
+            } catch (e) {}
+
+            return donation.date || "Recently";
+        }
+
+        // Render Recent Donations dynamically
+        function renderRecentDonationsList(donations) {
+            const container = document.getElementById("recent-donations-list");
+            if (!container) return;
+
+            if (!donations || donations.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 24px 16px; font-size: 0.95rem;">
+                        <i class="ph ph-heart-break" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px; display: block; opacity: 0.7;"></i>
+                        <span>No donations yet. Be the first to support our strays!</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const latestDonations = donations.slice(0, 5);
+            let html = "";
+
+            latestDonations.forEach(d => {
+                const donorName = d.anonymous ? "Anonymous" : (d.donorName || d.donor || "Anonymous");
+                const amountVal = d.amount || 0;
+                const relativeTime = getDonationRelativeTime(d);
+                const campaignVal = d.campaign || d.purpose || "";
+
+                // Determine icon based on campaign/purpose
+                const isMedical = campaignVal.toLowerCase().includes("medical") || 
+                                  campaignVal.toLowerCase().includes("rescue") || 
+                                  campaignVal.toLowerCase().includes("supplies");
+                
+                const iconClass = isMedical ? "ph-fill ph-first-aid" : "ph-fill ph-heart";
+                const iconBg = isMedical ? "#ffedd5" : "#fef2f2";
+                const iconColor = isMedical ? "var(--primary)" : "var(--alert)";
+                const campaignText = campaignVal ? ` for ${campaignVal}` : "";
+
+                html += `
+                    <div style="display: flex; align-items: center; gap: 12px; font-size: 0.95rem;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: ${iconBg}; color: ${iconColor}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div>
+                            <strong>${donorName}</strong> donated ₹${Number(amountVal).toLocaleString("en-IN")}${campaignText}
+                            <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 4px;">— ${relativeTime}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function loadRecentDonations() {
+            const donations = await DonationsAPI.getRecentDonations();
+            renderRecentDonationsList(donations);
+        }
+
+        // Global variables for multi-step checkout state
+        let pendingDonation = null;
+        let completedDonation = null;
+
+        // Payment Gateway Prototype Interface
+        const MockPaymentGateway = {
+            processPayment: function(amount, donorDetails, onSuccess, onFailure) {
+                // Show processing loader
+                const processingModal = document.getElementById("processing-modal");
+                processingModal.style.display = "flex";
+                setTimeout(() => processingModal.classList.add("show"), 10);
+
+                // Simulate transaction processing latency (approx 2.5 seconds)
+                setTimeout(() => {
+                    // Hide processing loader
+                    processingModal.classList.remove("show");
+                    setTimeout(() => processingModal.style.display = "none", 300);
+
+                    // Generate prototype Transaction ID
+                    const transactionId = "DON-" + Math.floor(100000 + Math.random() * 900000);
+                    onSuccess(transactionId);
+                }, 2500);
+            }
+        };
+
+        // Donation Form Submission -> Transition to Confirm Modal
+        document.getElementById("donation-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const donorName = document.getElementById("donate-donor-name").value.trim();
+            const donorEmail = document.getElementById("donate-donor-email").value.trim();
+            const ngo = document.getElementById("donate-ngo").value;
+            const campaign = document.getElementById("donate-campaign").value;
+            const amount = Number(document.getElementById("donate-amount").value);
+            const donationType = document.getElementById("donate-type").value;
+            const paymentMethod = document.getElementById("donate-payment").value;
+            const isAnonymous = document.getElementById("donate-anonymous") ? document.getElementById("donate-anonymous").checked : false;
+
+            if (!donorName || !donorEmail || amount <= 0) {
+                alert("Please enter valid details.");
+                return;
+            }
+
+            // Save details temporarily in the pending state
+            pendingDonation = {
+                donorName: donorName,
+                donorEmail: donorEmail,
+                ngo: ngo,
+                campaign: campaign,
+                amount: amount,
+                donationType: donationType,
+                paymentMethod: paymentMethod,
+                anonymous: isAnonymous
+            };
+
+            // Populate Confirmation Modal Details
+            document.getElementById("confirm-donor-name").textContent = donorName + (isAnonymous ? " (Anonymous)" : "");
+            document.getElementById("confirm-ngo").textContent = ngo;
+            document.getElementById("confirm-campaign").textContent = campaign;
+            document.getElementById("confirm-amount").textContent = `₹${amount.toLocaleString("en-IN")}`;
+            document.getElementById("confirm-type").textContent = donationType;
+            document.getElementById("confirm-payment").textContent = paymentMethod;
+
+            // Set Pay Button text
+            document.getElementById("pay-confirm-btn").textContent = `Pay ₹${amount.toLocaleString("en-IN")}`;
+
+            // Close Donation Form Modal
+            closeDonationModal();
+
+            // Open Confirmation Modal
+            const confirmModal = document.getElementById("confirm-modal");
+            confirmModal.style.display = "flex";
+            setTimeout(() => confirmModal.classList.add("show"), 10);
+        });
+
+        // Trigger simulated payment processing
+        function executePayment() {
+            if (!pendingDonation) return;
+
+            // Close Confirm Modal
+            closeConfirmModal();
+
+            // Invoke Mock Payment Gateway Checkout
+            MockPaymentGateway.processPayment(
+                pendingDonation.amount,
+                { name: pendingDonation.donorName, email: pendingDonation.donorEmail },
+                function onSuccess(transactionId) {
+                    // This success callback is invoked after loader completes
+                    saveDonationRecord(transactionId);
+                },
+                function onFailure(error) {
+                    alert("Payment failed: " + error);
+                }
+            );
+        }
+
+        // Save donation record to localStorage & trigger notifications
+        function saveDonationRecord(donationId) {
+            if (!pendingDonation) return;
+
+            const todayStr = "2026-06-18"; // standard workspace date
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Construct final schema-compliant donation record
+            completedDonation = {
+                id: donationId, // legacy support
+                donationId: donationId,
+                donor: pendingDonation.donorName, // legacy support
+                donorName: pendingDonation.donorName,
+                donorEmail: pendingDonation.donorEmail,
+                ngo: pendingDonation.ngo,
+                purpose: pendingDonation.campaign === "Emergency Medical Fund" ? "Emergency Rescue Fund" : pendingDonation.campaign, // legacy compatibility
+                campaign: pendingDonation.campaign,
+                amount: pendingDonation.amount,
+                donationType: pendingDonation.donationType,
+                paymentMethod: pendingDonation.paymentMethod,
+                date: todayStr,
+                time: timeStr,
+                status: "Completed",
+                anonymous: pendingDonation.anonymous,
+                timestamp: Date.now()
+            };
+
+            // Save to local storage
+            const donations = JSON.parse(localStorage.getItem("voiceOfStrayDonations") || "[]");
+            donations.unshift(completedDonation);
+            localStorage.setItem("voiceOfStrayDonations", JSON.stringify(donations));
+
+            // Re-render recent donations immediately
+            renderRecentDonationsList(donations);
+
+            // Create notification alerts in localStorage
+            let notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            
+            // 1. User notification
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-heart",
+                message: `Thank you for donating ₹${pendingDonation.amount.toLocaleString("en-IN")}.`,
+                time: "Just now",
+                unread: true
+            });
+
+            // 2. NGO notification
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-coins",
+                message: `New donation of ₹${pendingDonation.amount.toLocaleString("en-IN")} received for ${pendingDonation.campaign}.`,
+                time: "Just now",
+                unread: true
+            });
+
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            // Populate Success Modal Fields
+            document.getElementById("success-donation-id").textContent = donationId;
+            document.getElementById("success-amount").textContent = `₹${pendingDonation.amount.toLocaleString("en-IN")}`;
+            document.getElementById("success-campaign").textContent = pendingDonation.campaign;
+            document.getElementById("success-ngo").textContent = pendingDonation.ngo;
+            document.getElementById("success-date").textContent = todayStr;
+
+            // Reset pending donation state
+            pendingDonation = null;
+
+            // Show Success Modal
+            const successModal = document.getElementById("success-modal");
+            successModal.style.display = "flex";
+            setTimeout(() => successModal.classList.add("show"), 10);
+            
+            // Sync page progress bars
+            syncCampaignProgress();
+        }
+
+        // Receipt modal handler
+        function openReceiptModal() {
+            if (!completedDonation) return;
+
+            // Populate Receipt fields
+            document.getElementById("receipt-id").textContent = completedDonation.donationId;
+            document.getElementById("receipt-donor-name").textContent = completedDonation.donorName + (completedDonation.anonymous ? " (Anonymous)" : "");
+            document.getElementById("receipt-ngo").textContent = completedDonation.ngo;
+            document.getElementById("receipt-campaign").textContent = completedDonation.campaign;
+            document.getElementById("receipt-amount").textContent = `₹${completedDonation.amount.toLocaleString("en-IN")}`;
+            document.getElementById("receipt-payment").textContent = completedDonation.paymentMethod;
+            document.getElementById("receipt-date").textContent = completedDonation.date;
+
+            // Open Receipt Modal Overlay
+            const receiptModal = document.getElementById("receipt-modal");
+            receiptModal.style.display = "flex";
+            setTimeout(() => receiptModal.classList.add("show"), 10);
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById("confirm-modal");
+            modal.classList.remove("show");
+            setTimeout(() => modal.style.display = "none", 300);
+        }
+
+        function closeReceiptModal() {
+            const modal = document.getElementById("receipt-modal");
+            modal.classList.remove("show");
+            setTimeout(() => modal.style.display = "none", 300);
+        }
+
+        // Intersection Observer for scroll fade-in
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+        
+        // Initial fade-in for elements already in viewport
+        setTimeout(() => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.classList.add('visible');
+                }
+            });
+        }, 100);
+    </script>
+</body>
+</html>

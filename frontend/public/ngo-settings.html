@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Settings - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        /* Custom Styles for NGO Settings */
+        body {
+            background-color: #fff9f5;
+            background-image: radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Replicated Layered Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.04;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.12;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.3));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.08;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .ops-container {
+            max-width: 1200px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 992px) {
+            .ops-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .back-btn-container {
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            padding: 8px 18px;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: rgba(249, 115, 22, 0.3);
+            background: white;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.06);
+        }
+
+        .ops-hero {
+            background: linear-gradient(135deg, #fff2e8 0%, #ffe3d1 100%);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 32px 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 15px 35px -10px rgba(249, 115, 22, 0.1);
+            position: relative;
+            margin-bottom: 32px;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .ops-hero-info {
+            flex: 1;
+            min-width: 250px;
+            z-index: 2;
+        }
+
+        .ops-hero-info h1 {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .ops-hero-info p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .ngo-identity-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .ngo-identity-display img {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+            display: block;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.04);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 15px 35px -12px rgba(249, 115, 22, 0.08);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 576px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.span-2 {
+                grid-column: span 1 !important;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.span-2 {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-glass {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            width: 100%;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .input-glass:focus,
+        .input-glass:hover {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* Toggle Switches styles */
+        .toggles-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .toggle-row:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .toggle-label-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-width: 80%;
+        }
+
+        .toggle-label-wrap h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .toggle-label-wrap p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .switch-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .switch-state-text {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            min-width: 32px;
+            text-align: right;
+            user-select: none;
+        }
+
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Password strength indicator styling */
+        .strength-indicator {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .strength-bars {
+            display: flex;
+            gap: 4px;
+            height: 6px;
+            width: 100%;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 100%;
+            background-color: #e2e8f0;
+            border-radius: var(--radius-full);
+            transition: background-color 0.2s ease;
+        }
+
+        .strength-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Read-only list details */
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 0.95rem;
+        }
+
+        .info-item:last-child {
+            border: none;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        /* Danger Zone Card */
+        .danger-card {
+            border: 1.5px solid rgba(239, 68, 68, 0.2) !important;
+            background: rgba(254, 242, 242, 0.4);
+            box-shadow: 0 10px 25px -10px rgba(239, 68, 68, 0.05);
+        }
+
+        .danger-card:hover {
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(254, 242, 242, 0.6);
+        }
+
+        .danger-title {
+            color: #ef4444 !important;
+            border-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .danger-title i {
+            color: #ef4444 !important;
+        }
+
+        .btn-danger-outline {
+            border: 1.5px solid #ef4444;
+            color: #ef4444;
+            padding: 10px 20px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            border-radius: var(--radius-full);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            align-self: flex-start;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-danger-outline:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Action buttons bar */
+        .actions-bar {
+            display: flex;
+            justify-content: flex-start;
+            gap: 16px;
+            margin-top: 16px;
+            grid-column: span 2;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: var(--radius-full);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-action.save {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+        }
+
+        .btn-action.save:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+        }
+
+        .btn-action.cancel {
+            background: white;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .btn-action.cancel:hover {
+            border-color: #cbd5e1;
+            color: var(--text-main);
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+
+        /* Toast notification */
+        .editor-notification {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 10005;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .editor-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .editor-notification i {
+            color: #22c55e;
+            font-size: 1.25rem;
+        }
+
+        .editor-notification.error i {
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Shared Background Sparkles -->
+    <div class="bg-decorations">
+        <svg class="decor-item sparkle" style="top: 15%; left: 8%; width: 40px; height: 40px;" viewBox="0 0 256 256">
+            <path
+                d="M243,128.5A115,115,0,0,1,128.5,243,115,115,0,0,1,14,128.5,115,115,0,0,1,128.5,14,115,115,0,0,1,243,128.5Z"
+                fill="none" stroke="currentColor" stroke-width="16" />
+            <path d="M128,80v96M80,128h96" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" />
+        </svg>
+        <svg class="decor-item sparkle" style="top: 60%; right: 5%; width: 50px; height: 50px;" viewBox="0 0 256 256">
+            <path
+                d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" />
+        </svg>
+    </div>
+
+    <!-- Navbar (Shared) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <a href="ngo-dashboard.html" class="nav-home-link">
+                    <i class="ph-bold ph-layout"></i>
+                    <span>NGO Dashboard</span>
+                </a>
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+                <button class="icon-btn"><i class="ph ph-bell"></i></button>
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=City+Rescue&background=f97316&color=fff"
+                        alt="NGO Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="ops-container">
+
+        <!-- Left Column: Forms -->
+        <div>
+            <div class="back-btn-container">
+                <a href="ngo-dashboard.html" class="back-link">
+                    <i class="ph ph-arrow-left"></i> Back to NGO Dashboard
+                </a>
+            </div>
+
+            <!-- Hero Header -->
+            <section class="ops-hero">
+                <div class="ops-hero-info">
+                    <h1>NGO Settings</h1>
+                    <p>Manage your account preferences, organization availability, and security settings.</p>
+                </div>
+                <!-- NGO Identity Display -->
+                <div class="ngo-identity-display">
+                    <div id="ngo-hero-avatar-container" style="width: 70px; height: 70px; border-radius: var(--radius-md); border: 3px solid white; box-shadow: var(--shadow-md); background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 800; overflow: hidden; position: relative;">
+                        <img id="ngo-hero-avatar"
+                            src=""
+                            alt="NGO Logo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <span id="ngo-hero-avatar-fallback">PH</span>
+                    </div>
+                    <div>
+                        <h2 id="ngo-hero-name"
+                            style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                            Paws Haven NGO</h2>
+                        <span id="ngo-hero-status-label"
+                            style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Partner NGO</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. Organization Availability -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-calendar"></i> Organization Availability
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 500;">
+                    Turning a service off will temporarily hide it from public submissions while preserving existing records.
+                </p>
+                <div class="toggles-list">
+                    <!-- Toggle 1: Rescue Requests -->
+                    <div class="toggle-row">
+                        <div class="toggle-label-wrap">
+                            <h4>Accepting Rescue Requests</h4>
+                            <p>Allow users to file stray animal reports directly to your shelter dashboard.</p>
+                        </div>
+                        <div class="switch-wrap">
+                            <span class="switch-state-text" id="label-availability-rescue">ON</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-availability-rescue" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Toggle 2: Adoption Applications -->
+                    <div class="toggle-row">
+                        <div class="toggle-label-wrap">
+                            <h4>Accepting Adoption Applications</h4>
+                            <p>Enable public adoption matches and submit application flows for your available pets.</p>
+                        </div>
+                        <div class="switch-wrap">
+                            <span class="switch-state-text" id="label-availability-adoption">ON</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-availability-adoption" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Toggle 3: Volunteer Management -->
+                    <div class="toggle-row">
+                        <div class="toggle-label-wrap">
+                            <h4>Volunteer Management</h4>
+                            <p>Allow volunteers to submit applications and register to join your rescue dispatch roster.</p>
+                        </div>
+                        <div class="switch-wrap">
+                            <span class="switch-state-text" id="label-availability-volunteer">ON</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-availability-volunteer" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Verification Status -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-shield-check"></i> Verification Status
+                </h3>
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 0.82rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Current Status</span>
+                        <div id="settings-verification-status-badge" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--radius-full); font-weight: 700; font-size: 0.9rem; margin-top: 4px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                    <button id="btn-apply-verification" class="btn-action save" style="padding: 10px 22px; font-size: 0.92rem; border-radius: var(--radius-full);" onclick="openVerificationModal()">
+                        <i class="ph ph-seal-check"></i> Apply for Verification
+                    </button>
+                </div>
+            </section>
+
+            <!-- 3. Account Security -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-lock-key"></i> Account Security
+                </h3>
+                <div class="form-grid" style="margin-bottom: 20px;">
+                    <div class="form-group span-2">
+                        <label for="input-current-password">Current Password</label>
+                        <input type="password" id="input-current-password" class="input-glass"
+                            placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-new-password">New Password</label>
+                        <input type="password" id="input-new-password" class="input-glass"
+                            placeholder="Enter new password">
+                        <div class="strength-indicator">
+                            <div class="strength-bars">
+                                <div class="strength-bar" id="strength-bar-0"></div>
+                                <div class="strength-bar" id="strength-bar-1"></div>
+                                <div class="strength-bar" id="strength-bar-2"></div>
+                            </div>
+                            <div class="strength-label">
+                                <span>Password Strength</span>
+                                <span id="strength-text" style="color: var(--text-muted);">Too Short</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-confirm-password">Confirm New Password</label>
+                        <input type="password" id="input-confirm-password" class="input-glass"
+                            placeholder="Confirm new password">
+                    </div>
+                </div>
+                <button class="btn-action save" style="padding: 10px 22px; font-size: 0.92rem;" onclick="updatePassword()">Update Password</button>
+            </section>
+
+            <!-- 3. Platform Preferences -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-sliders"></i> Platform Preferences
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="select-landing-page">Default Dashboard Landing Page</label>
+                        <select id="select-landing-page" class="input-glass" style="background: white; font-weight: 600; cursor: pointer;">
+                            <option value="Dashboard">Dashboard Overview</option>
+                            <option value="Incoming Reports">Incoming Reports</option>
+                            <option value="Active Cases">Active Cases</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="select-theme">Theme Preference</label>
+                        <select id="select-theme" class="input-glass" style="background: #f1f5f9; color: #94a3b8; font-weight: 600; cursor: not-allowed;" disabled>
+                            <option value="Light">Light Theme (Default)</option>
+                            <option value="Dark">Dark Theme (Coming Soon)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Actions Bar -->
+            <div class="actions-bar">
+                <button class="btn-action save" onclick="saveSettings()">Save Changes</button>
+                <button class="btn-action cancel" onclick="resetSettings()">Reset Changes</button>
+            </div>
+        </div>
+
+        <!-- Right Column: Account Info & Danger Zone -->
+        <div>
+            <!-- Account Information -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-identification-card"></i> Account Information
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 500;">
+                    Profile details can only be edited on the <a href="ngo-edit-profile.html" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Edit NGO Profile</a> page.
+                </p>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Organization Name</span>
+                        <span class="info-value" id="info-org-name">Paws Haven NGO</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Registered Email</span>
+                        <span class="info-value" id="info-org-email">contact@pawshaven.org</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Type</span>
+                        <span class="info-value">NGO Shelter Partner</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Verification Status</span>
+                        <span class="info-value" id="info-verification-status" style="display: inline-flex; align-items: center; gap: 4px;">
+                            <!-- Populated dynamically -->
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value">June 2018</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Danger Zone -->
+            <section class="glass-card danger-card">
+                <h3 class="card-title danger-title">
+                    <i class="ph ph-warning-octagon"></i> Danger Zone
+                </h3>
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div>
+                        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Deactivate NGO Account</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; font-weight: 500;">
+                            Temporarily disable your organization profile from public visibility. Existing records will be preserved.
+                        </p>
+                    </div>
+                    <button class="btn-danger-outline" onclick="deactivateAccount()">
+                        <i class="ph ph-user-minus"></i> Deactivate NGO Account
+                    </button>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 40px 20px 100px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); position: relative; z-index: 1;">
+        <p>&copy; 2026 Voice of Stray NGO Workspace</p>
+    </div>
+
+    <!-- VERIFICATION MODAL DIALOG -->
+    <div class="photo-selector-overlay" id="verification-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 10002; align-items: center; justify-content: center;">
+        <div class="photo-modal-card" style="max-width: 550px; padding: 32px;">
+            <div class="modal-header-row">
+                <h3 style="font-size: 1.3rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-seal-check" style="color: var(--primary);"></i> NGO Organization Verification</h3>
+                <span class="modal-close-btn" onclick="closeVerificationModal()"><i class="ph ph-x"></i></span>
+            </div>
+            <div class="modal-body" id="verification-modal-body" style="display: flex; flex-direction: column; gap: 20px; text-align: left;">
+                <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; font-weight: 500;">
+                    Verification helps adopters, donors, and volunteers trust your organization. Verified NGOs receive a prominent checkmark badge across Voice of Stray.
+                </p>
+                <div style="background: rgba(249, 115, 22, 0.05); border: 1px solid rgba(249, 115, 22, 0.15); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;">Required Information (For Future Implementation)</h4>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; font-weight: 500; display: flex; flex-direction: column; gap: 6px;">
+                        <li>NGO Registration Certificate (PDF/Image)</li>
+                        <li>Government Registration Number</li>
+                        <li>Official Contact Information</li>
+                        <li>Organization Address Details</li>
+                    </ul>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); font-style: italic; font-weight: 500;">
+                    For now, document uploads are not required. Press the button below to submit your verification request.
+                </p>
+            </div>
+            <div class="modal-actions-row" id="verification-modal-actions">
+                <button class="btn-action cancel" style="padding: 8px 18px; font-size: 0.9rem;" onclick="closeVerificationModal()">Cancel</button>
+                <button class="btn-action save" style="padding: 8px 20px; font-size: 0.9rem;" onclick="submitVerificationRequest()">Submit Verification Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="editor-notification" id="settings-notification">
+        <i class="ph ph-check-circle"></i>
+        <span id="notification-message">Settings saved successfully!</span>
+    </div>
+
+    <script>
+        // Centralized preferences state object
+        let ngoSettings = {
+            availability: {
+                rescue: true,
+                adoption: true,
+                volunteer: true
+            },
+            landingPage: "Dashboard",
+            theme: "Light"
+        };
+
+        // Init page load
+        document.addEventListener("DOMContentLoaded", () => {
+            // Strict Auth Guard
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const role = localStorage.getItem("role") || "user";
+            if (!isLoggedIn || role !== "ngo") {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Sync dynamic NGO identity in hero
+            const orgName = localStorage.getItem("username") || "Paws Haven NGO";
+            const orgEmail = localStorage.getItem("email") || "contact@pawshaven.org";
+            const orgLogo = localStorage.getItem("avatarUrl");
+
+            // Header identity mapping
+            const heroAvatarImg = document.getElementById("ngo-hero-avatar");
+            const heroAvatarFallback = document.getElementById("ngo-hero-avatar-fallback");
+            
+            // Helper to get initials
+            function getInitials(name) {
+                if (!name) return "NGO";
+                const parts = name.trim().split(/\s+/);
+                if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+                return (parts[0][0] + (parts[1][0] || "")).toUpperCase();
+            }
+
+            if (orgLogo) {
+                if (heroAvatarImg) {
+                    heroAvatarImg.src = orgLogo;
+                    heroAvatarImg.style.display = "block";
+                }
+                if (heroAvatarFallback) heroAvatarFallback.style.display = "none";
+            } else {
+                if (heroAvatarImg) heroAvatarImg.style.display = "none";
+                if (heroAvatarFallback) {
+                    heroAvatarFallback.textContent = getInitials(orgName);
+                    heroAvatarFallback.style.display = "block";
+                }
+            }
+
+            document.getElementById("ngo-hero-name").textContent = orgName;
+
+            // Read-only info details mapping
+            document.getElementById("info-org-name").textContent = orgName;
+            document.getElementById("info-org-email").textContent = orgEmail;
+
+            // Update navbar profile pic
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => {
+                if (orgLogo) {
+                    img.src = orgLogo;
+                } else {
+                    img.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(orgName) + "&background=f97316&color=fff";
+                }
+            });
+
+            // Load settings from localStorage if available
+            const stored = localStorage.getItem("voiceOfStrayNgoSettings");
+            if (stored) {
+                try {
+                    ngoSettings = { ...ngoSettings, ...JSON.parse(stored) };
+                } catch(e) {
+                    console.error("Error loading localStorage settings", e);
+                }
+            }
+
+            // Apply state to UI inputs
+            applySettingsToUI();
+
+            // Bind inputs change triggers
+            bindToggles();
+
+            // Bind password strength watcher
+            bindPasswordStrengthWatcher();
+
+            // Resolve dynamic verification status
+            const currentVerStatus = localStorage.getItem("voiceOfStrayVerificationStatus") || "Not Verified";
+            updateVerificationUI(currentVerStatus);
+        });
+
+        // Map state to DOM controls
+        function applySettingsToUI() {
+            // Rescue availability
+            const rescueCheck = document.getElementById("toggle-availability-rescue");
+            rescueCheck.checked = ngoSettings.availability.rescue;
+            updateToggleLabel("rescue", ngoSettings.availability.rescue);
+
+            // Adoption availability
+            const adoptionCheck = document.getElementById("toggle-availability-adoption");
+            adoptionCheck.checked = ngoSettings.availability.adoption;
+            updateToggleLabel("adoption", ngoSettings.availability.adoption);
+
+            // Volunteer availability
+            const volunteerCheck = document.getElementById("toggle-availability-volunteer");
+            volunteerCheck.checked = ngoSettings.availability.volunteer;
+            updateToggleLabel("volunteer", ngoSettings.availability.volunteer);
+
+            // Landing Page preference
+            document.getElementById("select-landing-page").value = ngoSettings.landingPage;
+        }
+
+        // Toggle state change visual text helper
+        function updateToggleLabel(key, state) {
+            const label = document.getElementById(`label-availability-${key}`);
+            if (label) {
+                label.textContent = state ? "ON" : "OFF";
+                label.style.color = state ? "var(--primary)" : "var(--text-muted)";
+            }
+        }
+
+        // Bind toggle change listeners
+        function bindToggles() {
+            // Rescue
+            document.getElementById("toggle-availability-rescue").addEventListener("change", (e) => {
+                const checked = e.target.checked;
+                ngoSettings.availability.rescue = checked;
+                updateToggleLabel("rescue", checked);
+            });
+
+            // Adoption
+            document.getElementById("toggle-availability-adoption").addEventListener("change", (e) => {
+                const checked = e.target.checked;
+                ngoSettings.availability.adoption = checked;
+                updateToggleLabel("adoption", checked);
+            });
+
+            // Volunteer
+            document.getElementById("toggle-availability-volunteer").addEventListener("change", (e) => {
+                const checked = e.target.checked;
+                ngoSettings.availability.volunteer = checked;
+                updateToggleLabel("volunteer", checked);
+            });
+
+            // Landing page
+            document.getElementById("select-landing-page").addEventListener("change", (e) => {
+                ngoSettings.landingPage = e.target.value;
+            });
+        }
+
+        // Dynamic password strength watcher
+        function bindPasswordStrengthWatcher() {
+            const newPwd = document.getElementById("input-new-password");
+            
+            newPwd.addEventListener("input", () => {
+                const val = newPwd.value;
+                const result = checkPasswordStrength(val);
+                renderStrengthUI(result.score, result.text);
+            });
+        }
+
+        // Helper to check password strength score
+        function checkPasswordStrength(pwd) {
+            if (!pwd || pwd.length < 6) {
+                return { score: 0, text: "Too Short" };
+            }
+            
+            let score = 0;
+            // score checks
+            if (pwd.length >= 8) score++;
+            if (/[A-Z]/.test(pwd)) score++;
+            if (/[a-z]/.test(pwd)) score++;
+            if (/[0-9]/.test(pwd)) score++;
+            if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+            // Normalise score from 0-5 to 1-3
+            let level = 1; // Weak
+            let text = "Weak";
+            if (score >= 4) {
+                level = 3; // Strong
+                text = "Strong";
+            } else if (score >= 2) {
+                level = 2; // Medium
+                text = "Medium";
+            }
+
+            return { score: level, text: text };
+        }
+
+        // Set strength visual bars
+        function renderStrengthUI(score, text) {
+            const bar0 = document.getElementById("strength-bar-0");
+            const bar1 = document.getElementById("strength-bar-1");
+            const bar2 = document.getElementById("strength-bar-2");
+            const label = document.getElementById("strength-text");
+
+            label.textContent = text;
+
+            // Reset bars colors first
+            [bar0, bar1, bar2].forEach(bar => {
+                bar.style.backgroundColor = "#e2e8f0";
+            });
+
+            if (score === 0) {
+                label.style.color = "var(--text-muted)";
+                return;
+            }
+
+            if (score === 1) { // Weak - red
+                bar0.style.backgroundColor = "#ef4444";
+                label.style.color = "#ef4444";
+            } else if (score === 2) { // Medium - orange
+                bar0.style.backgroundColor = "#f59e0b";
+                bar1.style.backgroundColor = "#f59e0b";
+                label.style.color = "#f59e0b";
+            } else if (score === 3) { // Strong - green
+                bar0.style.backgroundColor = "#10b981";
+                bar1.style.backgroundColor = "#10b981";
+                bar2.style.backgroundColor = "#10b981";
+                label.style.color = "#10b981";
+            }
+        }
+
+        // Update password action
+        function updatePassword() {
+            const currentPwd = document.getElementById("input-current-password").value;
+            const newPwd = document.getElementById("input-new-password").value;
+            const confirmPwd = document.getElementById("input-confirm-password").value;
+
+            if (!currentPwd.trim()) {
+                showNotification("Current Password is required.", "error");
+                document.getElementById("input-current-password").focus();
+                return;
+            }
+
+            if (!newPwd.trim()) {
+                showNotification("New Password is required.", "error");
+                document.getElementById("input-new-password").focus();
+                return;
+            }
+
+            if (newPwd !== confirmPwd) {
+                showNotification("Passwords do not match.", "error");
+                document.getElementById("input-confirm-password").focus();
+                return;
+            }
+
+            if (newPwd.length < 6) {
+                showNotification("New Password must be at least 6 characters.", "error");
+                document.getElementById("input-new-password").focus();
+                return;
+            }
+
+            // Simulate save password successfully
+            showNotification("Account password updated successfully!", "success");
+
+            // Reset inputs
+            document.getElementById("input-current-password").value = "";
+            document.getElementById("input-new-password").value = "";
+            document.getElementById("input-confirm-password").value = "";
+            renderStrengthUI(0, "Too Short");
+        }
+
+        // Deactivate mock button
+        function deactivateAccount() {
+            const message = "Are you sure you want to deactivate your organization account?\n\nThis will temporarily disable your profile from public visibility on Voice of Stray. (This is a placeholder action and will not delete any data.)";
+            if (confirm(message)) {
+                showNotification("Account deactivation requested (mock action).", "success");
+            }
+        }
+
+        // Revert settings changes
+        function resetSettings() {
+            if (confirm("Are you sure you want to discard your changes?")) {
+                const stored = localStorage.getItem("voiceOfStrayNgoSettings");
+                if (stored) {
+                    try {
+                        ngoSettings = JSON.parse(stored);
+                    } catch(e) {}
+                } else {
+                    ngoSettings = {
+                        availability: { rescue: true, adoption: true, volunteer: true },
+                        landingPage: "Dashboard",
+                        theme: "Light"
+                    };
+                }
+                applySettingsToUI();
+                showNotification("Settings reverted successfully.", "success");
+            }
+        }
+
+        // Save preferences changes
+        function saveSettings() {
+            // Write preferences back to localStorage
+            localStorage.setItem("voiceOfStrayNgoSettings", JSON.stringify(ngoSettings));
+
+            // Display save toast
+            showNotification("Configuration settings updated successfully!", "success");
+
+            // Redirect back to dashboard after 1.5s
+            setTimeout(() => {
+                window.location.href = "ngo-dashboard.html";
+            }, 1500);
+        }
+
+        // Toast notification system helper
+        function showNotification(msg, type = "success") {
+            const toast = document.getElementById("settings-notification");
+            const text = document.getElementById("notification-message");
+            const icon = toast.querySelector("i");
+
+            text.textContent = msg;
+
+            // Apply notification state styles
+            if (type === "success") {
+                toast.classList.remove("error");
+                icon.className = "ph ph-check-circle";
+            } else {
+                toast.classList.add("error");
+                icon.className = "ph ph-warning-circle";
+            }
+
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2500);
+        }
+
+        // Verification Modal and UI Actions
+        function openVerificationModal() {
+            const status = localStorage.getItem("voiceOfStrayVerificationStatus") || "Not Verified";
+            if (status === "Under Review") return;
+
+            document.getElementById("verification-modal").style.display = "flex";
+            // Reset modal body to show required verification input form fields
+            document.getElementById("verification-modal-body").innerHTML = `
+                <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; font-weight: 500; margin-bottom: 8px;">
+                    Verification helps adopters, volunteers, and donors trust your organization.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
+                        <label for="modal-reg-number" style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Organization Registration Number</label>
+                        <input type="text" id="modal-reg-number" class="input-glass" placeholder="e.g. REG-12345-NGO" style="background: rgba(255, 255, 255, 0.8); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-family: inherit; font-size: 0.92rem; outline: none; width: 100%;">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
+                        <label for="modal-org-type" style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Organization Type</label>
+                        <select id="modal-org-type" class="input-glass" style="background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-family: inherit; font-size: 0.92rem; outline: none; width: 100%; cursor: pointer;">
+                            <option value="">Select Organization Type</option>
+                            <option value="Animal Shelter">Animal Shelter</option>
+                            <option value="Rescue Group">Rescue Group</option>
+                            <option value="Foster Network">Foster Network</option>
+                            <option value="Veterinary Clinic">Veterinary Clinic</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
+                        <label for="modal-additional-notes" style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Additional Notes</label>
+                        <textarea id="modal-additional-notes" class="input-glass" placeholder="Include any details that can help our team verify your organization faster..." style="background: rgba(255, 255, 255, 0.8); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-family: inherit; font-size: 0.92rem; outline: none; width: 100%; min-height: 80px; resize: vertical;"></textarea>
+                    </div>
+                </div>
+            `;
+            document.getElementById("verification-modal-actions").innerHTML = `
+                <button class="btn-action cancel" style="padding: 8px 18px; font-size: 0.9rem;" onclick="closeVerificationModal()">Cancel</button>
+                <button class="btn-action save" style="padding: 8px 20px; font-size: 0.9rem;" onclick="submitVerificationRequest()">Submit Request</button>
+            `;
+            document.getElementById("verification-modal-actions").style.display = "flex";
+        }
+
+        function closeVerificationModal() {
+            document.getElementById("verification-modal").style.display = "none";
+        }
+
+        function submitVerificationRequest() {
+            const regNumber = document.getElementById("modal-reg-number").value;
+            const orgType = document.getElementById("modal-org-type").value;
+            const notes = document.getElementById("modal-additional-notes").value;
+            
+            if (!regNumber.trim()) {
+                alert("Please enter your Organization Registration Number.");
+                document.getElementById("modal-reg-number").focus();
+                return;
+            }
+            if (!orgType) {
+                alert("Please select your Organization Type.");
+                document.getElementById("modal-org-type").focus();
+                return;
+            }
+
+            // Save details to localStorage
+            localStorage.setItem("voiceOfStrayVerificationDetails", JSON.stringify({
+                registrationNumber: regNumber,
+                organizationType: orgType,
+                notes: notes,
+                timestamp: new Date().toISOString()
+            }));
+
+            // Update localStorage status
+            localStorage.setItem("voiceOfStrayVerificationStatus", "Under Review");
+            
+            // Update modal body to display submission success state
+            document.getElementById("verification-modal-body").innerHTML = `
+                <div style="text-align: center; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: #fff7ed; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: var(--shadow-sm); animation: pulseGlow 2s infinite alternate ease-in-out;">
+                        <i class="ph ph-hourglass"></i>
+                    </div>
+                    <h4 style="font-size: 1.2rem; font-weight: 800; color: var(--text-main);">Verification Request Submitted</h4>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; font-weight: 500; max-width: 400px; margin: 0 auto;">
+                        Our team will review your organization and notify you once verification is complete.
+                    </p>
+                </div>
+            `;
+            
+            // Hide the cancel/submit buttons and show a single "Close" button
+            document.getElementById("verification-modal-actions").innerHTML = `
+                <button class="btn-action save" style="padding: 8px 24px; font-size: 0.9rem;" onclick="closeVerificationModal()">Close</button>
+            `;
+            
+            // Update UI status badges immediately
+            updateVerificationUI("Under Review");
+            
+            // Show toast message
+            showNotification("Verification request submitted!", "success");
+        }
+
+        function updateVerificationUI(status) {
+            const badge = document.getElementById("settings-verification-status-badge");
+            const infoStatus = document.getElementById("info-verification-status");
+            const applyBtn = document.getElementById("btn-apply-verification");
+            const heroName = document.getElementById("ngo-hero-name");
+            const heroLabel = document.getElementById("ngo-hero-status-label");
+            const orgName = localStorage.getItem("username") || "Paws Haven NGO";
+
+            if (status === "Verified NGO" || status === "Verified Partner") {
+                if (heroName) {
+                    heroName.innerHTML = `${orgName} <span class="verified-badge" style="font-size: 1.1rem; color: #0ea5e9; display: inline-flex;"><i class="ph-fill ph-seal-check"></i></span>`;
+                }
+                if (heroLabel) {
+                    heroLabel.textContent = "Verified Partner";
+                    heroLabel.style.color = "#0ea5e9";
+                }
+
+                badge.style.background = "#e0f2fe";
+                badge.style.color = "#0369a1";
+                badge.style.border = "1px solid #bae6fd";
+                badge.innerHTML = `<i class="ph-fill ph-seal-check" style="color: #0ea5e9;"></i> Verified NGO`;
+
+                infoStatus.style.color = "#0ea5e9";
+                infoStatus.innerHTML = `<i class="ph-fill ph-seal-check"></i> Verified Partner`;
+
+                applyBtn.style.display = "none";
+            } else if (status === "Under Review") {
+                if (heroName) {
+                    heroName.innerHTML = `${orgName} <span class="verified-badge" style="font-size: 1.1rem; color: #c2410c; display: inline-flex;"><i class="ph ph-hourglass"></i></span>`;
+                }
+                if (heroLabel) {
+                    heroLabel.textContent = "Under Review";
+                    heroLabel.style.color = "#c2410c";
+                }
+
+                badge.style.background = "#fff7ed";
+                badge.style.color = "#c2410c";
+                badge.style.border = "1px solid #ffedd5";
+                badge.innerHTML = `<i class="ph ph-hourglass"></i> Under Review`;
+
+                infoStatus.style.color = "#c2410c";
+                infoStatus.innerHTML = `<i class="ph ph-hourglass"></i> Under Review`;
+
+                applyBtn.className = "btn-action cancel";
+                applyBtn.style.cursor = "not-allowed";
+                applyBtn.style.background = "#f1f5f9";
+                applyBtn.style.color = "#94a3b8";
+                applyBtn.style.borderColor = "transparent";
+                applyBtn.disabled = true;
+                applyBtn.innerHTML = `<i class="ph ph-hourglass"></i> Verification Under Review`;
+                applyBtn.style.display = "inline-flex";
+            } else { // Not Verified
+                if (heroName) {
+                    heroName.innerHTML = `${orgName}`;
+                }
+                if (heroLabel) {
+                    heroLabel.textContent = "Partner NGO";
+                    heroLabel.style.color = "var(--text-muted)";
+                }
+
+                badge.style.background = "#f1f5f9";
+                badge.style.color = "#475569";
+                badge.style.border = "1px solid #cbd5e1";
+                badge.innerHTML = `<i class="ph ph-warning-circle"></i> Not Verified`;
+
+                infoStatus.style.color = "#475569";
+                infoStatus.innerHTML = `<i class="ph ph-warning-circle"></i> Not Verified`;
+
+                applyBtn.className = "btn-action save";
+                applyBtn.disabled = false;
+                applyBtn.style.display = "inline-flex";
+                applyBtn.innerHTML = `<i class="ph ph-seal-check"></i> Apply for Verification`;
+            }
+        }
+    </script>
+</body>
+
+</html>

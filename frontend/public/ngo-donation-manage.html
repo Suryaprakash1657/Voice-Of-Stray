@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Management - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        body {
+            background-color: #fff9f5;
+            background-image:
+                radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.04;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.12;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.3));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.08;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        /* Nav Home button */
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Layout structure */
+        .ops-container {
+            max-width: 1300px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sidebar Styling */
+        .ops-sidebar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            box-shadow: 0 10px 25px -10px rgba(249, 115, 22, 0.04);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-brand-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .sidebar-brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-brand-section h3 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-item-left i {
+            font-size: 1.25rem;
+            transition: color 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(249, 115, 22, 0.05);
+            color: var(--primary);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, var(--primary), #ea580c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        .sidebar-item.active i {
+            color: white;
+        }
+
+        .sidebar-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .sidebar-badge.pulse-red {
+            background: #fee2e2;
+            color: #ef4444;
+            animation: pulseText 1.5s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .sidebar-badge.count-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        /* Main Content Styling */
+        .ops-main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px -8px rgba(249, 115, 22, 0.08);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .metric-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-icon-bg {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .metric-value {
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .metric-subtext {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Active Campaign Box */
+        .campaign-box {
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(254, 243, 199, 0.25) 100%);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+        }
+
+        .campaign-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .campaign-title-area h3 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #0f172a;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .campaign-title-area h3 i {
+            color: var(--primary);
+        }
+
+        .campaign-title-area p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+            font-weight: 500;
+            max-width: 650px;
+            line-height: 1.5;
+        }
+
+        .campaign-goal-pill {
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--primary);
+            text-align: right;
+        }
+
+        .campaign-progress-container {
+            height: 16px;
+            background: #e2e8f0;
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin: 20px 0 10px 0;
+            position: relative;
+        }
+
+        .campaign-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), #ea580c);
+            border-radius: var(--radius-full);
+            width: 0%; /* Dynamic animation */
+            transition: width 1s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+
+        .campaign-progress-label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Two-Column split grid */
+        .donation-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 992px) {
+            .donation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ops-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .ops-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ops-section-title i {
+            color: var(--primary);
+        }
+
+        /* Premium Table styling */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+        }
+
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .premium-table th {
+            padding: 14px 16px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(249, 115, 22, 0.03);
+            border-bottom: 2px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .premium-table td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            color: #1e293b;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.05);
+            vertical-align: middle;
+        }
+
+        .premium-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .premium-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .premium-table tbody tr:hover {
+            background-color: rgba(249, 115, 22, 0.02);
+        }
+
+        /* Badges inside table */
+        .status-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-badge.pending {
+            background: #fffbeb;
+            color: #d97706;
+            border-color: #fef3c7;
+        }
+
+        .status-badge.review {
+            background: #eff6ff;
+            color: #2563eb;
+            border-color: #dbeafe;
+        }
+
+        .status-badge.visit {
+            background: #faf5ff;
+            color: #7c3aed;
+            border-color: #f3e8ff;
+        }
+
+        /* Form styling */
+        .record-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .form-input,
+        .form-select {
+            padding: 10px 14px;
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: white;
+            color: #1e293b;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.25);
+        }
+
+        /* Recent Activity List */
+        .recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(249, 115, 22, 0.05);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .recent-item:hover {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .recent-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .recent-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .recent-info h5 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 2px 0;
+        }
+
+        .recent-info span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .recent-amount {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #15803d;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background decorations -->
+    <div class="bg-decorations">
+        <svg class="decor-item" style="top: 15%; left: 4%; width: 110px; transform: rotate(-10deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <svg class="decor-item" style="bottom: 12%; right: 5%; width: 130px; transform: rotate(18deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <svg class="decor-item sparkle" style="top: 25%; left: 35%; width: 24px;" viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="bottom: 28%; left: 20%; width: 28px; animation-delay: 1s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+    </div>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-home-link">
+                    <i class="ph ph-house"></i>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <!-- Logged-in State (Session Profile) -->
+            <div class="nav-actions logged-in-actions" style="display: flex;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout Container -->
+    <div class="ops-container">
+
+        <!-- Left Sidebar Navigation -->
+        <aside class="ops-sidebar">
+            <div class="sidebar-brand-section">
+                <div class="sidebar-brand-icon">
+                    <i class="ph-fill ph-shield-heart"></i>
+                </div>
+                <div>
+                    <h3>Rescue Center</h3>
+                    <span
+                        style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Ops
+                        Command</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="sidebar-item" onclick="window.location.href='ngo-dashboard.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Dashboard</span>
+                    </span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-reports-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-bell-ringing"></i>
+                        <span>Incoming Reports</span>
+                    </span>
+                    <span class="sidebar-badge pulse-red" id="sidebar-reports-badge">2 New</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-dashboard.html#active-cases-section'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-ambulance"></i>
+                        <span>Active Cases</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-cases-badge">2</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-volunteer-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-hand-heart"></i>
+                        <span>Volunteer Management</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-vol-count"
+                        style="background: #e0f2fe; color: #0284c7;">0</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-adopt-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-house-line"></i>
+                        <span>Adoption Requests</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-adoption-count"
+                        style="background: #fce7f3; color: #db2777;">1</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-pet-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-note-pencil"></i>
+                        <span>Manage Pets (Builder)</span>
+                    </span>
+                    <span class="sidebar-badge"
+                        style="background: rgba(249, 115, 22, 0.1); color: var(--primary); font-weight: 800;">Builder</span>
+                </div>
+                <div class="sidebar-item active">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-coins"></i>
+                        <span>Donations</span>
+                    </span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-settings.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-gear"></i>
+                        <span>Settings</span>
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Panel -->
+        <main class="ops-main-panel">
+
+            <!-- Page Title Header -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <h1 style="font-size: 2.1rem; font-weight: 900; color: #0f172a; letter-spacing: -0.5px; margin: 0;">
+                    Donation Management</h1>
+                <p style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin: 0;">Overview fundraising
+                    campaigns, track community donations, and record offline contributions.</p>
+            </div>
+
+            <!-- Summary Metrics Row -->
+            <div class="metrics-grid">
+                <!-- Total Donations Received -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Total Donations</span>
+                        <div class="metric-icon-bg" style="background: rgba(249, 115, 22, 0.08); color: var(--primary);">
+                            <i class="ph-fill ph-hand-coins"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-total-donations">₹0</h2>
+                    <p class="metric-subtext">
+                        <i class="ph-bold ph-trend-up" style="color: #15803d;"></i>
+                        <span>Includes base & local logs</span>
+                    </p>
+                </div>
+
+                <!-- Donations This Month -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Monthly Total</span>
+                        <div class="metric-icon-bg" style="background: rgba(20, 184, 166, 0.08); color: var(--secondary);">
+                            <i class="ph-fill ph-calendar"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-monthly-donations">₹0</h2>
+                    <p class="metric-subtext">
+                        <span>June 2026 tracking</span>
+                    </p>
+                </div>
+
+                <!-- Active Donors -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Active Donors</span>
+                        <div class="metric-icon-bg" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6;">
+                            <i class="ph-fill ph-users"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-active-donors">0</h2>
+                    <p class="metric-subtext">
+                        <span>Unique contributors</span>
+                    </p>
+                </div>
+
+                <!-- Active Campaign Progress Percent -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Campaign Goal</span>
+                        <div class="metric-icon-bg" style="background: rgba(239, 68, 68, 0.08); color: var(--alert);">
+                            <i class="ph-fill ph-target"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-campaign-progress">0%</h2>
+                    <p class="metric-subtext">
+                        <span>Emergency Rescue Fund</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Active Campaign Section -->
+            <section class="glass-card campaign-box">
+                <div class="campaign-header">
+                    <div class="campaign-title-area">
+                        <h3><i class="ph-fill ph-lightning"></i> Emergency Rescue Fund</h3>
+                        <p>Emergency funds raised are strictly allocated to fueling ambulance sweeps, surgical tool acquisitions,
+                            critical clinic medical updates, and animal rescue dispatches.</p>
+                    </div>
+                    <div class="campaign-goal-pill">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; display: block; opacity: 0.7;">Goal</span>
+                        <span>₹1,50,000</span>
+                    </div>
+                </div>
+
+                <div class="campaign-progress-container">
+                    <div class="campaign-progress-bar" id="campaign-progress-bar"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                    <span class="campaign-progress-label" id="campaign-progress-label">₹0 raised of ₹1,50,000 (0%)</span>
+                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;" id="campaign-raised">₹0</span>
+                </div>
+            </section>
+
+            <!-- Grid Layout for Tables & Forms -->
+            <div class="donation-grid">
+                <!-- Left: Donation History Table -->
+                <section class="glass-card" style="padding: 24px;">
+                    <div class="ops-section-header">
+                        <span class="ops-section-title">
+                            <i class="ph-fill ph-clock-counter-clockwise"></i>
+                            <span>Donation History</span>
+                        </span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Donor</th>
+                                    <th>Amount</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody id="donation-history-tbody">
+                                <!-- Injected by Javascript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Right: Form and Recent activity -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+                    <!-- Record Donation Form -->
+                    <section class="glass-card" style="padding: 24px;">
+                        <div class="ops-section-header">
+                            <span class="ops-section-title">
+                                <i class="ph-fill ph-plus-circle"></i>
+                                <span>Record Donation</span>
+                            </span>
+                        </div>
+                        <form class="record-form" id="record-donation-form">
+                            <div class="form-group">
+                                <label for="donor-name">Donor Name <span style="color: #ef4444;">*</span></label>
+                                <input type="text" id="donor-name" required placeholder="e.g. Rahul Sharma"
+                                    class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="donation-amount">Amount (₹) <span style="color: #ef4444;">*</span></label>
+                                <input type="number" id="donation-amount" required min="1" placeholder="e.g. 5000"
+                                    class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="donation-purpose">Purpose <span style="color: #ef4444;">*</span></label>
+                                <select id="donation-purpose" required class="form-select">
+                                    <option value="Emergency Rescue Fund">Emergency Rescue Fund</option>
+                                    <option value="General Fund">General Fund</option>
+                                    <option value="Medical Supplies">Medical Supplies</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="donation-date">Date <span style="color: #ef4444;">*</span></label>
+                                <input type="date" id="donation-date" required class="form-input">
+                            </div>
+                            <button type="submit" class="btn-submit">
+                                <span>Record Contribution</span>
+                                <i class="ph-bold ph-check-square"></i>
+                            </button>
+                        </form>
+                    </section>
+
+                    <!-- Recent Donations (Feed) -->
+                    <section class="glass-card" style="padding: 24px;">
+                        <div class="ops-section-header">
+                            <span class="ops-section-title">
+                                <i class="ph-fill ph-heart"></i>
+                                <span>Recent Activities</span>
+                            </span>
+                        </div>
+                        <div class="recent-list" id="recent-donations-list">
+                            <!-- Injected by Javascript -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Ops Footer -->
+    <footer class="premium-footer"
+        style="background-color: #fcf6f0; padding: 48px 24px 32px; border-top: 1px solid rgba(249, 115, 22, 0.15); margin-top: auto;">
+        <div class="footer-bottom"
+            style="max-width: 1200px; margin: 0 auto; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">Made with <i class="ph-fill ph-heart" style="color: var(--alert);"></i> for
+                stray rescue welfare NGOs</p>
+            <p>&copy; 2026 Voice of Stray NGO Operations. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Logic Controller Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Strict Auth Guards
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const role = localStorage.getItem("role");
+            if (!isLoggedIn || role !== "ngo") {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Sync NGO Profile avatar picture
+            const orgLogo = localStorage.getItem("avatarUrl") || "https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff";
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => img.src = orgLogo);
+
+            // Set default date in the input form to today (2026-06-18)
+            document.getElementById("donation-date").value = "2026-06-18";
+
+            // Initialize and render donation details
+            calculateAndRender();
+
+            // Sync other sidebar counters
+            syncSidebarBadges();
+
+            // Set up form submit listener
+            document.getElementById("record-donation-form").addEventListener("submit", handleRecordSubmit);
+
+            // Listen to storage events to sync dashboard data dynamically without manual reload
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'voiceOfStrayDonations' || e.key === 'voiceOfStrayNotifications') {
+                    calculateAndRender();
+                }
+            });
+        });
+
+        // Initialize donations in localStorage if not present
+        function initializeDonations() {
+            let donations = localStorage.getItem("voiceOfStrayDonations");
+            let needsReset = false;
+            if (donations) {
+                try {
+                    const parsed = JSON.parse(donations);
+                    // Check if it is the old set of 7 template donations
+                    if (parsed.length === 7 && parsed[0].id === "DON-001" && parsed[0].donor === "John Doe" && parsed[0].date === "2026-06-15") {
+                        needsReset = true;
+                    }
+                } catch (e) {
+                    needsReset = true;
+                }
+            }
+            if (!donations || needsReset) {
+                const defaultDonations = [
+                    // June 2026 donations (15 donations, total 81,000, 15 unique donors)
+                    { id: "DON-001", donor: "John Doe", amount: 5000, date: "2026-06-18", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-002", donor: "Sarah Smith", amount: 2500, date: "2026-06-17", purpose: "General Fund" },
+                    { id: "DON-003", donor: "Mike Johnson", amount: 10000, date: "2026-06-16", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-004", donor: "Arjun Mehta", amount: 1500, date: "2026-06-15", purpose: "Medical Supplies" },
+                    { id: "DON-005", donor: "Priya Sharma", amount: 3500, date: "2026-06-14", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-006", donor: "Vikram Malhotra", amount: 20000, date: "2026-06-12", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-007", donor: "Rajesh Kumar", amount: 15000, date: "2026-06-10", purpose: "General Fund" },
+                    { id: "DON-008", donor: "Amit Patel", amount: 8000, date: "2026-06-08", purpose: "Medical Supplies" },
+                    { id: "DON-009", donor: "Sneha Reddy", amount: 4500, date: "2026-06-05", purpose: "General Fund" },
+                    { id: "DON-010", donor: "Ananya Sen", amount: 3000, date: "2026-06-04", purpose: "Medical Supplies" },
+                    { id: "DON-011", donor: "Karan Johar", amount: 2000, date: "2026-06-03", purpose: "General Fund" },
+                    { id: "DON-012", donor: "Rohan Das", amount: 1000, date: "2026-06-02", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-013", donor: "Neha Gupta", amount: 2500, date: "2026-06-02", purpose: "General Fund" },
+                    { id: "DON-014", donor: "Deepak Singh", amount: 1500, date: "2026-06-01", purpose: "Medical Supplies" },
+                    { id: "DON-015", donor: "Sanjay Dutt", amount: 1000, date: "2026-06-01", purpose: "General Fund" },
+
+                    // May 2026 donations (18 donations, total 1,60,000, 18 unique donors)
+                    { id: "DON-016", donor: "David Lee", amount: 5000, date: "2026-05-28", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-017", donor: "Emma Watson", amount: 12000, date: "2026-05-26", purpose: "General Fund" },
+                    { id: "DON-018", donor: "Kavita Rao", amount: 25000, date: "2026-05-24", purpose: "General Fund" },
+                    { id: "DON-019", donor: "Aditya Roy", amount: 18000, date: "2026-05-22", purpose: "General Fund" },
+                    { id: "DON-020", donor: "Pooja Hegde", amount: 6000, date: "2026-05-20", purpose: "Medical Supplies" },
+                    { id: "DON-021", donor: "Abhishek Bachchan", amount: 14000, date: "2026-05-18", purpose: "General Fund" },
+                    { id: "DON-022", donor: "Aishwarya Rai", amount: 9500, date: "2026-05-16", purpose: "General Fund" },
+                    { id: "DON-023", donor: "Salman Khan", amount: 30000, date: "2026-05-14", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-024", donor: "Katrina Kaif", amount: 4000, date: "2026-05-12", purpose: "Medical Supplies" },
+                    { id: "DON-025", donor: "Ranbir Kapoor", amount: 7500, date: "2026-05-10", purpose: "General Fund" },
+                    { id: "DON-026", donor: "Alia Bhatt", amount: 11000, date: "2026-05-08", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-027", donor: "Varun Dhawan", amount: 3000, date: "2026-05-06", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-028", donor: "Shraddha Kapoor", amount: 5000, date: "2026-05-05", purpose: "General Fund" },
+                    { id: "DON-029", donor: "Sidharth Malhotra", amount: 2000, date: "2026-05-04", purpose: "General Fund" },
+                    { id: "DON-030", donor: "Kiara Advani", amount: 4500, date: "2026-05-03", purpose: "General Fund" },
+                    { id: "DON-031", donor: "Kartik Aaryan", amount: 1500, date: "2026-05-02", purpose: "Medical Supplies" },
+                    { id: "DON-032", donor: "Kriti Sanon", amount: 2000, date: "2026-05-01", purpose: "General Fund" },
+                    { id: "DON-033", donor: "Sara Ali Khan", amount: 1000, date: "2026-05-01", purpose: "General Fund" },
+
+                    // Older donations (April 2026 & earlier, 16 donations, total 1,80,000, 16 unique donors)
+                    { id: "DON-034", donor: "Sachin Tendulkar", amount: 50000, date: "2026-04-28", purpose: "General Fund" },
+                    { id: "DON-035", donor: "Virat Kohli", amount: 40000, date: "2026-04-25", purpose: "General Fund" },
+                    { id: "DON-036", donor: "MS Dhoni", amount: 25000, date: "2026-04-20", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-037", donor: "Rohit Sharma", amount: 15000, date: "2026-04-15", purpose: "Medical Supplies" },
+                    { id: "DON-038", donor: "Hardik Pandya", amount: 8000, date: "2026-04-10", purpose: "General Fund" },
+                    { id: "DON-039", donor: "KL Rahul", amount: 5000, date: "2026-04-05", purpose: "Medical Supplies" },
+                    { id: "DON-040", donor: "Jasprit Bumrah", amount: 12000, date: "2026-04-02", purpose: "General Fund" },
+                    { id: "DON-041", donor: "Rishabh Pant", amount: 6000, date: "2026-03-28", purpose: "General Fund" },
+                    { id: "DON-042", donor: "Ravindra Jadeja", amount: 4000, date: "2026-03-24", purpose: "Medical Supplies" },
+                    { id: "DON-043", donor: "Shikhar Dhawan", amount: 3000, date: "2026-03-20", purpose: "General Fund" },
+                    { id: "DON-044", donor: "Yuvraj Singh", amount: 5000, date: "2026-03-15", purpose: "General Fund" },
+                    { id: "DON-045", donor: "Suresh Raina", amount: 2000, date: "2026-03-10", purpose: "Medical Supplies" },
+                    { id: "DON-046", donor: "Gautam Gambhir", amount: 1000, date: "2026-03-05", purpose: "General Fund" },
+                    { id: "DON-047", donor: "Zaheer Khan", amount: 1500, date: "2026-02-28", purpose: "Medical Supplies" },
+                    { id: "DON-048", donor: "Harbhajan Singh", amount: 1500, date: "2026-02-20", purpose: "General Fund" },
+                    { id: "DON-049", donor: "Anil Kumble", amount: 1000, date: "2026-02-15", purpose: "General Fund" }
+                ];
+                localStorage.setItem("voiceOfStrayDonations", JSON.stringify(defaultDonations));
+            }
+        }
+
+        // Relative time helper matching reference date 2026-06-18
+        function getRelativeTime(dateStr) {
+            if (dateStr === "2026-06-18") return "Today";
+            if (dateStr === "2026-06-17") return "Yesterday";
+
+            const donationDate = new Date(dateStr + "T00:00:00");
+            const today = new Date("2026-06-18T00:00:00");
+            const diffTime = today - donationDate;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) return "Today";
+            if (diffDays === 1) return "Yesterday";
+            return `${diffDays} days ago`;
+        }
+
+        // Timezone-independent date formatter (returns "DD MMM YYYY")
+        function formatLocalDate(dateStr) {
+            const parts = dateStr.split("-");
+            if (parts.length !== 3) return dateStr;
+            const year = parts[0];
+            const monthIndex = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthName = months[monthIndex] || parts[1];
+            return `${day} ${monthName} ${year}`;
+        }
+
+        // Main calculations and UI renders
+        function calculateAndRender() {
+            initializeDonations();
+
+            const donations = JSON.parse(localStorage.getItem("voiceOfStrayDonations") || "[]");
+
+            // 1. Calculate grand total donations directly from local storage records
+            const grandTotal = donations.reduce((sum, d) => sum + Number(d.amount || d.donationAmount || 0), 0);
+
+            // 2. Calculate donations this month (June 2026) directly from local storage records
+            const juneDonations = donations.filter(d => d.date.startsWith("2026-06"));
+            const monthlyTotal = juneDonations.reduce((sum, d) => sum + Number(d.amount || d.donationAmount || 0), 0);
+
+            // 3. Active Donors (unique contributors) directly from local storage records
+            const uniqueDonors = new Set(donations.map(d => (d.donorEmail || d.donorName || d.donor || '').trim().toLowerCase()));
+            const activeDonorsCount = uniqueDonors.size;
+
+            // 4. Emergency Rescue Fund Progress: goal (1,50,000) directly from local storage records
+            const emergencyDonations = donations.filter(d => d.purpose === "Emergency Rescue Fund" || d.purpose === "Emergency Medical Fund" || d.campaign === "Emergency Medical Fund");
+            const emergencyTotalRaised = emergencyDonations.reduce((sum, d) => sum + Number(d.amount || d.donationAmount || 0), 0);
+            const emergencyGoal = 150000;
+            const progressPercentVal = (emergencyTotalRaised / emergencyGoal) * 100;
+            const progressPercent = parseFloat(progressPercentVal.toFixed(1));
+
+            // Update Metric UI elements
+            document.getElementById("stat-total-donations").textContent = `₹${grandTotal.toLocaleString("en-IN")}`;
+            document.getElementById("stat-monthly-donations").textContent = `₹${monthlyTotal.toLocaleString("en-IN")}`;
+            document.getElementById("stat-active-donors").textContent = activeDonorsCount;
+            document.getElementById("stat-campaign-progress").textContent = `${progressPercent}%`;
+
+            // Update Active Campaign Card details
+            document.getElementById("campaign-raised").textContent = `₹${emergencyTotalRaised.toLocaleString("en-IN")}`;
+            document.getElementById("campaign-progress-label").textContent = `₹${emergencyTotalRaised.toLocaleString("en-IN")} raised of ₹${emergencyGoal.toLocaleString("en-IN")} (${progressPercent}%)`;
+
+            // Wait a brief moment to animate progress bar width (capped at 100%)
+            const barWidth = Math.min(100, progressPercent);
+            setTimeout(() => {
+                const bar = document.getElementById("campaign-progress-bar");
+                if (bar) bar.style.width = `${barWidth}%`;
+            }, 150);
+
+            // 5. Render History Table (sorted by date descending, stable sort preserving insertion order)
+            const tableBody = document.getElementById("donation-history-tbody");
+            if (tableBody) {
+                const sortedDonations = [...donations].sort((a, b) => {
+                    const dateDiff = b.date.localeCompare(a.date);
+                    if (dateDiff !== 0) return dateDiff;
+                    return donations.indexOf(a) - donations.indexOf(b);
+                });
+                if (sortedDonations.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">No donations recorded yet.</td></tr>`;
+                } else {
+                    let tableHtml = "";
+                    sortedDonations.forEach(d => {
+                        const formattedDate = formatLocalDate(d.date);
+                        let purposeVal = d.purpose || d.campaign || "General Fund";
+                        if (purposeVal === "Emergency Medical Fund") purposeVal = "Emergency Rescue Fund";
+                        
+                        let purposeBadgeClass = "review"; // General Fund
+                        if (purposeVal === "Emergency Rescue Fund") purposeBadgeClass = "pending";
+                        if (purposeVal === "Medical Supplies") purposeBadgeClass = "visit";
+
+                        const donorName = d.anonymous ? "Anonymous" : (d.donorName || d.donor || "Anonymous");
+                        const amountVal = d.amount || d.donationAmount || 0;
+
+                        tableHtml += `
+                            <tr>
+                                <td style="font-weight: 700; color: #475569;">${formattedDate}</td>
+                                <td style="font-weight: 700;">${donorName}</td>
+                                <td style="font-weight: 800; color: #15803d;">₹${Number(amountVal).toLocaleString("en-IN")}</td>
+                                <td><span class="status-badge ${purposeBadgeClass}">${purposeVal}</span></td>
+                            </tr>
+                        `;
+                    });
+                    tableBody.innerHTML = tableHtml;
+                }
+            }
+
+            // 6. Render Recent Donations (top 4 latest, stable sort preserving insertion order)
+            const recentContainer = document.getElementById("recent-donations-list");
+            if (recentContainer) {
+                const sortedDonations = [...donations].sort((a, b) => {
+                    const dateDiff = b.date.localeCompare(a.date);
+                    if (dateDiff !== 0) return dateDiff;
+                    return donations.indexOf(a) - donations.indexOf(b);
+                });
+                const topDonations = sortedDonations.slice(0, 4);
+
+                if (topDonations.length === 0) {
+                    recentContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 16px;">No recent activities.</div>`;
+                } else {
+                    let recentHtml = "";
+                    topDonations.forEach(d => {
+                        const donorName = d.anonymous ? "Anonymous" : (d.donorName || d.donor || "Anonymous");
+                        // Generate dynamic initials for donor
+                        const initials = donorName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+                        const relTime = getRelativeTime(d.date);
+                        let purposeVal = d.purpose || d.campaign || "General Fund";
+                        if (purposeVal === "Emergency Medical Fund") purposeVal = "Emergency Rescue Fund";
+                        const amountVal = d.amount || d.donationAmount || 0;
+
+                        recentHtml += `
+                            <div class="recent-item">
+                                <div class="recent-left">
+                                    <div class="recent-avatar">${initials}</div>
+                                    <div class="recent-info">
+                                        <h5>${donorName}</h5>
+                                        <span>${relTime} &bull; ${purposeVal}</span>
+                                    </div>
+                                </div>
+                                <div class="recent-amount">+₹${Number(amountVal).toLocaleString("en-IN")}</div>
+                            </div>
+                        `;
+                    });
+                    recentContainer.innerHTML = recentHtml;
+                }
+            }
+        }
+
+        // Sync counts from other screens onto sidebar badges
+        function syncSidebarBadges() {
+            const storedVolApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            const sidebarVolCountEl = document.getElementById("sidebar-vol-count");
+            if (sidebarVolCountEl) {
+                sidebarVolCountEl.textContent = storedVolApps.length;
+            }
+
+            // Adoption Requests Badge Count
+            const storedAdoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+            const activeAdoptionsCount = storedAdoptions.filter(app => !app.archived && app.status !== "Approved" && app.status !== "Rejected" && app.status !== "Adopted").length;
+            const sidebarAdoptionCountEl = document.getElementById("sidebar-adoption-count");
+            if (sidebarAdoptionCountEl) {
+                sidebarAdoptionCountEl.textContent = activeAdoptionsCount;
+            }
+
+            // Incoming Reports Badge Count
+            const storedReports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const sidebarReportsCountEl = document.getElementById("sidebar-reports-badge");
+            if (sidebarReportsCountEl) {
+                sidebarReportsCountEl.textContent = `${storedReports.length} New`;
+                sidebarReportsCountEl.style.display = storedReports.length > 0 ? "inline-block" : "none";
+            }
+
+            // Active Cases Badge Count
+            let activeCasesCount = 0;
+            try {
+                const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+                Object.keys(casesDb).forEach(id => {
+                    if (casesDb[id] && casesDb[id].statusStep < 6 && casesDb[id].statusStep >= 1) {
+                        activeCasesCount++;
+                    }
+                });
+            } catch(e) {}
+            const sidebarCasesCountEl = document.getElementById("sidebar-cases-badge");
+            if (sidebarCasesCountEl) {
+                sidebarCasesCountEl.textContent = activeCasesCount;
+            }
+        }
+
+        // Submit form handler
+        function handleRecordSubmit(e) {
+            e.preventDefault();
+
+            const donorNameInput = document.getElementById("donor-name");
+            const amountInput = document.getElementById("donation-amount");
+            const purposeSelect = document.getElementById("donation-purpose");
+            const dateInput = document.getElementById("donation-date");
+
+            const donor = donorNameInput.value.trim();
+            const amount = Number(amountInput.value);
+            const purpose = purposeSelect.value;
+            const date = dateInput.value;
+
+            if (!donor || !amount || amount <= 0 || !date) {
+                alert("Please fill out all required fields with valid values.");
+                return;
+            }
+
+            const donations = JSON.parse(localStorage.getItem("voiceOfStrayDonations") || "[]");
+            const donationId = "DON-" + Math.floor(100000 + Math.random() * 900000);
+            
+            const newDonation = {
+                id: donationId, // legacy support
+                donationId: donationId,
+                donor: donor, // legacy support
+                donorName: donor,
+                donorEmail: "",
+                ngo: localStorage.getItem("username") || "Paws Haven NGO",
+                purpose: purpose, // legacy support
+                campaign: purpose,
+                amount: amount,
+                donationType: "One-time",
+                paymentMethod: "Cash/Offline",
+                date: date,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                status: "Completed"
+            };
+
+            donations.unshift(newDonation);
+            localStorage.setItem("voiceOfStrayDonations", JSON.stringify(donations));
+
+            alert(`Successfully recorded a donation of ₹${amount.toLocaleString("en-IN")} from ${donor}!`);
+
+            // Reset inputs and redraw UI
+            document.getElementById("record-donation-form").reset();
+            document.getElementById("donation-date").value = "2026-06-18"; // Reset to standard workspace date
+
+            calculateAndRender();
+        }
+    </script>
+</body>
+
+</html>
