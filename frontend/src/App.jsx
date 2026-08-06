@@ -12,6 +12,7 @@ import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import UserDashboard from './pages/UserDashboard.jsx';
 import NgoDashboard from './pages/NgoDashboard.jsx';
+import UiShowroom from './pages/UiShowroom.jsx';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="user-dashboard" element={<UserDashboard />} />
           <Route path="ngo-dashboard" element={<NgoDashboard />} />
+          <Route path="ui-showroom" element={<UiShowroom />} />
         </Route>
       </Routes>
     </BrowserRouter>
