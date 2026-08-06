@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({
     name: 'Arjun',
@@ -171,18 +173,18 @@ export default function Navbar() {
   return (
     <nav className="navbar" style={{ position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
       <div className="nav-container">
-        <div className="logo" style={{ cursor: 'pointer' }} onClick={() => window.location.href = '/'}>
+        <Link to="/" className="logo">
           <i className="ph-fill ph-paw-print"></i>
           <span>Voice of Stray</span>
-        </div>
+        </Link>
         <div className="nav-links">
-          <a href="/" className={getActiveClass('/')}>Home</a>
-          <a href="/community.html" className={getActiveClass('/community.html')}>Community</a>
-          <a href="/report.html" className={getActiveClass('/report.html')}>Report</a>
-          <a href="/rescue.html" className={getActiveClass('/rescue.html')}>Rescue</a>
-          <a href="/adopt.html" className={getActiveClass('/adopt.html')}>Adopt</a>
-          <a href="/donate.html" className={getActiveClass('/donate.html')}>Donate</a>
-          <a href="/volunteer.html" className={getActiveClass('/volunteer.html')}>Volunteer</a>
+          <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} end>Home</NavLink>
+          <NavLink to="/community" className={({ isActive }) => isActive ? 'active' : ''}>Community</NavLink>
+          <NavLink to="/report" className={({ isActive }) => isActive ? 'active' : ''}>Report</NavLink>
+          <NavLink to="/rescue" className={({ isActive }) => isActive ? 'active' : ''}>Rescue</NavLink>
+          <NavLink to="/adopt" className={({ isActive }) => isActive ? 'active' : ''}>Adopt</NavLink>
+          <NavLink to="/donate" className={({ isActive }) => isActive ? 'active' : ''}>Donate</NavLink>
+          <NavLink to="/volunteer" className={({ isActive }) => isActive ? 'active' : ''}>Volunteer</NavLink>
         </div>
 
         {/* Guest Actions */}
@@ -200,7 +202,7 @@ export default function Navbar() {
           /* Logged-In Actions */
           <div className="nav-actions logged-in-actions" style={{ display: 'flex' }}>
             {user.role !== 'ngo' && (
-              <button className="icon-btn saved-pets-btn" onClick={() => window.location.href = '/adopt.html'}>
+              <button className="icon-btn saved-pets-btn" onClick={() => navigate('/adopt')}>
                 <i className="ph ph-heart"></i>
                 <span className="badge-counter">3</span>
               </button>
