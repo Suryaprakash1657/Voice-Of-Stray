@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Adoption Application - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="adopt-apply.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+</head>
+
+<body>
+    <!-- Background Sparkles -->
+    <div class="bg-decorations">
+        <svg class="decor-item sparkle" style="top: 15%; left: 8%; width: 40px; height: 40px;" viewBox="0 0 256 256">
+            <path
+                d="M243,128.5A115,115,0,0,1,128.5,243,115,115,0,0,1,14,128.5,115,115,0,0,1,128.5,14,115,115,0,0,1,243,128.5Z"
+                fill="none" stroke="currentColor" stroke-width="16" />
+            <path d="M128,80v96M80,128h96" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" />
+        </svg>
+        <svg class="decor-item sparkle" style="top: 60%; right: 5%; width: 50px; height: 50px;" viewBox="0 0 256 256">
+            <path
+                d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" />
+        </svg>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html" class="active">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+                <button class="icon-btn"><i class="ph ph-bell"></i></button>
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=User&background=f97316&color=fff" alt="User Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace Container -->
+    <main style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative;">
+
+        <!-- Main Form split container -->
+        <div class="apply-container" id="application-content-grid">
+
+            <!-- Left Column: Fields and Questionnaires -->
+            <div class="form-column">
+
+                <!-- 1. Pet Summary Header Card -->
+                <section class="card" style="padding: 24px;">
+                    <div class="pet-summary-flex">
+                        <div class="pet-summary-img">
+                            <img id="pet-summary-image"
+                                src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200"
+                                alt="Charlie">
+                        </div>
+                        <div class="pet-summary-info">
+                            <span class="pet-summary-badge">Adoption Application</span>
+                            <h2 id="pet-summary-name">Charlie</h2>
+                            <div class="pet-summary-vitals">
+                                <span id="pet-summary-breed">Golden Retriever Mix</span> •
+                                <span id="pet-summary-age">2 Years Old</span> •
+                                <span id="pet-summary-gender">Male</span>
+                            </div>
+                            <div class="pet-summary-ngo">
+                                <i class="ph-fill ph-shield-heart"></i>
+                                <span id="pet-summary-ngo-name">City Rescue NGO</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pet-summary-message">
+                        <i class="ph-fill ph-sparkles"></i>
+                        <span>You're one step closer to giving <strong id="pet-message-name">Charlie</strong> a loving
+                            forever home.</span>
+                    </div>
+                </section>
+
+                <form id="adoption-form" onsubmit="handleFormSubmission(event)">
+                    <!-- 2. Applicant Information -->
+                    <section class="card">
+                        <h3 class="card-title">
+                            <i class="ph-fill ph-user-circle"></i>
+                            <span>Applicant Information</span>
+                        </h3>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="txt-name">Full Name <span class="required">*</span></label>
+                                <input type="text" id="txt-name" class="form-input" placeholder="e.g. Arjun Dev"
+                                    required oninput="checkFormValidity()">
+                            </div>
+                            <div class="form-group">
+                                <label for="txt-email">Email Address <span class="required">*</span></label>
+                                <input type="email" id="txt-email" class="form-input"
+                                    placeholder="e.g. arjun@example.com" required oninput="checkFormValidity()">
+                            </div>
+                            <div class="form-group">
+                                <label for="txt-phone">Phone Number <span class="required">*</span></label>
+                                <input type="tel" id="txt-phone" class="form-input" placeholder="e.g. +91 98765 43210"
+                                    required oninput="checkFormValidity()">
+                            </div>
+                            <div class="form-group">
+                                <label for="txt-city">City <span class="required">*</span></label>
+                                <input type="text" id="txt-city" class="form-input" placeholder="e.g. Mumbai" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="txt-occupation">Occupation</label>
+                                <input type="text" id="txt-occupation" class="form-input"
+                                    placeholder="e.g. Software Engineer">
+                            </div>
+                            <div class="form-group">
+                                <label for="txt-age">Age <span class="required">*</span></label>
+                                <input type="number" id="txt-age" class="form-input" placeholder="e.g. 28" min="18"
+                                    required>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 3. Home & Lifestyle Information -->
+                    <section class="card">
+                        <h3 class="card-title">
+                            <i class="ph-fill ph-house-line"></i>
+                            <span>Living Environment</span>
+                        </h3>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Do you own or rent your home? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label>
+                                        <input type="radio" name="home-own" value="own" checked>
+                                        <span class="radio-tile"><i class="ph ph-house"></i> Own Home</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="home-own" value="rent">
+                                        <span class="radio-tile"><i class="ph ph-key"></i> Rent Home</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Do you have a yard? <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label>
+                                        <input type="radio" name="home-yard" value="yes" checked>
+                                        <span class="radio-tile"><i class="ph ph-tree"></i> Yes</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="home-yard" value="no">
+                                        <span class="radio-tile"><i class="ph ph-x"></i> No</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group span-2">
+                                <label>Do you currently own pets? <span class="required">*</span></label>
+                                <div class="radio-group" style="grid-template-columns: repeat(2, 1fr);">
+                                    <label>
+                                        <input type="radio" name="own-pets" value="yes">
+                                        <span class="radio-tile"><i class="ph ph-paw-print"></i> Yes</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="own-pets" value="no" checked>
+                                        <span class="radio-tile"><i class="ph ph-x"></i> No</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group span-2 sliding-desc-wrap" id="pets-desc-wrap">
+                                <label for="txt-pets-desc">Describe your current pets (species, breed, age,
+                                    temperament)</label>
+                                <textarea id="txt-pets-desc" class="form-textarea"
+                                    placeholder="e.g. We have a 4-year old calm neutered indie dog named Bruno..."></textarea>
+                            </div>
+                            <div class="form-group span-2">
+                                <label>Do you have children at home? <span class="required">*</span></label>
+                                <div class="radio-group" style="grid-template-columns: repeat(2, 1fr);">
+                                    <label>
+                                        <input type="radio" name="kids-home" value="yes">
+                                        <span class="radio-tile"><i class="ph ph-baby"></i> Yes</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="kids-home" value="no" checked>
+                                        <span class="radio-tile"><i class="ph ph-x"></i> No</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 4. Adoption Questionnaire -->
+                    <section class="card">
+                        <h3 class="card-title">
+                            <i class="ph-fill ph-notepad"></i>
+                            <span>Tell Us About Yourself</span>
+                        </h3>
+                        <div class="form-group">
+                            <label for="txt-why-adopt">Why do you want to adopt this pet? <span
+                                    class="required">*</span></label>
+                            <textarea id="txt-why-adopt" class="form-textarea" rows="4"
+                                placeholder="Share what connected you to this pet and why you'd like to bring them home..."
+                                required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt-alone-hours">How many hours will the pet be left alone each day? <span
+                                    class="required">*</span></label>
+                            <input type="text" id="txt-alone-hours" class="form-input"
+                                placeholder="e.g. 2-3 hours, or someone is always at home" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt-owned-before">Have you owned pets before? <span
+                                    class="required">*</span></label>
+                            <textarea id="txt-owned-before" class="form-textarea" rows="3"
+                                placeholder="Briefly share your experience raising animals..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt-emergencies">How will you handle medical emergencies? <span
+                                    class="required">*</span></label>
+                            <textarea id="txt-emergencies" class="form-textarea" rows="3"
+                                placeholder="e.g. Access to local 24/7 vets, pet insurance, dedicated savings..."
+                                required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt-adjust-plan">How will you help the pet adjust to its new home? <span
+                                    class="required">*</span></label>
+                            <textarea id="txt-adjust-plan" class="form-textarea" rows="4"
+                                placeholder="Describe the patience, slow introduction, safe spaces, or schedules you will provide during the first few weeks..."
+                                required></textarea>
+                        </div>
+                    </section>
+
+                    <!-- 5. Commitment Checklist -->
+                    <section class="card">
+                        <h3 class="card-title">
+                            <i class="ph-fill ph-shield-check"></i>
+                            <span>Adoption Commitment</span>
+                        </h3>
+                        <div class="checklist-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="chk-term" required onchange="checkFormValidity()">
+                                <span class="custom-checkbox"><i class="ph-bold ph-check"></i></span>
+                                <span>I understand pet adoption is a long-term commitment (10-15+ years).</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="chk-care" required onchange="checkFormValidity()">
+                                <span class="custom-checkbox"><i class="ph-bold ph-check"></i></span>
+                                <span>I agree to provide high-quality food, shelter, safety, and necessary medical
+                                    care.</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="chk-reject" required onchange="checkFormValidity()">
+                                <span class="custom-checkbox"><i class="ph-bold ph-check"></i></span>
+                                <span>I understand that NGO shelters review applications thoroughly and hold the right
+                                    to reject requests in the pet's best interest.</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="chk-accurate" required onchange="checkFormValidity()">
+                                <span class="custom-checkbox"><i class="ph-bold ph-check"></i></span>
+                                <span>I agree to provide accurate and truthful information throughout this
+                                    application.</span>
+                            </label>
+                        </div>
+                    </section>
+                </form>
+            </div>
+
+            <!-- Right Column: Sticky review dashboard & actions -->
+            <aside class="sidebar-column">
+                <div class="card sticky-card" style="border-top: 4px solid var(--primary);">
+                    <h3
+                        style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Review Summary</h3>
+
+                    <div class="review-row">
+                        <span class="review-label">Selected Pet</span>
+                        <strong id="review-pet-name">Charlie</strong>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Shelter / NGO</span>
+                        <strong id="review-ngo-name">City Rescue NGO</strong>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Application Type</span>
+                        <strong>Adoption Request</strong>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Status</span>
+                        <span class="status-badge" id="review-status">Ready to Submit</span>
+                    </div>
+
+                    <div class="review-actions-block">
+                        <button type="submit" form="adoption-form" class="btn-submit-large" id="btn-submit-app"
+                            disabled>
+                            <span>Submit Adoption Request</span>
+                            <i class="ph-bold ph-paper-plane-right"></i>
+                        </button>
+                        <button type="button" class="btn-back-large" id="btn-back-profile"
+                            onclick="handleCancelClick()">
+                            <i class="ph ph-arrow-left"></i>
+                            <span>Back to Pet Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- Success Confirmation View Card (Centered, Initially Hidden) -->
+        <div id="success-view-container"
+            style="display: none; padding: 0 24px; width: 100%; position: relative; z-index: 2;">
+            <div class="success-card">
+                <div class="success-icon-wrap">
+                    <i class="ph-bold ph-check"></i>
+                </div>
+                <h2>Application Submitted!</h2>
+                <p class="success-highlight">Your adoption application has been submitted successfully.</p>
+                <p class="success-details">NGO reviewers will assess your application and contact you if additional
+                    information is needed.</p>
+
+                <div class="success-actions">
+                    <button class="btn-premium primary" style="padding: 12px 28px; font-size: 0.95rem;"
+                        onclick="window.location.href='adopt.html'">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <span>Browse More Pets</span>
+                    </button>
+                    <button class="btn-premium secondary"
+                        style="padding: 12px 28px; font-size: 0.95rem; border: 1.5px solid var(--border);"
+                        onclick="window.location.href='user-dashboard.html'">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Go to Dashboard</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Shared Footer -->
+    <div
+        style="text-align: center; padding: 40px 20px 40px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); position: relative; z-index: 1;">
+        <p>&copy; 2026 Voice of Stray Adoption Portal</p>
+    </div>
+
+    <!-- CLIENT CONTROLLER SCRIPT -->
+    <script>
+        const defaultPet = {
+            name: "Charlie",
+            breed: "Golden Retriever Mix",
+            age: "2 Years Old",
+            gender: "Male",
+            ngoName: "City Rescue NGO",
+            ngoInitials: "CR",
+            images: {
+                main: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800"
+            }
+        };
+
+        let currentPet = defaultPet;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Strict Auth Guard
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            if (!isLoggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+            const role = localStorage.getItem("role") || "user";
+            if (role === "ngo") {
+                window.location.href = "ngo-dashboard.html";
+                return;
+            }
+
+            // Sync user details to applicant fields if they exist
+            const storedName = localStorage.getItem("username") || "";
+            const storedEmail = localStorage.getItem("email") || "";
+
+            document.getElementById("txt-name").value = storedName;
+            document.getElementById("txt-email").value = storedEmail;
+
+            const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+            if (storedProfile) {
+                try {
+                    const profile = JSON.parse(storedProfile);
+                    if (profile.phone) document.getElementById("txt-phone").value = profile.phone;
+                    if (profile.city) document.getElementById("txt-city").value = profile.city;
+                    if (profile.occupation) document.getElementById("txt-occupation").value = profile.occupation;
+                    if (profile.age) document.getElementById("txt-age").value = profile.age;
+                } catch (e) {}
+            }
+
+            // Load pet details context from localStorage
+            const savedPet = localStorage.getItem("voiceOfStrayCurrentPet");
+            if (savedPet) {
+                try {
+                    currentPet = JSON.parse(savedPet);
+                } catch (e) {
+                    console.error("Error loading pet details context", e);
+                }
+            }
+
+            renderPetSummary();
+            checkFormValidity();
+            setupRadioListeners();
+        });
+
+        // Populate Pet info in cards
+        function renderPetSummary() {
+            document.getElementById("pet-summary-name").textContent = currentPet.name || "Stray Companion";
+            document.getElementById("pet-message-name").textContent = currentPet.name || "Stray Companion";
+            document.getElementById("pet-summary-breed").textContent = currentPet.breed || "Companion Breed";
+            document.getElementById("pet-summary-age").textContent = currentPet.age || "Age Unspecified";
+            document.getElementById("pet-summary-gender").textContent = currentPet.gender || "Gender Unspecified";
+
+            const ngoName = currentPet.ngoName || "City Rescue NGO";
+            document.getElementById("pet-summary-ngo-name").textContent = ngoName;
+
+            const petImg = currentPet.images.main || "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800";
+            document.getElementById("pet-summary-image").src = petImg;
+
+            // Sidebar summaries
+            document.getElementById("review-pet-name").textContent = currentPet.name || "Stray Companion";
+            document.getElementById("review-ngo-name").textContent = ngoName;
+        }
+
+        // Custom Pet ownership textarea revealer toggling
+        function setupRadioListeners() {
+            document.querySelectorAll('input[name="own-pets"]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const descWrap = document.getElementById('pets-desc-wrap');
+                    if (e.target.value === 'yes') {
+                        descWrap.style.display = 'block';
+                    } else {
+                        descWrap.style.display = 'none';
+                        document.getElementById("txt-pets-desc").value = "";
+                    }
+                });
+            });
+        }
+
+        // Live validation status checks to enable submit buttons
+        function checkFormValidity() {
+            const chk1 = document.getElementById("chk-term").checked;
+            const chk2 = document.getElementById("chk-care").checked;
+            const chk3 = document.getElementById("chk-reject").checked;
+            const chk4 = document.getElementById("chk-accurate").checked;
+
+            const nameVal = document.getElementById("txt-name").value.trim();
+            const emailVal = document.getElementById("txt-email").value.trim();
+            const phoneVal = document.getElementById("txt-phone").value.trim();
+
+            const submitBtn = document.getElementById("btn-submit-app");
+
+            const isValid = (chk1 && chk2 && chk3 && chk4 && nameVal !== "" && emailVal !== "" && phoneVal !== "");
+            submitBtn.disabled = !isValid;
+
+            const statusLabel = document.getElementById("review-status");
+            if (isValid) {
+                statusLabel.textContent = "Ready to Submit";
+                statusLabel.style.background = "#dcfce7";
+                statusLabel.style.color = "#15803d";
+                statusLabel.style.borderColor = "#bbf7d0";
+            } else {
+                statusLabel.textContent = "Form Incomplete";
+                statusLabel.style.background = "#fff1f2";
+                statusLabel.style.color = "#e11d48";
+                statusLabel.style.borderColor = "#fecdd3";
+            }
+        }
+
+        // Handle profile cancellation redirection
+        function handleCancelClick() {
+            const previewMode = new URLSearchParams(window.location.search).get("preview") === "true";
+            if (previewMode) {
+                window.location.href = "pet-details.html?preview=true";
+            } else {
+                window.location.href = "pet-details.html";
+            }
+        }
+
+        // Form submission database insertion
+        function handleFormSubmission(event) {
+            event.preventDefault();
+
+            const nameVal = document.getElementById("txt-name").value.trim();
+            const emailVal = document.getElementById("txt-email").value.trim();
+            const phoneVal = document.getElementById("txt-phone").value.trim();
+            const cityVal = document.getElementById("txt-city").value.trim();
+            const occupationVal = document.getElementById("txt-occupation").value.trim();
+            const ageVal = document.getElementById("txt-age").value.trim();
+
+            const ownRent = document.querySelector('input[name="home-own"]:checked').value;
+            const hasYard = document.querySelector('input[name="home-yard"]:checked').value;
+            const hasPets = document.querySelector('input[name="own-pets"]:checked').value;
+            const petsDesc = document.getElementById("txt-pets-desc").value.trim();
+            const hasKids = document.querySelector('input[name="kids-home"]:checked').value;
+
+            const whyAdopt = document.getElementById("txt-why-adopt").value.trim();
+            const aloneHours = document.getElementById("txt-alone-hours").value.trim();
+            const ownedBefore = document.getElementById("txt-owned-before").value.trim();
+            const emergencies = document.getElementById("txt-emergencies").value.trim();
+            const adjustPlan = document.getElementById("txt-adjust-plan").value.trim();
+
+            const appID = "APPL-" + Math.floor(1000 + Math.random() * 9000);
+
+            // Construct new application model
+            const newApplication = {
+                id: appID,
+                petName: currentPet.name || "Stray Companion",
+                breed: currentPet.breed || "Companion Breed",
+                ngoName: currentPet.ngoName || "City Rescue NGO",
+                ngoInitials: currentPet.ngoInitials || "CR",
+                applicantName: nameVal,
+                applicantEmail: emailVal,
+                applicantPhone: phoneVal,
+                city: cityVal,
+                occupation: occupationVal,
+                age: ageVal,
+                ownRent: ownRent,
+                hasYard: hasYard,
+                hasPets: hasPets,
+                petsDesc: petsDesc,
+                hasKids: hasKids,
+                whyAdopt: whyAdopt,
+                aloneHours: aloneHours,
+                ownedBefore: ownedBefore,
+                emergencies: emergencies,
+                adjustPlan: adjustPlan,
+                status: "Pending Review",
+                date: new Date().toLocaleDateString()
+            };
+
+            // Save inside localStorage databases (voiceOfStrayAdoptions list)
+            const adoptionsStr = localStorage.getItem("voiceOfStrayAdoptions") || "[]";
+            let adoptions = [];
+            try {
+                adoptions = JSON.parse(adoptionsStr);
+            } catch (e) { }
+
+            adoptions.unshift(newApplication);
+            localStorage.setItem("voiceOfStrayAdoptions", JSON.stringify(adoptions));
+
+            // Push dynamic user dashboard unread notification
+            const notificationsStr = localStorage.getItem("voiceOfStrayNotifications") || "[]";
+            let notifications = [];
+            try {
+                notifications = JSON.parse(notificationsStr);
+            } catch (e) { }
+
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-check-circle",
+                message: `Adoption application for **${newApplication.petName}** has been successfully submitted!`,
+                time: "Just now",
+                unread: true
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            // Visual layout fadeIn transitions to success screen card
+            document.getElementById("application-content-grid").style.display = "none";
+            document.getElementById("success-view-container").style.display = "block";
+
+            // Scroll success container to view smoothly
+            document.getElementById("success-view-container").scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>

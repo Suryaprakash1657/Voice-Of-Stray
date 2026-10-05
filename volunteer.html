@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer - Voice of Stray</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="volunteer.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <i class="ph-bold ph-list"></i>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html" class="active">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Emergency Banner -->
+    <div style="max-width: 1200px; margin: 32px auto 0; padding: 0 24px;">
+        <div class="emergency-banner fade-in">
+            <h2><i class="ph-fill ph-warning-circle"></i> Emergency Volunteers Needed Tonight</h2>
+            <p>Due to severe weather conditions, we urgently need transport volunteers and temporary fosters to move strays from flood-prone zones to our sanctuaries.</p>
+            <div class="emergency-actions">
+                <button class="btn-white open-modal-btn" data-modal="volunteer-modal">Join Emergency Team</button>
+                <button class="btn-outline-white open-modal-btn" data-modal="foster-modal">Become Foster Parent</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="volunteer-main">
+        <!-- 1. Hero Section -->
+        <section class="volunteer-hero fade-in">
+            <div class="hero-stats-floating left">
+                <i class="ph-fill ph-check-circle" style="color: #10b981; font-size: 1.2rem;"></i> 12k+ Rescues
+            </div>
+            <div class="hero-stats-floating right">
+                <i class="ph-fill ph-map-pin" style="color: var(--primary); font-size: 1.2rem;"></i> Active in 50+ Cities
+            </div>
+            <h1>Join the Rescue Ecosystem</h1>
+            <p>Empowering heroes and organizations to build a world where no animal is left behind.</p>
+            
+            <div class="hero-ctas">
+                <button class="btn-hero primary open-modal-btn" data-modal="volunteer-modal">Join as Volunteer</button>
+                <button class="btn-hero outline open-modal-btn" data-modal="ngo-modal">Partner as NGO</button>
+            </div>
+            
+            <div class="hero-stats-grid">
+                <div class="stat-card hover-lift">
+                    <div class="stat-icon"><i class="ph-fill ph-users"></i></div>
+                    <div class="stat-value counter" data-target="1240">0</div>
+                    <div class="stat-label">Volunteers Nearby</div>
+                </div>
+                <div class="stat-card green hover-lift">
+                    <div class="stat-icon"><i class="ph-fill ph-heartbeat"></i></div>
+                    <div class="stat-value counter" data-target="15420">0</div>
+                    <div class="stat-label">Total Lives Saved</div>
+                </div>
+                <div class="stat-card blue hover-lift">
+                    <div class="stat-icon"><i class="ph-fill ph-buildings"></i></div>
+                    <div class="stat-value counter" data-target="85">0</div>
+                    <div class="stat-label">Partner NGOs</div>
+                </div>
+                <div class="stat-card brown hover-lift">
+                    <div class="stat-icon"><i class="ph-fill ph-trend-up"></i></div>
+                    <div class="stat-value counter" data-target="98" data-suffix="%">0</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Choose Your Role -->
+        <section class="fade-in" id="role-selection-section">
+            <div class="section-header-center">
+                <h2>Choose Your Role</h2>
+                <p>Select how you want to contribute to the mission</p>
+            </div>
+            
+            <div class="role-grid" id="role-selection-grid">
+                <!-- Individual Rescuer -->
+                <div class="role-card hover-lift">
+                    <div class="role-header">
+                        <div class="role-title-area">
+                            <div class="role-icon"><i class="ph-fill ph-user"></i></div>
+                            <div class="role-title">
+                                <h3>Individual Rescuer</h3>
+                                <p>Emergency responder & helper</p>
+                            </div>
+                        </div>
+                        <div class="role-badge badge-orange"><i class="ph-fill ph-check-circle"></i> Verified Rescuer</div>
+                    </div>
+                    
+                    <div class="step-label"><div class="step-num">1</div> SELECT YOUR SKILLS</div>
+                    <div class="skills-container" id="skills-list">
+                        <div class="skill-chip active"><i class="ph-bold ph-first-aid"></i> First Aid</div>
+                        <div class="skill-chip"><i class="ph-bold ph-car"></i> Driving</div>
+                        <div class="skill-chip"><i class="ph-bold ph-camera"></i> Photography</div>
+                        <div class="skill-chip"><i class="ph-bold ph-house"></i> Fostering</div>
+                        <div class="skill-chip add-new"><i class="ph-bold ph-plus"></i></div>
+                    </div>
+                    
+                    <div class="step-label"><div class="step-num">2</div> SET AVAILABILITY & ZONE</div>
+                    
+                    <div class="availability-selector">
+                        <div class="avail-btn">Weekdays</div>
+                        <div class="avail-btn active">Weekends</div>
+                        <div class="avail-btn">Anytime</div>
+                    </div>
+                    
+                    <div class="emergency-toggle">
+                        <div class="emergency-toggle-text">
+                            <h4>Emergency Alerts Only</h4>
+                            <p>Only notify me for critical, life-threatening rescues.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="map-zone img-zoom-container">
+                        <div class="map-overlay-circle"></div>
+                        <div class="radius-badge">Radius: 5km</div>
+                    </div>
+                    
+                    <button class="btn-full orange open-modal-btn" data-modal="volunteer-modal">Submit Rescuer Profile</button>
+                </div>
+                
+                <!-- NGO Partner -->
+                <div class="role-card ngo hover-lift">
+                    <div class="role-header">
+                        <div class="role-title-area">
+                            <div class="role-icon"><i class="ph-fill ph-buildings"></i></div>
+                            <div class="role-title">
+                                <h3>NGO Partner</h3>
+                                <p>Registered Welfare Group</p>
+                            </div>
+                        </div>
+                        <div class="role-badge badge-green"><i class="ph-fill ph-shield-check"></i> Registered NGO</div>
+                    </div>
+                    
+                    <div class="step-label"><div class="step-num">1</div> ORGANIZATION VERIFICATION</div>
+                    <div class="docs-grid">
+                        <div class="doc-card">
+                            <i class="ph-fill ph-shield-check"></i>
+                            <h4>Legal Docs</h4>
+                            <p>501(c)(3) or equivalent</p>
+                        </div>
+                        <div class="doc-card">
+                            <i class="ph-fill ph-bank"></i>
+                            <h4>Financials</h4>
+                            <p>Transparency reports</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-upload"><i class="ph-bold ph-upload-simple"></i> Upload Required Documents</button>
+                    
+                    <div class="ngo-benefits">
+                        <ul>
+                            <li><i class="ph-bold ph-check"></i> Access to verified rescue network</li>
+                            <li><i class="ph-bold ph-check"></i> Receive verified emergency alerts</li>
+                            <li><i class="ph-bold ph-check"></i> Direct funding distribution</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="step-label"><div class="step-num">2</div> ONBOARDING PROGRESS</div>
+                    <div class="onboarding-progress">
+                        <div class="progress-icon">
+                            <i class="ph-fill ph-paw-print"></i>
+                            <div class="progress-check"><i class="ph-bold ph-check"></i></div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-header">
+                                <span>PROGRESS</span>
+                                <span>61%</span>
+                            </div>
+                            <div class="p-bar">
+                                <div class="p-fill" style="width: 61%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-full blue open-modal-btn" data-modal="ngo-modal">Begin NGO Verification</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Impact Dashboard -->
+        <section class="fade-in">
+            <div class="section-header-split">
+                <div class="header-text">
+                    <h2>Impact Dashboard</h2>
+                    <p>A glimpse of your personal or organization's journey</p>
+                </div>
+                <a href="#" class="view-link">Full Report <i class="ph-bold ph-arrow-right"></i></a>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dash-card hover-lift">
+                    <div class="dash-icon-row">
+                        <div class="dash-icon orange"><i class="ph-fill ph-clock-counter-clockwise"></i></div>
+                        <div class="dash-trend green">+ 12% vs last month</div>
+                    </div>
+                    <div class="dash-value counter" data-target="24">0</div>
+                    <div class="dash-label">Active Cases Handled</div>
+                    <div class="mini-chart">
+                        <div class="mini-bar" style="height: 30%;"></div>
+                        <div class="mini-bar" style="height: 50%;"></div>
+                        <div class="mini-bar" style="height: 70%;"></div>
+                        <div class="mini-bar" style="height: 60%;"></div>
+                        <div class="mini-bar active" style="height: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div class="dash-card hover-lift">
+                    <div class="dash-icon-row">
+                        <div class="dash-icon blue"><i class="ph-fill ph-heart"></i></div>
+                        <div class="dash-trend green">95% Positive Feedback</div>
+                    </div>
+                    <div class="dash-value counter" data-target="186">0</div>
+                    <div class="dash-label">Animals Rehomed</div>
+                    <div class="mini-chart">
+                        <div class="mini-bar" style="height: 40%;"></div>
+                        <div class="mini-bar" style="height: 60%;"></div>
+                        <div class="mini-bar" style="height: 30%;"></div>
+                        <div class="mini-bar" style="height: 80%;"></div>
+                        <div class="mini-bar active" style="height: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div class="dash-card hover-lift">
+                    <div class="dash-icon-row">
+                        <div class="dash-icon green"><i class="ph-fill ph-clock"></i></div>
+                        <div class="dash-trend green">Top 10% Contributor</div>
+                    </div>
+                    <div class="dash-value counter" data-target="320">0</div>
+                    <div class="dash-label">Hours Contributed</div>
+                    <div class="mini-chart">
+                        <div class="mini-bar" style="height: 50%;"></div>
+                        <div class="mini-bar" style="height: 70%;"></div>
+                        <div class="mini-bar" style="height: 90%;"></div>
+                        <div class="mini-bar active" style="height: 100%;"></div>
+                        <div class="mini-bar" style="height: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-row-2">
+                <div class="dash-card hover-lift" style="justify-content: flex-start;">
+                    <div class="activity-title" style="margin-bottom: 8px;">RECENT ACTIVITY</div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="act-icon"><i class="ph-fill ph-star" style="color: var(--primary);"></i></div>
+                            <div class="act-details">
+                                <h4>Stray Rescue NYC-402</h4>
+                                <p>2 days ago • Completed</p>
+                            </div>
+                            <div class="act-status green"><i class="ph-bold ph-check-circle"></i></div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="act-icon"><i class="ph-fill ph-first-aid" style="color: #3b82f6;"></i></div>
+                            <div class="act-details">
+                                <h4>Medical Aid Request</h4>
+                                <p>5 days ago • In Review</p>
+                            </div>
+                            <div class="act-status gray"><i class="ph-bold ph-dots-three-circle"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Global Impact -->
+        <section class="fade-in">
+            <div class="section-header-split">
+                <div class="header-text">
+                    <h2>Global Impact</h2>
+                </div>
+            </div>
+            
+            <div class="global-impact-grid">
+                <div class="impact-main-card img-zoom-container hover-lift">
+                    <img src="https://images.unsplash.com/photo-1593134257782-e89567b7718a?auto=format&fit=crop&q=80&w=1200" alt="Rescuers" class="impact-img">
+                    <div class="map-pin" style="top: 25%; left: 30%;"></div>
+                    <div class="map-pin" style="top: 45%; left: 60%; animation-delay: 0.5s;"></div>
+                    <div class="map-pin" style="top: 65%; left: 40%; animation-delay: 1s;"></div>
+                    <div class="map-pin" style="top: 35%; left: 75%; animation-delay: 1.5s;"></div>
+                    <div class="impact-overlay">
+                        <h3><span class="counter" data-target="4200">0</span>+ Lives Saved</h3>
+                        <p>Our partner network provides critical medical care to strays in record time across 12 countries.</p>
+                    </div>
+                </div>
+                
+                <div class="impact-side-cards">
+                    <div class="side-card orange hover-lift">
+                        <div class="side-icon"><i class="ph-fill ph-users"></i></div>
+                        <h3><span class="counter" data-target="850">0</span> Volunteers</h3>
+                        <p>Active on the ground today</p>
+                    </div>
+                    <div class="side-card green hover-lift">
+                        <div class="side-icon"><i class="ph-fill ph-handshake"></i></div>
+                        <h3><span class="counter" data-target="120">0</span> NGOs</h3>
+                        <p>Certified for transparency</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Volunteer Opportunities -->
+        <section class="fade-in">
+            <div class="section-header-split">
+                <div class="header-text">
+                    <h2>Volunteer Opportunities</h2>
+                    <p>Real-time help needed in your area.</p>
+                </div>
+                <a href="#" class="view-link">View Map <i class="ph-bold ph-map-trifold"></i></a>
+            </div>
+            
+            <div class="opportunities-filter" id="opp-filter">
+                <button class="filter-btn active" data-filter="all">All Needs</button>
+                <button class="filter-btn" data-filter="rescue">Rescue</button>
+                <button class="filter-btn" data-filter="foster">Foster</button>
+                <button class="filter-btn" data-filter="feeding">Feeding Drive</button>
+            </div>
+            
+            <div class="opportunities-grid">
+                <!-- Opp 1 -->
+                <div class="opp-card hover-lift" data-category="rescue">
+                    <div class="opp-header">
+                        <span class="opp-badge badge-urgent">Emergency Rescue</span>
+                        <i class="ph-fill ph-warning-circle" style="color: var(--alert); font-size: 1.5rem;"></i>
+                    </div>
+                    <h3 class="opp-title">Dog stuck in drain</h3>
+                    <div class="opp-details">
+                        <div class="opp-detail-row"><i class="ph-fill ph-map-pin"></i> 5th Avenue, Brooklyn</div>
+                        <div class="opp-detail-row"><i class="ph-fill ph-clock"></i> Now (Urgent)</div>
+                        <div class="opp-detail-row"><i class="ph-fill ph-buildings"></i> Paws Rescue NYC</div>
+                    </div>
+                    <div class="opp-footer">
+                        <span class="volunteers-needed">1 / 3 Volunteers</span>
+                        <button class="btn-accept">Accept Task</button>
+                    </div>
+                </div>
+                <!-- Opp 2 -->
+                <div class="opp-card hover-lift" data-category="foster">
+                    <div class="opp-header">
+                        <span class="opp-badge badge-normal">Foster Needed</span>
+                        <i class="ph-fill ph-house" style="color: #3b82f6; font-size: 1.5rem;"></i>
+                    </div>
+                    <h3 class="opp-title">Kitten litter recovery</h3>
+                    <div class="opp-details">
+                        <div class="opp-detail-row"><i class="ph-fill ph-map-pin"></i> Bronx Shelter</div>
+                        <div class="opp-detail-row"><i class="ph-fill ph-clock"></i> Next 4 weeks</div>
+                        <div class="opp-detail-row"><i class="ph-fill ph-buildings"></i> Feline Friends</div>
+                    </div>
+                    <div class="opp-footer">
+                        <span class="volunteers-needed">0 / 1 Fosters</span>
+                        <button class="btn-accept" style="background: #3b82f6;">Accept Task</button>
+                    </div>
+                </div>
+                <!-- Opp 3 -->
+                <div class="opp-card hover-lift" data-category="feeding">
+                    <div class="opp-header">
+                        <span class="opp-badge badge-normal">Feeding Drive</span>
+                        <i class="ph-fill ph-bone" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    </div>
+                    <h3 class="opp-title">Weekend community feed</h3>
+                    <div class="opp-details">
+                        <div class="opp-detail-row"><i class="ph-fill ph-map-pin"></i> Central Park South</div>
+                        <div class="opp-detail-row"><i class="ph-fill ph-clock"></i> Saturday, 8 AM</div>
+                        <div class="opp-detail-row"><i class="ph-fill ph-buildings"></i> Voice of Stray</div>
+                    </div>
+                    <div class="opp-footer">
+                        <span class="volunteers-needed">12 / 20 Volunteers</span>
+                        <button class="btn-accept">Accept Task</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Testimonials -->
+        <section class="fade-in">
+            <div class="section-header-center">
+                <h2>Volunteer Stories</h2>
+                <p>Hear from our community of heroes</p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="test-card hover-lift">
+                    <p class="test-quote">Fostering injured strays has been the most rewarding experience of my life. The platform makes it so easy to connect with verified vets.</p>
+                    <div class="test-author">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150" alt="Sarah" class="test-avatar">
+                        <div class="test-info">
+                            <h4>Sarah Jenkins</h4>
+                            <p>Foster Parent, NYC</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="test-card hover-lift">
+                    <p class="test-quote">As an NGO, finding reliable volunteers used to be a challenge. Now, we fill transport and rescue roles in a matter of minutes.</p>
+                    <div class="test-author">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150" alt="Michael" class="test-avatar">
+                        <div class="test-info">
+                            <h4>Michael Rodriguez</h4>
+                            <p>Stray Hope Foundation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="test-card hover-lift">
+                    <p class="test-quote">I love the weekends feeding drives. It's an amazing way to give back to the community and help those who can't speak for themselves.</p>
+                    <div class="test-author">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150" alt="Priya" class="test-avatar">
+                        <div class="test-info">
+                            <h4>Priya Patel</h4>
+                            <p>Community Volunteer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. FAQ -->
+        <section class="fade-in faq-section">
+            <div class="section-header-center">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            
+            <div class="faq-list" id="faq-accordion">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do I need prior experience to volunteer?</span>
+                        <i class="ph-bold ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Not at all! We have roles for all experience levels. While emergency rescue missions may require specialized training (which we provide), tasks like feeding drives, transportation, and fostering are perfect for beginners.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can students volunteer?</span>
+                        <i class="ph-bold ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, students over the age of 16 can volunteer for most tasks. Those under 16 must be accompanied by a parent or guardian during feeding drives and community events.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is there any remote volunteering available?</span>
+                        <i class="ph-bold ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! We constantly need help with social media management, helpline coordination, graphic design, and grant writing. You can help save lives right from your laptop.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I volunteer weekends only?</span>
+                        <i class="ph-bold ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. When you set up your Individual Rescuer profile, you can set your exact availability zone and schedule. You will only be pinged for opportunities that match your settings.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Are rescues safe?</span>
+                        <i class="ph-bold ph-caret-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Safety is our top priority. We provide comprehensive safety guidelines, mandatory training for field roles, and you will always be paired with an experienced rescuer or verified NGO on your first few missions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="premium-footer" style="background-color: #f1f5f9; padding: 64px 24px 32px; border-top: 1px solid var(--border);">
+        <div class="footer-grid" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px;">
+            <div class="footer-brand">
+                <h2 style="color: var(--primary); display: flex; align-items: center; gap: 8px; margin-bottom: 16px;"><i class="ph-fill ph-paw-print"></i> Voice of Stray</h2>
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;">A registered non-profit organization dedicated to creating a world where every animal is treated with dignity and care.</p>
+                <div class="social-links" style="display: flex; gap: 16px;">
+                    <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i class="ph-fill ph-instagram-logo"></i></a>
+                    <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i class="ph-fill ph-twitter-logo"></i></a>
+                    <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm); transition: transform 0.2s;"><i class="ph-fill ph-linkedin-logo"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Programs</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="#">Street Feeding</a></li>
+                    <li><a href="#">Emergency Rescue</a></li>
+                    <li><a href="#">Spay & Neuter</a></li>
+                    <li><a href="#">Sanctuary Stays</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Transparency</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="#">Annual Reports</a></li>
+                    <li><a href="#">Tax Documents</a></li>
+                    <li><a href="#">Board of Directors</a></li>
+                    <li><a href="#">Donor Rights</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4 style="margin-bottom: 16px; font-size: 1.05rem; color: var(--text-main);">Get Involved</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); padding: 0;">
+                    <li><a href="volunteer.html">Volunteer</a></li>
+                    <li><a href="donate.html">Donate</a></li>
+                    <li><a href="#">Register NGO</a></li>
+                    <li><a href="#">Foster Program</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom" style="max-width: 1200px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid #e2e8f0; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">Made with <i class="ph-fill ph-heart" style="color: var(--alert);"></i> for stray animals</p>
+            <p>&copy; 2026 Voice of Stray NGO. All rights reserved.</p>
+            <div style="margin-top: 8px; display: flex; justify-content: center; gap: 16px;">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Volunteer Modal -->
+    <div class="modal-overlay" id="volunteer-modal">
+        <div class="modal-content">
+            <i class="ph-bold ph-x modal-close"></i>
+            <h3>Volunteer Registration</h3>
+            <p>Join our network of heroes on the ground.</p>
+            <div class="modal-success-msg" style="flex-direction: column; text-align: center; background: transparent; color: inherit; padding: 0; margin: 0; gap: 8px;">
+                <i class="ph-fill ph-check-circle" style="font-size: 3.5rem; color: #10b981; margin-bottom: 12px;"></i>
+                <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Application Submitted</h3>
+                <span class="status-pill pending" style="background: #fef9c3; color: #854d0e; display: inline-block; margin-bottom: 16px; padding: 6px 16px; font-size: 0.8rem; font-weight: 700; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px;">Pending Review</span>
+                <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; text-align: center;">Your volunteer application has been successfully submitted and is currently under review by a partner NGO.<br><br>You will receive a notification once your application has been reviewed.</p>
+                <a href="user-dashboard.html" class="btn-full orange" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-decoration: none; padding: 14px 24px; font-weight: 700; border-radius: var(--radius-md); font-size: 1.05rem;">
+                    Return to Dashboard <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" name="name" placeholder="Enter your full name" required>
+                    <span class="form-error">Name is required</span>
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <span class="form-error">Please enter a valid email</span>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" name="phone" placeholder="e.g. 9876543210" required>
+                    <span class="form-error">Please enter a valid 10-digit phone number</span>
+                </div>
+                <div class="form-group">
+                    <label>Primary Role</label>
+                    <select name="role">
+                        <option value="rescue">Emergency Rescue</option>
+                        <option value="transport">Transport</option>
+                        <option value="feeding">Feeding Drives</option>
+                        <option value="medical">Medical / Vet</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-full orange" style="margin-top: 16px;">Submit Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NGO Modal -->
+    <div class="modal-overlay" id="ngo-modal">
+        <div class="modal-content">
+            <i class="ph-bold ph-x modal-close"></i>
+            <h3>NGO Verification</h3>
+            <p>Partner with us for direct funding and verified rescue alerts.</p>
+            <div class="modal-success-msg" style="flex-direction: column; text-align: center; background: transparent; color: inherit; padding: 0; margin: 0; gap: 8px;">
+                <i class="ph-fill ph-check-circle" style="font-size: 3.5rem; color: #10b981; margin-bottom: 12px;"></i>
+                <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Application Submitted</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; text-align: center;">Your organization details have been submitted. You can now visit your partner dashboard.</p>
+                <a href="ngo-dashboard.html" class="btn-full blue" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-decoration: none; padding: 14px 24px; font-weight: 700; border-radius: var(--radius-md); font-size: 1.05rem;">
+                    Go To NGO Dashboard <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Organization Name *</label>
+                    <input type="text" name="name" placeholder="Enter NGO name" required>
+                    <span class="form-error">Organization name is required</span>
+                </div>
+                <div class="form-group">
+                    <label>Official Email *</label>
+                    <input type="email" name="email" placeholder="contact@ngo.org" required>
+                    <span class="form-error">Please enter a valid email</span>
+                </div>
+                <div class="form-group">
+                    <label>Registration Number *</label>
+                    <input type="text" name="reg" placeholder="Enter registration ID" required>
+                    <span class="form-error">Registration number is required</span>
+                </div>
+                <button type="submit" class="btn-full blue" style="margin-top: 16px;">Start Onboarding</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Foster Modal -->
+    <div class="modal-overlay" id="foster-modal">
+        <div class="modal-content">
+            <i class="ph-bold ph-x modal-close"></i>
+            <h3>Become a Foster Parent</h3>
+            <p>Give a stray a temporary home while they heal.</p>
+            <div class="modal-success-msg" style="flex-direction: column; text-align: center; background: transparent; color: inherit; padding: 0; margin: 0; gap: 8px;">
+                <i class="ph-fill ph-check-circle" style="font-size: 3.5rem; color: #10b981; margin-bottom: 12px;"></i>
+                <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Application Submitted</h3>
+                <span class="status-pill pending" style="background: #fef9c3; color: #854d0e; display: inline-block; margin-bottom: 16px; padding: 6px 16px; font-size: 0.8rem; font-weight: 700; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px;">Pending Review</span>
+                <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; text-align: center;">Your volunteer application has been successfully submitted and is currently under review by a partner NGO.<br><br>You will receive a notification once your application has been reviewed.</p>
+                <a href="user-dashboard.html" class="btn-full orange" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-decoration: none; padding: 14px 24px; font-weight: 700; border-radius: var(--radius-md); font-size: 1.05rem;">
+                    Return to Dashboard <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" name="name" placeholder="Enter your full name" required>
+                    <span class="form-error">Name is required</span>
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <span class="form-error">Please enter a valid email</span>
+                </div>
+                <div class="form-group">
+                    <label>Housing Type</label>
+                    <select name="housing">
+                        <option value="apt">Apartment</option>
+                        <option value="house">House with yard</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Any current pets?</label>
+                    <select name="pets">
+                        <option value="no">No</option>
+                        <option value="yes_dogs">Yes, Dogs</option>
+                        <option value="yes_cats">Yes, Cats</option>
+                        <option value="yes_both">Yes, Both</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-full orange" style="margin-top: 16px;">Apply to Foster</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="volunteer.js"></script>
+</body>
+</html>

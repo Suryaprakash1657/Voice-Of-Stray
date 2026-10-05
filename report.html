@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a Stray - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html" class="active">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- Main Report Column -->
+        <section class="feed-column">
+            <header class="feed-header" style="margin-bottom: 24px;">
+                <h1>Report a Stray</h1>
+                <p>Help us locate and assist animals in need quickly.</p>
+            </header>
+
+            <!-- Step Progress Bar -->
+            <div class="step-progress card">
+                <div class="step-item active">
+                    <div class="step-circle">1</div>
+                    <span class="step-label">Photo & Details</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item">
+                    <div class="step-circle">2</div>
+                    <span class="step-label">Location & Severity</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item">
+                    <div class="step-circle">3</div>
+                    <span class="step-label">Extra Info</span>
+                </div>
+            </div>
+
+            <div class="report-form card">
+                <!-- Photo Upload & AI Assist Preview -->
+                <div class="form-section">
+                    <h3>Upload Photo <span class="required">*</span></h3>
+                    <div class="photo-upload-area" id="photo-upload-container" style="cursor: default;">
+                        <div id="upload-choices" style="display: flex; gap: 16px; width: 100%; justify-content: center; margin-bottom: 12px; flex-wrap: wrap;">
+                            <button type="button" class="btn-premium primary" id="btn-take-photo" style="padding: 12px 24px; font-size: 0.95rem; border-radius: var(--radius-sm);">
+                                <i class="ph ph-camera"></i> Take Photo
+                            </button>
+                            <button type="button" class="btn-premium secondary" id="btn-upload-gallery" style="padding: 12px 24px; font-size: 0.95rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm);">
+                                <i class="ph ph-image"></i> Upload Gallery
+                            </button>
+                        </div>
+                        <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+                        <input type="file" id="gallery-input" accept="image/*" style="display: none;">
+                        
+                        <div id="photo-preview-wrap" style="display: none; position: relative; margin-top: 12px; border-radius: var(--radius-md); overflow: hidden; width: 100%; max-height: 300px; border: 1px solid var(--border);">
+                            <img id="photo-preview-img" src="" alt="Selected Stray" style="width: 100%; height: 100%; object-fit: cover;">
+                            <button type="button" id="btn-remove-photo" style="position: absolute; top: 10px; right: 10px; background: rgba(15, 23, 42, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; cursor: pointer; transition: all 0.2s;">
+                                <i class="ph ph-x"></i>
+                            </button>
+                        </div>
+                        
+                        <span id="upload-placeholder-text" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; text-align: center; margin-top: 8px;">Select an option to add a photo of the stray animal.</span>
+                    </div>
+                    
+                    <!-- AI Assist Preview -->
+                    <div class="ai-preview-card">
+                        <div class="ai-preview-header" style="display: flex; align-items: center;">
+                            <div><i class="ph-fill ph-sparkle"></i> AI Assist Analysis</div>
+                            <span style="font-size: 0.75rem; font-weight: normal; margin-left: auto; color: var(--text-muted, #666); opacity: 0.8;">*AI may not be 100% accurate</span>
+                        </div>
+                        <div class="ai-preview-content">
+                            <div class="ai-detected-item">
+                                <span class="ai-label">Detected Animal:</span>
+                                <strong>Dog (Golden Retriever Mix)</strong>
+                            </div>
+                            <div class="ai-detected-item">
+                                <span class="ai-label">Possible Condition:</span>
+                                <strong style="color: var(--alert);">Injured Hind Leg, Malnourished</strong>
+                            </div>
+                    </div>
+                </div>
+
+                <!-- Verified Animal Information -->
+                <div class="form-section">
+                    <h3>Verified Animal Information</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 16px; font-weight: 500;">
+                        Please verify the details below. These values will be used by responders.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Animal Type <span class="required">*</span></label>
+                            <select id="manual-animal-type" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111); cursor: pointer;" required>
+                                <option value="" disabled selected>Select Animal Type</option>
+                                <option value="Dog">Dog</option>
+                                <option value="Cat">Cat</option>
+                                <option value="Cow">Cow</option>
+                                <option value="Goat">Goat</option>
+                                <option value="Horse">Horse</option>
+                                <option value="Rabbit">Rabbit</option>
+                                <option value="Bird">Bird</option>
+                                <option value="Monkey">Monkey</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Breed <span class="required">*</span></label>
+                            <select id="manual-breed" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111); cursor: pointer;" required disabled>
+                                <option value="" disabled selected>Select Breed / Option</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Estimated Age <span class="required">*</span></label>
+                            <select id="manual-estimated-age" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111); cursor: pointer;" required>
+                                <option value="" disabled selected>Select Estimated Age</option>
+                                <option value="Puppy / Kitten">Puppy / Kitten</option>
+                                <option value="Young">Young</option>
+                                <option value="Adult">Adult</option>
+                                <option value="Senior">Senior</option>
+                                <option value="Unknown">Unknown</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Issue Category <span class="required">*</span></label>
+                            <select id="manual-issue-category" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111); cursor: pointer;" required>
+                                <option value="" disabled selected>Select Issue Category</option>
+                                <option value="Injury">Injury</option>
+                                <option value="Accident">Accident</option>
+                                <option value="Illness">Illness</option>
+                                <option value="Abandoned">Abandoned</option>
+                                <option value="Abuse">Abuse</option>
+                                <option value="Malnourished">Malnourished</option>
+                                <option value="Pregnant Animal">Pregnant Animal</option>
+                                <option value="Lost Pet">Lost Pet</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div style="grid-column: span 2;">
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Observed Condition <span class="required">*</span></label>
+                            <textarea id="manual-observed-condition" rows="3" placeholder="e.g. Hit by vehicle and unable to walk, open wound on front leg, severe dehydration, appears abandoned, possible fracture" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111); resize: vertical;" required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Severity Level -->
+                <div class="form-section">
+                    <h3>Severity Level <span class="required">*</span></h3>
+                    <div class="severity-grid">
+                        <label class="severity-card low">
+                            <input type="radio" name="severity" value="low">
+                            <div class="severity-card-content">
+                                <i class="ph-fill ph-info"></i>
+                                <h4>Low</h4>
+                                <p>Safe but needs food or shelter. Not in immediate danger.</p>
+                            </div>
+                        </label>
+                        <label class="severity-card urgent">
+                            <input type="radio" name="severity" value="urgent">
+                            <div class="severity-card-content">
+                                <i class="ph-fill ph-warning"></i>
+                                <h4>Urgent</h4>
+                                <p>Lost, trapped, or showing signs of sickness. Needs help soon.</p>
+                            </div>
+                        </label>
+                        <label class="severity-card emergency">
+                            <input type="radio" name="severity" value="emergency">
+                            <div class="severity-card-content">
+                                <i class="ph-fill ph-warning-circle"></i>
+                                <h4>Emergency</h4>
+                                <p>Severe injury, abuse, or imminent life-threatening danger.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Location Preview -->
+                <div class="form-section">
+                    <h3>Location Details <span class="required">*</span></h3>
+                    <div class="location-preview">
+                        <div class="map-placeholder" style="position: relative; overflow: hidden; border-radius: 8px; background: #e5e5e5; min-height: 160px;">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15000!2d-122.4194!3d37.7749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0; position: absolute; top: 0; left: 0; pointer-events: none;" allowfullscreen="" loading="lazy"></iframe>
+                            <div class="map-overlay" style="position: relative; z-index: 1; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(2px);">
+                                <button class="btn-primary"><i class="ph ph-crosshair"></i> Use Current Location</button>
+                                <button class="btn-secondary"><i class="ph ph-map-pin"></i> Pin Exact Spot</button>
+                            </div>
+                        </div>
+                        <div class="location-info">
+                            <div class="address-input">
+                                <i class="ph ph-map-pin"></i>
+                                <input type="text" placeholder="Enter street address or landmark" value="Downtown Park, Main St.">
+                            </div>
+                            <div class="eta-badge">
+                                <i class="ph-fill ph-clock"></i>
+                                <span>Nearby Rescue ETA: <strong>15-20 mins</strong></span>
+                            </div>
+                            <div class="eta-badge" style="margin-top: 8px; background: rgba(249, 115, 22, 0.1); color: var(--primary);">
+                                <i class="ph-fill ph-users"></i>
+                                <span><strong>3</strong> Rescue Teams Active Nearby</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reporter Contact Info -->
+                <div class="form-section">
+                    <h3>Your Contact Info <span class="required">*</span></h3>
+                    <div style="display: grid; gap: 12px; margin-bottom: 12px;">
+                        <input type="text" placeholder="Full Name" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <input type="tel" placeholder="Phone Number" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111);">
+                            <input type="email" placeholder="Email Address" style="width: 100%; padding: 12px; border: 1px solid var(--border, #e5e7eb); border-radius: 8px; outline: none; font-family: inherit; background: var(--bg-main, #fff); color: var(--text-main, #111);">
+                        </div>
+                    </div>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main, #444);">
+                        <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primary);">
+                        <span>Report Anonymously (Hide my details from public view)</span>
+                    </label>
+                </div>
+
+                <!-- Additional Information (Toggles) -->
+                <div class="form-section">
+                    <h3>Additional Options</h3>
+                    <div class="toggles-container">
+                        <label class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Community Follow-Up</strong>
+                                <span>Allow local community members to contact you for details.</span>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </div>
+                        </label>
+                        <label class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Possible Owned Pet</strong>
+                                <span>Animal appears to have a collar or looks well-groomed.</span>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </div>
+                        </label>
+                        <label class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Reward Info</strong>
+                                <span>I want to offer a reward for safe rescue/return.</span>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Form Footer -->
+                <div class="form-footer">
+                    <div class="what-happens-next" style="background: var(--bg-alt, #f8fafc); padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--border, #e2e8f0);">
+                        <h4 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-main, #1e293b); font-size: 1.1rem;">
+                            <i class="ph-fill ph-info"></i> What Happens After Submission?
+                        </h4>
+                        <ul class="timeline" style="list-style: none; padding-left: 14px; border-left: 2px solid var(--border, #cbd5e1); margin-left: 8px;">
+                            <li style="margin-bottom: 16px; position: relative;">
+                                <span style="position: absolute; left: -21px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--primary, #f97316); border: 3px solid var(--bg-alt, #f8fafc);"></span>
+                                <strong style="color: var(--text-main, #334155); display: block; margin-bottom: 4px;">1. Broadcasting Alert</strong>
+                                <p class="text-sm" style="color: var(--text-muted, #64748b); margin: 0;">Your report is instantly sent to nearby verified volunteers and rescues.</p>
+                            </li>
+                            <li style="margin-bottom: 16px; position: relative;">
+                                <span style="position: absolute; left: -21px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--border, #cbd5e1); border: 3px solid var(--bg-alt, #f8fafc);"></span>
+                                <strong style="color: var(--text-main, #334155); display: block; margin-bottom: 4px;">2. Responder Acceptance</strong>
+                                <p class="text-sm" style="color: var(--text-muted, #64748b); margin: 0;">A responder accepts the case and provides an ETA to the location.</p>
+                            </li>
+                            <li style="position: relative;">
+                                <span style="position: absolute; left: -21px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--border, #cbd5e1); border: 3px solid var(--bg-alt, #f8fafc);"></span>
+                                <strong style="color: var(--text-main, #334155); display: block; margin-bottom: 4px;">3. Rescue & Updates</strong>
+                                <p class="text-sm" style="color: var(--text-muted, #64748b); margin: 0;">Animal is secured and you receive a final status update.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="autosave-status">
+                            <i class="ph ph-check-circle"></i> Draft saved just now
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn-secondary">Save Draft</button>
+                            <button class="btn-primary" style="padding: 12px 32px; font-size: 1.1rem;">Submit Report</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sidebar Column -->
+        <aside class="sidebar-column">
+            
+            <!-- Alert Widget -->
+            <div class="widget alert-widget card">
+                <h3><i class="ph-fill ph-warning-circle"></i> Nearby Alerts</h3>
+                <div class="widget-scroll-container">
+                    <div class="alert-item">
+                        <div class="alert-item-content">
+                            <div class="alert-icon"><i class="ph ph-siren"></i></div>
+                            <div class="alert-info">
+                                <strong>Injured cat reported</strong>
+                                <span>0.5 miles away • 10 mins ago</span>
+                            </div>
+                        </div>
+                        <button class="alert-cta">Help Now</button>
+                    </div>
+                    <div class="widget-scroll-indicator"><i class="ph ph-caret-down"></i></div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts - Made Sticky specific to its own wrapper -->
+            <div class="sticky-wrapper">
+                <div class="widget card emergency-contact-widget" style="border-left: 4px solid var(--alert);">
+                    <h3 style="margin-bottom: 12px;"><i class="ph-fill ph-phone-call" style="color: var(--alert);"></i> Emergency Contacts</h3>
+                    <div class="contributor-item" style="margin-bottom: 12px;">
+                        <div class="contributor-info">
+                            <strong style="color: var(--text-main);">City Animal Control</strong>
+                            <span>1-800-555-0199 (24/7)</span>
+                        </div>
+                    </div>
+                    <div class="contributor-item" style="margin-bottom: 0;">
+                        <div class="contributor-info">
+                            <strong style="color: var(--text-main);">Paws Vet Clinic</strong>
+                            <span>1-800-555-0122 (8AM - 8PM)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggested NGOs -->
+            <div class="widget suggested-widget card">
+                <h3>Suggested NGOs</h3>
+                <div class="widget-scroll-container">
+                    <div class="contributor-item">
+                        <img src="https://images.unsplash.com/photo-1542838686-37ed7a9efc78?auto=format&fit=crop&q=80&w=100" alt="Paws NGO" class="avatar-sm">
+                        <div class="contributor-info">
+                            <strong>Paws & Claws NGO</strong>
+                            <span>2.1k followers</span>
+                        </div>
+                    </div>
+                    <div class="widget-scroll-indicator"><i class="ph ph-caret-down"></i></div>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <a href="#">About</a> • <a href="#">Privacy</a> • <a href="#">Terms</a>
+                <p>&copy; 2026 Voice of Stray</p>
+            </div>
+            
+        </aside>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-fill reporter details if a user is logged in
+            const currentUserRaw = localStorage.getItem("currentUser");
+            if (currentUserRaw) {
+                try {
+                    const currentUser = JSON.parse(currentUserRaw);
+                    const nameInput = document.querySelector('input[placeholder="Full Name"]');
+                    const emailInput = document.querySelector('input[placeholder="Email Address"]');
+                    const phoneInput = document.querySelector('input[placeholder="Phone Number"]');
+                    
+                    if (nameInput) nameInput.value = currentUser.name || "";
+                    if (emailInput) emailInput.value = currentUser.email || "";
+                    
+                    // Retrieve phone from profile if available
+                    const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+                    if (storedProfile) {
+                        const profile = JSON.parse(storedProfile);
+                        if (phoneInput && profile.phone) {
+                            phoneInput.value = profile.phone;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error auto-filling reporter details", e);
+                }
+            }
+
+            const scrollContainers = document.querySelectorAll('.widget-scroll-container');
+            
+            scrollContainers.forEach(container => {
+                const indicator = container.querySelector('.widget-scroll-indicator');
+                if (!indicator) return;
+
+                const checkScroll = () => {
+                    if (container.scrollHeight <= container.clientHeight + 2) {
+                        indicator.style.opacity = '0';
+                        return;
+                    }
+                    if (container.scrollHeight - container.scrollTop <= container.clientHeight + 20) {
+                        indicator.style.opacity = '0';
+                    } else {
+                        indicator.style.opacity = '1';
+                    }
+                };
+                
+                container.addEventListener('scroll', checkScroll);
+                window.addEventListener('resize', checkScroll);
+                setTimeout(checkScroll, 100);
+            });
+
+            // Breed mapping data
+            const breedOptions = {
+                "Dog": [
+                    "Indian Pariah Dog",
+                    "Labrador Retriever",
+                    "Golden Retriever",
+                    "German Shepherd",
+                    "Beagle",
+                    "Pug",
+                    "Rottweiler",
+                    "Husky",
+                    "Doberman",
+                    "Other / Unknown"
+                ],
+                "Cat": [
+                    "Indian Street Cat",
+                    "Persian",
+                    "Siamese",
+                    "Maine Coon",
+                    "Bengal",
+                    "British Shorthair",
+                    "Other / Unknown"
+                ],
+                "Cow": [
+                    "Jersey",
+                    "Holstein Friesian",
+                    "Gir",
+                    "Sahiwal",
+                    "Other / Unknown"
+                ],
+                "Goat": [
+                    "Jamnapari",
+                    "Boer",
+                    "Barbari",
+                    "Beetle",
+                    "Other / Unknown"
+                ],
+                "Horse": [
+                    "Marwari",
+                    "Kathiawari",
+                    "Thoroughbred",
+                    "Arabian",
+                    "Quarter Horse",
+                    "Other / Unknown"
+                ],
+                "Rabbit": [
+                    "Angora",
+                    "Rex",
+                    "Dutch",
+                    "Flemish Giant",
+                    "New Zealand",
+                    "Other / Unknown"
+                ],
+                "Bird": [
+                    "Pigeon",
+                    "Sparrow",
+                    "Crow",
+                    "Parrot",
+                    "Myna",
+                    "Eagle",
+                    "Other / Unknown"
+                ],
+                "Monkey": [
+                    "Rhesus Macaque",
+                    "Bonnet Macaque",
+                    "Langur",
+                    "Other / Unknown"
+                ],
+                "Other": [
+                    "Other / Unknown"
+                ]
+            };
+
+            const animalTypeSelect = document.getElementById("manual-animal-type");
+            const breedSelect = document.getElementById("manual-breed");
+
+            if (animalTypeSelect && breedSelect) {
+                animalTypeSelect.addEventListener("change", () => {
+                    const selectedType = animalTypeSelect.value;
+                    breedSelect.innerHTML = '<option value="" disabled selected>Select Breed / Option</option>';
+                    breedSelect.disabled = false;
+                    
+                    if (breedOptions[selectedType]) {
+                        breedOptions[selectedType].forEach(breed => {
+                            const opt = document.createElement("option");
+                            opt.value = breed;
+                            opt.textContent = breed;
+                            breedSelect.appendChild(opt);
+                        });
+                        // Set default to Other / Unknown if available
+                        if (breedOptions[selectedType].includes("Other / Unknown")) {
+                            breedSelect.value = "Other / Unknown";
+                        }
+                    } else {
+                        breedSelect.disabled = true;
+                    }
+                });
+            }
+
+            // Image handling variables
+            let selectedPhotoBase64 = "";
+
+            const btnTakePhoto = document.getElementById("btn-take-photo");
+            const btnUploadGallery = document.getElementById("btn-upload-gallery");
+            const cameraInput = document.getElementById("camera-input");
+            const galleryInput = document.getElementById("gallery-input");
+            const btnRemovePhoto = document.getElementById("btn-remove-photo");
+
+            if (btnTakePhoto && cameraInput) {
+                btnTakePhoto.addEventListener("click", () => cameraInput.click());
+            }
+            if (btnUploadGallery && galleryInput) {
+                btnUploadGallery.addEventListener("click", () => galleryInput.click());
+            }
+
+            function handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.onload = function () {
+                        // Downscale using Canvas to save localStorage space
+                        const canvas = document.createElement("canvas");
+                        const MAX_WIDTH = 500;
+                        const MAX_HEIGHT = 500;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Compress and save Base64 jpeg string
+                        selectedPhotoBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
+                        // Show Preview
+                        document.getElementById("photo-preview-img").src = selectedPhotoBase64;
+                        document.getElementById("photo-preview-wrap").style.display = "block";
+                        document.getElementById("upload-choices").style.display = "none";
+                        document.getElementById("upload-placeholder-text").style.display = "none";
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            if (cameraInput) cameraInput.addEventListener("change", handleFileSelect);
+            if (galleryInput) galleryInput.addEventListener("change", handleFileSelect);
+
+            if (btnRemovePhoto) {
+                btnRemovePhoto.addEventListener("click", () => {
+                    selectedPhotoBase64 = "";
+                    if (cameraInput) cameraInput.value = "";
+                    if (galleryInput) galleryInput.value = "";
+                    document.getElementById("photo-preview-wrap").style.display = "none";
+                    document.getElementById("upload-choices").style.display = "flex";
+                    document.getElementById("upload-placeholder-text").style.display = "block";
+                });
+            }
+
+            // Report submission handler
+            const submitBtn = document.querySelector(".form-footer .action-buttons .btn-primary");
+            if (submitBtn) {
+                submitBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    
+                    const nameInput = document.querySelector('input[placeholder="Full Name"]');
+                    const phoneInput = document.querySelector('input[placeholder="Phone Number"]');
+                    const emailInput = document.querySelector('input[placeholder="Email Address"]');
+                    const locationInput = document.querySelector('input[placeholder="Enter street address or landmark"]');
+                    const severityRadio = document.querySelector('input[name="severity"]:checked');
+                    
+                    // Manual inputs
+                    const manualAnimalTypeInput = document.getElementById("manual-animal-type");
+                    const manualBreedInput = document.getElementById("manual-breed");
+                    const manualEstimatedAgeInput = document.getElementById("manual-estimated-age");
+                    const manualIssueCategoryInput = document.getElementById("manual-issue-category");
+                    const manualObservedConditionInput = document.getElementById("manual-observed-condition");
+
+                    if (!nameInput || !phoneInput || !emailInput || !locationInput || !severityRadio || 
+                        !manualAnimalTypeInput || !manualBreedInput || !manualEstimatedAgeInput || !manualObservedConditionInput || !manualIssueCategoryInput) {
+                        alert("Please fill in all required fields and select a severity level.");
+                        return;
+                    }
+                    
+                    const name = nameInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const email = emailInput.value.trim();
+                    const location = locationInput.value.trim();
+                    
+                    const animalType = manualAnimalTypeInput.value;
+                    const breed = manualBreedInput.value;
+                    const estimatedAge = manualEstimatedAgeInput.value;
+                    const observedCondition = manualObservedConditionInput.value.trim();
+                    const issueCategory = manualIssueCategoryInput.value;
+
+                    if (!name || !phone || !email || !location || !animalType || !breed || !estimatedAge || !observedCondition || !issueCategory) {
+                        alert("Please fill in all required fields (Name, Phone, Email, Location, Animal Type, Breed, Estimated Age, Observed Condition, Issue Category).");
+                        return;
+                    }
+
+                    if (!selectedPhotoBase64) {
+                        alert("Please upload or capture a photo of the stray animal before submitting.");
+                        return;
+                    }
+                    
+                    // Map severity
+                    const sevValue = severityRadio.value;
+                    let priority = "Low";
+                    if (sevValue === "emergency") {
+                        priority = "Emergency";
+                    } else if (sevValue === "urgent") {
+                        priority = "High Priority";
+                    }
+                    
+                    // Create report object
+                    const reportId = Math.floor(1000 + Math.random() * 9000).toString();
+                    
+                    // Display title includes breed description if present
+                    const displayTitle = breed ? `${animalType} (${breed})` : animalType;
+
+                    const newReport = {
+                        id: reportId,
+                        animalType: animalType,
+                        breed: breed,
+                        breedDesc: breed, // for compatibility
+                        estimatedAge: estimatedAge,
+                        issueCategory: issueCategory,
+                        title: `${displayTitle} near ${location}`,
+                        location: location,
+                        reporterName: name,
+                        reporterPhone: phone,
+                        reporterEmail: email,
+                        dateSubmitted: new Date().toISOString().split('T')[0],
+                        timeSubmitted: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        priority: priority,
+                        observedCondition: observedCondition,
+                        description: observedCondition, // for compatibility
+                        photo: selectedPhotoBase64
+                    };
+                    
+                    // Save to reports database
+                    let reports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+                    reports.unshift(newReport);
+                    localStorage.setItem("voiceOfStrayReports", JSON.stringify(reports));
+                    
+                    // Also create case entry in cases database with statusStep = 0
+                    let casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+                    casesDb[reportId] = {
+                        id: reportId,
+                        animal: displayTitle,
+                        animalType: animalType,
+                        breed: breed,
+                        breedDesc: breed, // for compatibility
+                        estimatedAge: estimatedAge,
+                        issueCategory: issueCategory,
+                        location: location,
+                        reportedTime: newReport.timeSubmitted,
+                        condition: observedCondition,
+                        observedCondition: observedCondition, // for compatibility
+                        severity: priority,
+                        status: "Reported",
+                        statusStep: 0,
+                        reporter: {
+                            name: name,
+                            phone: phone,
+                            notes: observedCondition
+                        },
+                        team: {
+                            ngo: "Paws Haven NGO",
+                            lead: null,
+                            volunteers: []
+                        },
+                        timeline: [
+                            { time: newReport.timeSubmitted, text: "Rescue report received." }
+                        ],
+                        notes: "",
+                        photos: {
+                            before: selectedPhotoBase64,
+                            during: "",
+                            treatment: "",
+                            recovery: ""
+                        }
+                    };
+                    localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+                    
+                    alert(`Thank you! Your report for #${reportId} (${animalType}) has been successfully submitted and broadcasted to local NGOs.`);
+                    window.location.href = "index.html";
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        body {
+            background-color: #fff9f5;
+            background-image: radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Replicated Layered Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.04;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.12;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.3));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.08;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .ops-container {
+            max-width: 1200px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 992px) {
+            .ops-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .back-btn-container {
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            padding: 8px 18px;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: rgba(249, 115, 22, 0.3);
+            background: white;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.06);
+        }
+
+        .ops-hero {
+            background: linear-gradient(135deg, #fff2e8 0%, #ffe3d1 100%);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 32px 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 15px 35px -10px rgba(249, 115, 22, 0.1);
+            position: relative;
+            margin-bottom: 32px;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .ops-hero-info {
+            flex: 1;
+            min-width: 250px;
+            z-index: 2;
+        }
+
+        .ops-hero-info h1 {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .ops-hero-info p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .user-identity-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .avatar-edit-wrapper {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar-edit-wrapper img {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+            display: block;
+        }
+
+        .avatar-edit-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: white;
+        }
+
+        .avatar-edit-wrapper:hover .avatar-edit-overlay {
+            opacity: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.04);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 15px 35px -12px rgba(249, 115, 22, 0.08);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 576px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.span-2 {
+                grid-column: span 1 !important;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.span-2 {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-glass {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            width: 100%;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .input-glass:focus,
+        .input-glass:hover:not(.disabled-input) {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        textarea.input-glass {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .disabled-input {
+            background: rgba(241, 245, 249, 0.6);
+            color: var(--text-muted);
+            border-color: var(--border);
+            cursor: not-allowed;
+        }
+
+        .badge-identifier {
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: rgba(20, 184, 166, 0.08);
+            color: var(--secondary);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .pref-checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .pref-checkbox-wrapper:hover {
+            border-color: rgba(249, 115, 22, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .pref-checkbox-wrapper:has(input:checked) {
+            border-color: var(--primary) !important;
+            background: var(--primary-light) !important;
+            color: var(--primary) !important;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.08);
+        }
+
+        .pref-checkbox-wrapper input {
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* RIGHT STICKY PREVIEW CARD */
+        .preview-column {
+            position: relative;
+        }
+
+        .sticky-card {
+            position: sticky;
+            top: 100px;
+            padding: 32px 24px;
+            border-top: 4px solid var(--primary);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preview-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .preview-avatar-wrap {
+            width: 64px;
+            height: 64px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pref-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(249, 115, 22, 0.12);
+        }
+
+        /* Avatar Selection Modal */
+        .photo-selector-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10002;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-modal-card {
+            background: #fffdfb;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px -15px rgba(249, 115, 22, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .modal-header-row h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .image-option-item {
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+            border: 3.5px solid transparent;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .image-option-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-option-item.selected,
+        .image-option-item:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        .url-input-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .url-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: var(--radius-full);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-action.save {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+            border: none;
+        }
+
+        .btn-action.save:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+        }
+
+        .btn-action.cancel {
+            background: white;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .btn-action.cancel:hover {
+            border-color: #cbd5e1;
+            color: var(--text-main);
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+
+        .modal-actions-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid rgba(249, 115, 22, 0.1);
+            padding-top: 16px;
+        }
+
+        /* Toast notification */
+        .editor-notification {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 10005;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .editor-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .editor-notification i {
+            color: #22c55e;
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Shared Background Sparkles -->
+    <div class="bg-decorations">
+        <svg class="decor-item sparkle" style="top: 15%; left: 8%; width: 40px; height: 40px;" viewBox="0 0 256 256">
+            <path
+                d="M243,128.5A115,115,0,0,1,128.5,243,115,115,0,0,1,14,128.5,115,115,0,0,1,128.5,14,115,115,0,0,1,243,128.5Z"
+                fill="none" stroke="currentColor" stroke-width="16" />
+            <path d="M128,80v96M80,128h96" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" />
+        </svg>
+        <svg class="decor-item sparkle" style="top: 60%; right: 5%; width: 50px; height: 50px;" viewBox="0 0 256 256">
+            <path
+                d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" />
+        </svg>
+        <svg class="decor-item" style="top: 35%; left: 50%; width: 80px; opacity: 0.03;" viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-home-link">
+                    <i class="ph ph-house"></i>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <!-- Guest State -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="ops-container">
+
+        <!-- Left Column: Edit Panels -->
+        <div>
+            <!-- Back Button -->
+            <div class="back-btn-container">
+                <a href="user-dashboard.html" class="back-link">
+                    <i class="ph ph-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Hero Section -->
+            <section class="ops-hero">
+                <div class="ops-hero-info">
+                    <h1>Edit Profile</h1>
+                    <p>Manage your personal information and preferences across Voice of Stray.</p>
+                </div>
+                <!-- Identity Display -->
+                <div class="user-identity-display">
+                    <div class="avatar-edit-wrapper" onclick="openAvatarSelector()" title="Change Avatar"
+                        style="position: relative; width: 80px; height: 80px; cursor: pointer;">
+                        <img id="hero-avatar" src="" alt="Avatar">
+                        <div class="avatar-edit-overlay">
+                            <i class="ph ph-camera" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 id="hero-username"
+                            style="font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">
+                        </h2>
+                        <span id="hero-member-label"
+                            style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. Personal Information Card -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph-fill ph-user"></i> Personal Information
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label for="input-full-name">Full Name</label>
+                        <input type="text" id="input-full-name" class="input-glass" placeholder="e.g. Arjun Prasad">
+                    </div>
+                    <div class="form-group span-2">
+                        <label for="input-email"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Email Address</span>
+                            <span class="badge-identifier"><i class="ph-fill ph-shield-check"></i> Account Login
+                                Identifier</span>
+                        </label>
+                        <input type="email" id="input-email" class="input-glass"
+                            placeholder="e.g. user@voiceofstray.com">
+                        <span
+                            style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500; margin-top: 2px;">Your
+                            email is used for account notifications and recovery.</span>
+                    </div>
+                    <div class="form-group span-2">
+                        <label for="input-account-type">Account Type</label>
+                        <select id="input-account-type" class="input-glass">
+                            <option value="Regular User">Regular User</option>
+                            <option value="Volunteer">Volunteer</option>
+                            <option value="Rescuer">Rescuer</option>
+                        </select>
+                    </div>
+                    <div class="form-group span-2">
+                        <label for="input-phone">Phone Number</label>
+                        <input type="tel" id="input-phone" class="input-glass" placeholder="e.g. +1 (555) 234-5678">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Location Information Card -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph-fill ph-map-pin"></i> Location Information
+                </h3>
+                <p
+                    style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; font-weight: 500;">
+                    Adding location parameters lets Voice of Stray optimize street rescue alerts, volunteer coordinating
+                    drives, and local pet shelter listings closest to you.
+                </p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-city">City</label>
+                        <input type="text" id="input-city" class="input-glass" placeholder="e.g. Brooklyn">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-state">State</label>
+                        <input type="text" id="input-state" class="input-glass" placeholder="e.g. New York">
+                    </div>
+                    <div class="form-group span-2">
+                        <label for="input-pincode">Pincode</label>
+                        <input type="text" id="input-pincode" class="input-glass" placeholder="e.g. 11201">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. About Me Card -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph-fill ph-note-pencil"></i> About Me
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label for="input-about">Tell the community a little about yourself</label>
+                        <textarea id="input-about" class="input-glass"
+                            placeholder="e.g. Animal lover passionate about helping stray dogs and supporting local rescue efforts."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Animal Preferences Card -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph-fill ph-paw-print"></i> Animal Preferences
+                </h3>
+                <p
+                    style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; font-weight: 500;">
+                    Select the animals you want to support. This helps us customize recommendation layouts for rescues
+                    and adoptions.
+                </p>
+                <div class="preferences-grid">
+                    <label class="pref-checkbox-wrapper">
+                        <input type="checkbox" name="animal-pref" value="Dogs">
+                        <span>Dogs</span>
+                    </label>
+                    <label class="pref-checkbox-wrapper">
+                        <input type="checkbox" name="animal-pref" value="Cats">
+                        <span>Cats</span>
+                    </label>
+                    <label class="pref-checkbox-wrapper">
+                        <input type="checkbox" name="animal-pref" value="Birds">
+                        <span>Birds</span>
+                    </label>
+                    <label class="pref-checkbox-wrapper">
+                        <input type="checkbox" name="animal-pref" value="Rabbits">
+                        <span>Rabbits</span>
+                    </label>
+                    <label class="pref-checkbox-wrapper">
+                        <input type="checkbox" name="animal-pref" value="Other">
+                        <span>Other Animals</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Volunteer-specific Information Card -->
+            <section class="glass-card" id="volunteer-info-card" style="display: none;">
+                <h3 class="card-title">
+                    <i class="ph-fill ph-hand-heart"></i> Volunteer Profile
+                </h3>
+                <p
+                    style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; font-weight: 500;">
+                    Please share your volunteering interests and preferences.
+                </p>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label>Volunteering Interests</label>
+                        <div class="preferences-grid">
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="volunteer-skills" value="Feeding Drives">
+                                <span>Feeding Drives</span>
+                            </label>
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="volunteer-skills" value="Fostering">
+                                <span>Fostering</span>
+                            </label>
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="volunteer-skills" value="Shelter Help">
+                                <span>Shelter Help</span>
+                            </label>
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="volunteer-skills" value="Event Coordination">
+                                <span>Event Coordination</span>
+                            </label>
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="volunteer-skills" value="Social Media">
+                                <span>Social Media</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-volunteer-availability">Availability</label>
+                        <select id="input-volunteer-availability" class="input-glass">
+                            <option value="Weekends">Weekends</option>
+                            <option value="Weekdays">Weekdays</option>
+                            <option value="Anytime">Anytime</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-volunteer-experience">Prior Experience</label>
+                        <select id="input-volunteer-experience" class="input-glass">
+                            <option value="None">None / Beginner</option>
+                            <option value="1-2 Years">1-2 Years</option>
+                            <option value="3+ Years">3+ Years</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rescuer-specific Information Card -->
+            <section class="glass-card" id="rescuer-info-card" style="display: none;">
+                <h3 class="card-title">
+                    <i class="ph-fill ph-first-aid"></i> Rescuer Profile
+                </h3>
+                <p
+                    style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; font-weight: 500;">
+                    Configure your emergency alert radius and specializations to receive notifications of stray animals
+                    in distress.
+                </p>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label>Rescuer Specializations</label>
+                        <div class="preferences-grid">
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="rescuer-skills" value="Canine Handling">
+                                <span>Canine Handling</span>
+                            </label>
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="rescuer-skills" value="First Aid">
+                                <span>First Aid</span>
+                            </label>
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="rescuer-skills" value="Driving">
+                                <span>Driving / Transport</span>
+                            </label>
+                            <label class="pref-checkbox-wrapper">
+                                <input type="checkbox" name="rescuer-skills" value="Rescue Equipment">
+                                <span>Rescue Equipment</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-rescue-radius">Alert Radius</label>
+                        <select id="input-rescue-radius" class="input-glass">
+                            <option value="5km">5 km</option>
+                            <option value="10km">10 km</option>
+                            <option value="25km">25 km</option>
+                            <option value="50km">50 km</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-rescue-contact">Emergency Contact No.</label>
+                        <input type="tel" id="input-rescue-contact" class="input-glass"
+                            placeholder="e.g. +1 (555) 901-2345">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Account Overview Card (Read-only) -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph-fill ph-info"></i> Account Overview
+                </h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, 0.45); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">Account Type</span>
+                        <span id="overview-acct-type"
+                            style="font-size: 0.72rem; font-weight: 800; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: var(--radius-sm); text-transform: uppercase;"></span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, 0.45); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">Member Since</span>
+                        <span id="overview-member-since"
+                            style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);"></span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, 0.45); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">Rescue Reports
+                            Submitted</span>
+                        <span id="overview-reports"
+                            style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);"></span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, 0.45); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">Adoption
+                            Applications</span>
+                        <span id="overview-adoptions"
+                            style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);"></span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, 0.45); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">Volunteer
+                            Activities</span>
+                        <span id="overview-activities"
+                            style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bottom Actions Bar -->
+            <div class="actions-bar"
+                style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 16px; margin-bottom: 32px;">
+                <button type="button" class="btn-action cancel" onclick="cancelEdits()">Cancel</button>
+                <button type="button" class="btn-action save" onclick="saveEdits()">Save Changes</button>
+            </div>
+        </div>
+
+        <!-- Right Column: Sticky Live Preview -->
+        <aside class="preview-column">
+            <div class="sticky-card">
+                <div class="preview-badge">Public Profile Preview</div>
+
+                <div class="preview-header"
+                    style="display: flex; gap: 16px; align-items: center; margin-top: 12px; margin-bottom: 20px;">
+                    <div class="preview-avatar-wrap" id="preview-avatar">
+                        <!-- dynamic avatar -->
+                    </div>
+                    <div class="preview-identity">
+                        <h3 id="preview-name"
+                            style="font-size: 1.25rem; color: var(--text-main); font-weight: 800; line-height: 1.2; word-break: break-word;">
+                        </h3>
+                        <div
+                            style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                            <i class="ph-fill ph-paw-print" style="color: var(--primary);"></i> <span
+                                id="preview-acct-type">Regular User</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 1px; background: rgba(249, 115, 22, 0.08); margin-bottom: 20px;"></div>
+
+                <div class="preview-bio-section" style="margin-bottom: 20px;">
+                    <h4
+                        style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;">
+                        About</h4>
+                    <p id="preview-bio"
+                        style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; font-weight: 500; word-break: break-word; font-style: italic; white-space: pre-line;">
+                    </p>
+                </div>
+
+                <div class="preview-location-section" style="margin-bottom: 20px;">
+                    <h4
+                        style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;">
+                        Location</h4>
+                    <p id="preview-location"
+                        style="font-size: 0.92rem; color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                        <i class="ph ph-map-pin" style="color: var(--primary); font-size: 1.15rem;"></i> <span></span>
+                    </p>
+                </div>
+
+                <div class="preview-pref-section" style="margin-bottom: 20px;">
+                    <h4
+                        style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;">
+                        Animal Preferences</h4>
+                    <div id="preview-preferences" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        <!-- dynamic preference tags -->
+                    </div>
+                </div>
+
+                <div class="preview-volunteer-section">
+                    <h4
+                        style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;">
+                        Volunteer Profile</h4>
+                    <div
+                        style="font-size: 0.92rem; color: var(--text-main); font-weight: 600; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="ph ph-briefcase" style="color: var(--primary); font-size: 1.15rem;"></i>
+                            <span style="color: var(--text-muted); font-weight: 500;">Experience Level:</span>
+                            <span id="preview-vol-experience"></span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="ph ph-calendar-blank" style="color: var(--primary); font-size: 1.15rem;"></i>
+                            <span style="color: var(--text-muted); font-weight: 500;">Availability:</span>
+                            <span id="preview-vol-availability"></span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="ph ph-paw-print" style="color: var(--primary); font-size: 1.15rem;"></i>
+                            <span style="color: var(--text-muted); font-weight: 500;">Preferred Animal Types:</span>
+                            <span id="preview-vol-animals"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        style="text-align: center; padding: 40px 20px 80px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); position: relative; z-index: 1;">
+        <p>&copy; 2026 Voice of Stray NGO. All rights reserved.</p>
+    </footer>
+
+    <!-- PHOTO SELECTOR MODAL DIALOG -->
+    <div class="photo-selector-overlay" id="photo-modal-overlay">
+        <div class="photo-modal-card">
+            <div class="modal-header-row">
+                <h3><i class="ph ph-image"></i> Select Profile Avatar</h3>
+                <span class="modal-close-btn" onclick="closeAvatarSelector()"><i class="ph ph-x"></i></span>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">Choose one of our premium,
+                    pre-configured community avatar illustrations, or enter a custom image URL below:</p>
+
+                <div class="image-options-grid">
+                    <!-- Option 1: Arjun (Default Orange) -->
+                    <div class="image-option-item"
+                        onclick="selectPresetAvatar('https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff', this)">
+                        <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff"
+                            alt="Avatar Preset 1">
+                    </div>
+                    <!-- Option 2: Teal Avatar -->
+                    <div class="image-option-item"
+                        onclick="selectPresetAvatar('https://ui-avatars.com/api/?name=Arjun&background=14b8a6&color=fff', this)">
+                        <img src="https://ui-avatars.com/api/?name=Arjun&background=14b8a6&color=fff"
+                            alt="Avatar Preset 2">
+                    </div>
+                    <!-- Option 3: Blue Avatar -->
+                    <div class="image-option-item"
+                        onclick="selectPresetAvatar('https://ui-avatars.com/api/?name=Arjun&background=3b82f6&color=fff', this)">
+                        <img src="https://ui-avatars.com/api/?name=Arjun&background=3b82f6&color=fff"
+                            alt="Avatar Preset 3">
+                    </div>
+                    <!-- Option 4: Dog Photo 1 -->
+                    <div class="image-option-item"
+                        onclick="selectPresetAvatar('https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200"
+                            alt="Avatar Preset 4">
+                    </div>
+                    <!-- Option 5: Cat Photo 1 -->
+                    <div class="image-option-item"
+                        onclick="selectPresetAvatar('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=200"
+                            alt="Avatar Preset 5">
+                    </div>
+                    <!-- Option 6: Dog Photo 2 -->
+                    <div class="image-option-item"
+                        onclick="selectPresetAvatar('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=200"
+                            alt="Avatar Preset 6">
+                    </div>
+                </div>
+
+                <div
+                    style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; border-top: 1px solid rgba(249, 115, 22, 0.1); padding-top: 16px;">
+                    <label
+                        style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Upload
+                        Image File</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="file" id="avatar-file-upload" accept="image/png, image/jpeg, image/jpg"
+                            style="display: none;" onchange="handleFileUpload(event)">
+                        <button type="button" class="btn-action save"
+                            style="padding: 10px 22px; font-size: 0.9rem; border-radius: var(--radius-sm);"
+                            onclick="document.getElementById('avatar-file-upload').click()">
+                            <i class="ph ph-upload-simple"></i> Choose File
+                        </button>
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Supported formats:
+                            PNG, JPG</span>
+                    </div>
+                </div>
+
+                <div class="url-input-wrap">
+                    <label for="custom-avatar-url"
+                        style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Or
+                        Paste Image URL</label>
+                    <div class="url-input-row">
+                        <input type="text" id="custom-avatar-url" class="input-glass" style="flex: 1;"
+                            placeholder="https://example.com/avatar.jpg">
+                        <button class="btn-action save"
+                            style="border-radius: var(--radius-sm); padding: 8px 16px; font-size: 0.9rem;"
+                            onclick="applyCustomUrl()">Apply</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions-row">
+                <button class="btn-action cancel" style="padding: 8px 18px; font-size: 0.9rem;"
+                    onclick="closeAvatarSelector()">Cancel</button>
+                <button class="btn-action save" style="padding: 8px 20px; font-size: 0.9rem;"
+                    onclick="confirmAvatarSelection()">Select Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="editor-notification" id="save-notification">
+        <i class="ph ph-check-circle"></i>
+        <span>Profile updated successfully!</span>
+    </div>
+
+    <!-- Script Controller -->
+    <script>
+        // Centralized profile state object
+        let userProfile = {
+            fullName: "Arjun Prasad",
+            email: "user@voiceofstray.com",
+            phone: "+1 (555) 234-5678",
+            city: "Brooklyn",
+            state: "New York",
+            pincode: "11201",
+            about: "Animal lover passionate about helping stray dogs and supporting local rescue efforts.",
+            avatarUrl: "https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff",
+            preferences: ["Dogs", "Cats"],
+            memberSince: "June 2026",
+            accountType: "Regular User",
+            volunteerSkills: [],
+            volunteerAvailability: "Weekends",
+            volunteerExperience: "None",
+            rescuerSkills: [],
+            rescuerRadius: "5km",
+            rescuerContact: "",
+            stats: {
+                reports: 3,
+                adoptions: 2,
+                volunteer: 2
+            }
+        };
+
+        let tempAvatarUrl = "";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Strict Auth Guard
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const role = localStorage.getItem("role") || "user";
+            if (!isLoggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+            if (role === "ngo") {
+                window.location.href = "ngo-edit-profile.html";
+                return;
+            }
+
+            // Sync global layout profile pics
+            const globalAvatar = localStorage.getItem("avatarUrl") || userProfile.avatarUrl;
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => img.src = globalAvatar);
+
+            // Load from localStorage if exists
+            const stored = localStorage.getItem("voiceOfStrayUserProfile");
+            if (stored) {
+                try {
+                    userProfile = { ...userProfile, ...JSON.parse(stored) };
+                } catch (e) {
+                    console.error("Error parsing stored user profile", e);
+                }
+            } else {
+                // Pre-populate with auth storage if clean slate
+                const authUser = localStorage.getItem("username");
+                const authEmail = localStorage.getItem("email");
+                const authAvatar = localStorage.getItem("avatarUrl");
+                if (authUser && authUser !== "Arjun") userProfile.fullName = authUser;
+                if (authEmail) userProfile.email = authEmail;
+                if (authAvatar) userProfile.avatarUrl = authAvatar;
+            }
+
+            // Populate form inputs
+            populateForm();
+
+            // Run initial preview sync
+            updatePreview();
+
+            // Bind live editing listeners
+            bindFormListeners();
+        });
+
+        function toggleAccountTypeSections(type) {
+            const volunteerCard = document.getElementById("volunteer-info-card");
+            const rescuerCard = document.getElementById("rescuer-info-card");
+
+            if (type === "Volunteer") {
+                volunteerCard.style.display = "block";
+                rescuerCard.style.display = "none";
+            } else if (type === "Rescuer") {
+                volunteerCard.style.display = "none";
+                rescuerCard.style.display = "block";
+            } else {
+                volunteerCard.style.display = "none";
+                rescuerCard.style.display = "none";
+            }
+        }
+
+        function populateForm() {
+            document.getElementById("input-full-name").value = userProfile.fullName;
+            document.getElementById("input-email").value = userProfile.email;
+            document.getElementById("input-phone").value = userProfile.phone;
+            document.getElementById("input-city").value = userProfile.city;
+            document.getElementById("input-state").value = userProfile.state;
+            document.getElementById("input-pincode").value = userProfile.pincode;
+            document.getElementById("input-about").value = userProfile.about;
+
+            // Account Type select
+            document.getElementById("input-account-type").value = userProfile.accountType || "Regular User";
+            toggleAccountTypeSections(userProfile.accountType);
+
+            // Set checkboxes
+            const checkboxes = document.querySelectorAll("input[name='animal-pref']");
+            checkboxes.forEach(cb => {
+                cb.checked = userProfile.preferences.includes(cb.value);
+            });
+
+            // Populate volunteer fields
+            const volSkills = userProfile.volunteerSkills || [];
+            document.querySelectorAll("input[name='volunteer-skills']").forEach(cb => {
+                cb.checked = volSkills.includes(cb.value);
+            });
+            document.getElementById("input-volunteer-availability").value = userProfile.volunteerAvailability || "Weekends";
+            document.getElementById("input-volunteer-experience").value = userProfile.volunteerExperience || "None";
+
+            // Populate rescuer fields
+            const rescSkills = userProfile.rescuerSkills || [];
+            document.querySelectorAll("input[name='rescuer-skills']").forEach(cb => {
+                cb.checked = rescSkills.includes(cb.value);
+            });
+            document.getElementById("input-rescue-radius").value = userProfile.rescuerRadius || "5km";
+            document.getElementById("input-rescue-contact").value = userProfile.rescuerContact || "";
+
+            // Set read-only overview elements
+            document.getElementById("overview-acct-type").textContent = userProfile.accountType;
+            document.getElementById("overview-member-since").textContent = userProfile.memberSince;
+            document.getElementById("overview-reports").textContent = userProfile.stats.reports;
+            document.getElementById("overview-adoptions").textContent = userProfile.stats.adoptions;
+            document.getElementById("overview-activities").textContent = userProfile.stats.volunteer;
+        }
+
+        function updatePreview() {
+            // Hero
+            document.getElementById("hero-avatar").src = userProfile.avatarUrl;
+            document.getElementById("hero-username").textContent = userProfile.fullName || "User Identity";
+            document.getElementById("hero-member-label").textContent = `Member Since: ${userProfile.memberSince}`;
+
+            // Preview card details
+            const previewAvatar = document.getElementById("preview-avatar");
+            if (userProfile.avatarUrl) {
+                previewAvatar.innerHTML = `<img src="${userProfile.avatarUrl}" alt="Avatar">`;
+            } else {
+                const initials = (userProfile.fullName || "US").trim().split(/\s+/).map(n => n[0]).join("").toUpperCase().substring(0, 2);
+                previewAvatar.innerHTML = `<span>${initials}</span>`;
+            }
+
+            document.getElementById("preview-name").textContent = userProfile.fullName || "User Identity";
+            document.getElementById("preview-bio").textContent = (userProfile.about || "").trim() || "No bio added yet.";
+
+            // Preview card Account Type
+            document.getElementById("preview-acct-type").textContent = userProfile.accountType || "Regular User";
+
+            // Location Preview
+            const locationSpan = document.querySelector("#preview-location span");
+            const city = (userProfile.city || "").trim();
+            const state = (userProfile.state || "").trim();
+            if (city || state) {
+                locationSpan.textContent = [city, state].filter(Boolean).join(", ");
+            } else {
+                locationSpan.textContent = "Location not provided.";
+            }
+
+            // Preference Tags Preview
+            const prefContainer = document.getElementById("preview-preferences");
+            prefContainer.innerHTML = "";
+            if (userProfile.preferences && userProfile.preferences.length > 0) {
+                userProfile.preferences.forEach(pref => {
+                    const tag = document.createElement("span");
+                    tag.className = "pref-tag";
+                    tag.textContent = pref;
+                    prefContainer.appendChild(tag);
+                });
+            } else {
+                const tag = document.createElement("span");
+                tag.className = "pref-tag";
+                tag.style.background = "#f1f5f9";
+                tag.style.color = "var(--text-muted)";
+                tag.style.borderColor = "var(--border)";
+                tag.textContent = "No preferences selected.";
+                prefContainer.appendChild(tag);
+            }
+
+            // Volunteer Profile Preview Update
+            const volExp = userProfile.volunteerExperience || "None";
+            const volExpText = volExp === "None" ? "None / Beginner" : volExp;
+            document.getElementById("preview-vol-experience").textContent = volExpText;
+            document.getElementById("preview-vol-availability").textContent = userProfile.volunteerAvailability || "Weekends";
+            document.getElementById("preview-vol-animals").textContent = (userProfile.preferences && userProfile.preferences.length > 0)
+                ? userProfile.preferences.join(", ")
+                : "No animal preferences selected";
+        }
+
+        function bindFormListeners() {
+            // Live inputs
+            document.getElementById("input-full-name").addEventListener("input", (e) => {
+                userProfile.fullName = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById("input-email").addEventListener("input", (e) => {
+                userProfile.email = e.target.value;
+            });
+
+            document.getElementById("input-account-type").addEventListener("change", (e) => {
+                userProfile.accountType = e.target.value;
+                toggleAccountTypeSections(e.target.value);
+                document.getElementById("overview-acct-type").textContent = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById("input-phone").addEventListener("input", (e) => {
+                userProfile.phone = e.target.value;
+            });
+
+            document.getElementById("input-city").addEventListener("input", (e) => {
+                userProfile.city = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById("input-state").addEventListener("input", (e) => {
+                userProfile.state = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById("input-pincode").addEventListener("input", (e) => {
+                userProfile.pincode = e.target.value;
+            });
+
+            document.getElementById("input-about").addEventListener("input", (e) => {
+                userProfile.about = e.target.value;
+                updatePreview();
+            });
+
+            // Checkbox modifications
+            const checkboxes = document.querySelectorAll("input[name='animal-pref']");
+            checkboxes.forEach(cb => {
+                cb.addEventListener("change", () => {
+                    userProfile.preferences = Array.from(checkboxes)
+                        .filter(c => c.checked)
+                        .map(c => c.value);
+                    updatePreview();
+                });
+            });
+
+            // Volunteer listeners
+            const volCheckboxes = document.querySelectorAll("input[name='volunteer-skills']");
+            volCheckboxes.forEach(cb => {
+                cb.addEventListener("change", () => {
+                    userProfile.volunteerSkills = Array.from(volCheckboxes)
+                        .filter(c => c.checked)
+                        .map(c => c.value);
+                });
+            });
+
+            document.getElementById("input-volunteer-availability").addEventListener("change", (e) => {
+                userProfile.volunteerAvailability = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById("input-volunteer-experience").addEventListener("change", (e) => {
+                userProfile.volunteerExperience = e.target.value;
+                updatePreview();
+            });
+
+            // Rescuer listeners
+            const rescCheckboxes = document.querySelectorAll("input[name='rescuer-skills']");
+            rescCheckboxes.forEach(cb => {
+                cb.addEventListener("change", () => {
+                    userProfile.rescuerSkills = Array.from(rescCheckboxes)
+                        .filter(c => c.checked)
+                        .map(c => c.value);
+                });
+            });
+
+            document.getElementById("input-rescue-radius").addEventListener("change", (e) => {
+                userProfile.rescuerRadius = e.target.value;
+            });
+
+            document.getElementById("input-rescue-contact").addEventListener("input", (e) => {
+                userProfile.rescuerContact = e.target.value;
+            });
+        }
+
+        // Avatar selector actions
+        function openAvatarSelector() {
+            document.getElementById("photo-modal-overlay").style.display = "flex";
+            tempAvatarUrl = userProfile.avatarUrl;
+
+            // Check matching presets
+            const items = document.querySelectorAll(".image-option-item");
+            items.forEach(item => {
+                const img = item.querySelector("img");
+                if (img && img.src === userProfile.avatarUrl) {
+                    item.classList.add("selected");
+                } else {
+                    item.classList.remove("selected");
+                }
+            });
+            document.getElementById("custom-avatar-url").value = "";
+        }
+
+        function closeAvatarSelector() {
+            document.getElementById("photo-modal-overlay").style.display = "none";
+        }
+
+        function selectPresetAvatar(url, element) {
+            tempAvatarUrl = url;
+            document.querySelectorAll(".image-option-item").forEach(item => {
+                item.classList.remove("selected");
+            });
+            if (element) {
+                element.classList.add("selected");
+            }
+            document.getElementById("custom-avatar-url").value = "";
+        }
+
+        function applyCustomUrl() {
+            const url = document.getElementById("custom-avatar-url").value.trim();
+            if (url) {
+                tempAvatarUrl = url;
+                document.querySelectorAll(".image-option-item").forEach(item => {
+                    item.classList.remove("selected");
+                });
+                alert("Custom avatar URL applied! Click 'Select Image' to confirm.");
+            } else {
+                alert("Please enter a valid image URL first.");
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+            if (!validTypes.includes(file.type)) {
+                alert("Supported formats: PNG, JPG, JPEG. Please select a valid image.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                tempAvatarUrl = e.target.result;
+                document.querySelectorAll(".image-option-item").forEach(item => {
+                    item.classList.remove("selected");
+                });
+                alert("File loaded successfully! Click 'Select Image' to confirm.");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function confirmAvatarSelection() {
+            if (tempAvatarUrl) {
+                userProfile.avatarUrl = tempAvatarUrl;
+                updatePreview();
+                showToast("Avatar image updated!");
+            }
+            closeAvatarSelector();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("save-notification");
+            if (toast) {
+                toast.querySelector("span").textContent = msg;
+                toast.classList.add("show");
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2500);
+            }
+        }
+
+        function cancelEdits() {
+            if (confirm("Are you sure you want to discard your changes?")) {
+                window.location.href = "user-dashboard.html";
+            }
+        }
+
+        function saveEdits() {
+            if (!userProfile.fullName.trim()) {
+                alert("Please enter your Full Name.");
+                document.getElementById("input-full-name").focus();
+                return;
+            }
+
+            const emailInput = document.getElementById("input-email");
+            const emailVal = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailVal || !emailRegex.test(emailVal)) {
+                alert("Please enter a valid email address.");
+                emailInput.focus();
+                return;
+            }
+            userProfile.email = emailVal;
+
+            // Persist userProfile object in localStorage
+            localStorage.setItem("voiceOfStrayUserProfile", JSON.stringify(userProfile));
+
+            // Sync with navbar.js state keys
+            localStorage.setItem("username", userProfile.fullName);
+            localStorage.setItem("email", userProfile.email);
+            localStorage.setItem("avatarUrl", userProfile.avatarUrl);
+
+            // Toast slide-in
+            showToast("Profile settings saved successfully!");
+
+            // Redirect back to dashboard after a short delay
+            setTimeout(() => {
+                window.location.href = "user-dashboard.html";
+            }, 1500);
+        }
+    </script>
+</body>
+
+</html>

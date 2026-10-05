@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice of Stray - Every Stray Deserves a Voice</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Leaflet Map library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="landing.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+</head>
+<body>
+    <!-- 1. Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. Hero Section -->
+    <section class="hero-section">
+        <div class="hero-background-shape"></div>
+        <div class="hero-content">
+            <div class="hero-text animate-up">
+                <h1>Every stray deserves a <span>voice</span></h1>
+                <p>Join the fastest growing community of animal lovers, rescuers, and NGOs working together to create a safer world for street animals.</p>
+                <div class="hero-actions">
+                    <a href="report.html" class="btn-premium primary" style="text-decoration: none;"><i class="ph-fill ph-warning-circle"></i> Report Emergency</a>
+                    <a href="adopt.html" class="btn-premium secondary" style="text-decoration: none;"><i class="ph-fill ph-heart"></i> Adopt a Pet</a>
+                </div>
+            </div>
+            <div class="hero-visual animate-up" style="animation-delay: 0.2s;">
+                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=800" alt="Rescued dogs playing" class="hero-main-img">
+                
+                <div class="floating-glass-card glass-card-1">
+                    <div class="glass-icon"><i class="ph-fill ph-shield-check"></i></div>
+                    <div class="glass-text">
+                        <strong>Verified Rescue</strong>
+                        <span>Safe & secure</span>
+                    </div>
+                </div>
+                
+                <div class="floating-glass-card glass-card-2">
+                    <div class="glass-icon" style="background: #10b981;"><i class="ph-fill ph-clock"></i></div>
+                    <div class="glass-text">
+                        <strong>15 Min ETA</strong>
+                        <span>Emergency response</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Impact Network -->
+    <section class="impact-section">
+        <div class="impact-grid">
+            <div class="impact-stat">
+                <i class="ph-fill ph-paw-print"></i>
+                <h3>12k+</h3>
+                <p>Animals Rescued</p>
+            </div>
+            <div class="impact-stat">
+                <i class="ph-fill ph-heart"></i>
+                <h3>5k+</h3>
+                <p>Successful Adoptions</p>
+            </div>
+            <div class="impact-stat">
+                <i class="ph-fill ph-buildings"></i>
+                <h3>180+</h3>
+                <p>Partner NGOs</p>
+            </div>
+            <div class="impact-stat">
+                <i class="ph-fill ph-users"></i>
+                <h3>50k+</h3>
+                <p>Active Volunteers</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Rescue Journey -->
+    <section class="journey-section">
+        <div class="section-title">
+            <h2>How It Works</h2>
+            <p>Our platform connects reporters directly with nearby rescue teams for the fastest possible response.</p>
+        </div>
+        
+        <div class="journey-steps">
+            <div class="journey-step">
+                <div class="step-number-bg">1</div>
+                <div class="journey-icon"><i class="ph-fill ph-camera"></i></div>
+                <h3>Report</h3>
+                <p>See a stray in need? Take a photo, tag the location, and select the severity level. Our system alerts nearby volunteers instantly.</p>
+            </div>
+            
+            <div class="journey-step">
+                <div class="step-number-bg">2</div>
+                <div class="journey-icon"><i class="ph-fill ph-ambulance"></i></div>
+                <h3>Rescue</h3>
+                <p>Verified NGO partners or volunteers accept the case. Track their live GPS location as they navigate to the animal.</p>
+            </div>
+            
+            <div class="journey-step">
+                <div class="step-number-bg">3</div>
+                <div class="journey-icon"><i class="ph-fill ph-house-line"></i></div>
+                <h3>Recover & Adopt</h3>
+                <p>The animal receives medical care at a verified shelter. Once healthy, they are listed on our platform for adoption or fostering.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Live Map Preview -->
+    <section class="live-map-section">
+        <div class="section-title">
+            <h2>Live Rescue Network</h2>
+            <p>Watch our community in action. Real-time updates from rescues happening around you.</p>
+        </div>
+        
+        <div class="map-container">
+            <!-- Simplified Premium Map Target -->
+            <div id="live-rescue-map"></div>
+
+            <!-- Dashboard Technical Overlays -->
+            <div class="map-grid-overlay"></div>
+            <div class="map-glow-overlay"></div>
+
+            <!-- Simplified, Premium Live Status Bar -->
+            <div class="map-status-bar">
+                <span class="status-item">
+                    <span class="status-dot dot-emergency"></span>
+                    <strong>13</strong> Emergencies
+                </span>
+                <span class="status-divider">•</span>
+                <span class="status-item">
+                    <span class="status-dot dot-active"></span>
+                    <strong>7</strong> Teams En Route
+                </span>
+                <span class="status-divider">•</span>
+                <span class="status-item">
+                    <span class="status-dot dot-resolved"></span>
+                    <strong>48</strong> NGOs Active
+                </span>
+            </div>
+            
+            <!-- Left Premium Storytelling Feed Sidebar -->
+            <div class="map-overlay">
+                <div class="map-overlay-header">
+                    <div class="live-pulse-container">
+                        <div class="live-pulse-dot"></div>
+                        <div class="live-pulse-ring"></div>
+                    </div>
+                    <div>
+                        <h3>Live Rescue Feed</h3>
+                        <span style="font-size: 0.78rem; color: #94a3b8; font-weight: 500;">Real-time ecosystem updates</span>
+                    </div>
+                </div>
+
+                <!-- Storytelling Incidents Feed List (Natural Lifecycle) -->
+                <div class="map-list-wrapper">
+                    <!-- Step 1: Reported -->
+                    <div class="map-list-item premium-item" data-incident-id="1">
+                        <div class="item-icon-wrapper siren-glow">
+                            <i class="ph-fill ph-siren"></i>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">Injured puppy reported</div>
+                            <div class="item-sub">Sunset Blvd • 2 mins ago</div>
+                        </div>
+                        <div class="item-badge badge-emergency">Reported</div>
+                    </div>
+                    
+                    <!-- Step 2: Accepted -->
+                    <div class="map-list-item premium-item" data-incident-id="2">
+                        <div class="item-icon-wrapper coordinated-glow">
+                            <i class="ph-fill ph-hand-heart"></i>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">Rescue request accepted</div>
+                            <div class="item-sub">City Vet Center • 6 mins ago</div>
+                        </div>
+                        <div class="item-badge badge-coordinated">Accepted</div>
+                    </div>
+                    
+                    <!-- Step 3: Dispatched -->
+                    <div class="map-list-item premium-item" data-incident-id="3">
+                        <div class="item-icon-wrapper active-glow">
+                            <i class="ph-fill ph-ambulance"></i>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">Rescue team dispatched</div>
+                            <div class="item-sub">Mission District • 12 mins ago</div>
+                        </div>
+                        <div class="item-badge badge-active">En Route</div>
+                    </div>
+
+                    <!-- Step 4: Transporting -->
+                    <div class="map-list-item premium-item" data-incident-id="4">
+                        <div class="item-icon-wrapper transport-glow">
+                            <i class="ph-fill ph-first-aid-kit"></i>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">Animal transported to clinic</div>
+                            <div class="item-sub">Downtown Park • 18 mins ago</div>
+                        </div>
+                        <div class="item-badge badge-transport">Transporting</div>
+                    </div>
+                    
+                    <!-- Step 5: Completed -->
+                    <div class="map-list-item premium-item" data-incident-id="5">
+                        <div class="item-icon-wrapper resolved-glow">
+                            <i class="ph-fill ph-heart"></i>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">Rescue completed safely</div>
+                            <div class="item-sub">Marina District • 30 mins ago</div>
+                        </div>
+                        <div class="item-badge badge-resolved">Completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Success Stories -->
+    <section class="stories-section">
+        <div class="section-title">
+            <h2>Happy Tails</h2>
+            <p>Every rescue tells a story. Meet the animals who found their second chance.</p>
+        </div>
+        
+        <div class="stories-grid">
+            <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600" alt="Charlie" class="story-img">
+                <div class="story-content">
+                    <h3>Charlie's Journey</h3>
+                    <p>Found injured by the highway, Charlie underwent a 3-month recovery before finding his forever family who loves taking him on hikes.</p>
+                    <div class="story-meta">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100" alt="Sarah">
+                        <span>Adopted by Sarah</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=600" alt="Luna" class="story-img">
+                <div class="story-content">
+                    <h3>Little Luna</h3>
+                    <p>Rescued from an abandoned building during a storm. This tiny kitten grew into a fierce, loving house cat.</p>
+                    <div class="story-meta">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100" alt="Mark">
+                        <span>Adopted by Mark</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=600" alt="Max" class="story-img">
+                <div class="story-content">
+                    <h3>Max the Senior</h3>
+                    <p>Proving that age is just a number. Max, a 9-year-old lab mix, finally found a quiet home to spend his golden years.</p>
+                    <div class="story-meta">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" alt="Priya">
+                        <span>Adopted by Priya</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Mobile App CTA -->
+    <section class="app-cta-section">
+        <div class="app-cta-container">
+            <div class="app-cta-text">
+                <h2>Rescue in your pocket</h2>
+                <p>Download the Voice of Stray app to report emergencies instantly, track live rescues, and connect with the community on the go. Faster reporting saves lives.</p>
+                <div class="store-buttons">
+                    <a href="#" class="store-btn">
+                        <i class="ph-fill ph-apple-logo"></i>
+                        <div>
+                            <span>Download on the</span>
+                            <strong>App Store</strong>
+                        </div>
+                    </a>
+                    <a href="#" class="store-btn">
+                        <i class="ph-fill ph-google-play-logo"></i>
+                        <div>
+                            <span>GET IT ON</span>
+                            <strong>Google Play</strong>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="app-mockup">
+                <div class="phone-frame">
+                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&q=80&w=400" alt="App interface preview">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Partner NGOs -->
+    <section class="partners-section">
+        <h4 class="partners-title">Trusted by over 180+ verified rescue organizations</h4>
+        
+        <div class="ticker-wrap">
+            <div class="ticker-track">
+                <div class="partner-logo"><i class="ph-fill ph-shield-heart"></i> Paws Hope Rescue</div>
+                <div class="partner-logo"><i class="ph-fill ph-first-aid-kit"></i> City Vet Network</div>
+                <div class="partner-logo"><i class="ph-fill ph-hand-heart"></i> Animal Angels</div>
+                <div class="partner-logo"><i class="ph-fill ph-paw-print"></i> Safe Haven Shelter</div>
+                <div class="partner-logo"><i class="ph-fill ph-heartbeat"></i> Metro Street Dogs</div>
+                
+                <!-- Duplicated for seamless loop -->
+                <div class="partner-logo"><i class="ph-fill ph-shield-heart"></i> Paws Hope Rescue</div>
+                <div class="partner-logo"><i class="ph-fill ph-first-aid-kit"></i> City Vet Network</div>
+                <div class="partner-logo"><i class="ph-fill ph-hand-heart"></i> Animal Angels</div>
+                <div class="partner-logo"><i class="ph-fill ph-paw-print"></i> Safe Haven Shelter</div>
+                <div class="partner-logo"><i class="ph-fill ph-heartbeat"></i> Metro Street Dogs</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Footer -->
+    <footer class="premium-footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h2><i class="ph-fill ph-paw-print"></i> Voice of Stray</h2>
+                <p>Building a compassionate world where no animal suffers alone. Together we can give every stray a voice.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="report.html">Report a Stray</a></li>
+                    <li><a href="rescue.html">Live Tracking</a></li>
+                    <li><a href="adopt.html">Adopt a Pet</a></li>
+                    <li><a href="community.html">Community Feed</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Get Involved</h4>
+                <ul>
+                    <li><a href="volunteer.html">Volunteer</a></li>
+                    <li><a href="donate.html">Donate</a></li>
+                    <li><a href="#">Register NGO</a></li>
+                    <li><a href="#">Foster Program</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-newsletter">
+                <h4>Stay Updated</h4>
+                <p style="color: #94a3b8; margin-bottom: 16px; font-size: 0.9rem;">Get the latest rescue stories and updates.</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Email address">
+                    <button>Subscribe</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 Voice of Stray. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="ph-fill ph-instagram-logo"></i></a>
+                <a href="#"><i class="ph-fill ph-twitter-logo"></i></a>
+                <a href="#"><i class="ph-fill ph-facebook-logo"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Premium Leaflet Map Initialization and Dynamic Coordination Engine -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Initialize Map centered on San Francisco coordinates
+            // Disable interaction to simulate a clean showcase dashboard
+            var map = L.map('live-rescue-map', {
+                center: [37.772, -122.442],
+                zoom: 13,
+                zoomControl: false,
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                dragging: false,
+                touchZoom: false,
+                attributionControl: false
+            });
+
+            // 2. Add high-contrast CartoDB Dark Matter tile layer
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 20
+            }).addTo(map);
+
+            // 3. Define Coordinates for Storytelling Lifecycle
+            var coords = {
+                emergency: [37.765, -122.472],  // Step 1: Reported (Sunset Blvd)
+                hub: [37.758, -122.435],        // Step 2: Accepted (Paws Hope NGO HQ)
+                active: [37.759, -122.418],      // Step 3: Dispatched (Mission District)
+                transport: [37.778, -122.446],   // Step 4: Transporting (Panhandle Medical Center)
+                resolved: [37.800, -122.438]     // Step 5: Completed (Marina District Shelter)
+            };
+
+            // 4. Create custom pulsing HTML divIcons matching the Voice of Stray branding
+            var createPulseIcon = function(statusClass) {
+                var innerHtml = '<div class="pulse-core"></div><div class="pulse-ring"></div>';
+                if (statusClass === 'emergency') {
+                    innerHtml += '<div class="pulse-radar-ring"></div>';
+                }
+                
+                return L.divIcon({
+                    className: 'custom-pulsing-marker marker-' + statusClass,
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12],
+                    html: innerHtml
+                });
+            };
+
+            // 5. Add markers to the map matching the storytelling lifecycle
+            var markers = {
+                emergency: L.marker(coords.emergency, { icon: createPulseIcon('emergency') }).addTo(map),
+                hub: L.marker(coords.hub, { icon: createPulseIcon('coordinated') }).addTo(map),
+                active: L.marker(coords.active, { icon: createPulseIcon('active') }).addTo(map),
+                transport: L.marker(coords.transport, { icon: createPulseIcon('transport') }).addTo(map),
+                resolved: L.marker(coords.resolved, { icon: createPulseIcon('resolved') }).addTo(map)
+            };
+
+            // Add clean, human-centered tooltips to the map pins
+            markers.emergency.bindTooltip("<b>Step 1</b>: Stray Reported (Injured Puppy)", { direction: 'top', className: 'map-tooltip' });
+            markers.hub.bindTooltip("<b>Step 2</b>: Request Accepted (Paws Hope Center)", { direction: 'top', className: 'map-tooltip' });
+            markers.active.bindTooltip("<b>Step 3</b>: Rescue Team Dispatched", { direction: 'top', className: 'map-tooltip' });
+            markers.transport.bindTooltip("<b>Step 4</b>: Transporting to Medical Center", { direction: 'top', className: 'map-tooltip' });
+            markers.resolved.bindTooltip("<b>Step 5</b>: Rescue Completed Successfully!", { direction: 'top', className: 'map-tooltip' });
+
+            // 6. Bezier Arc mathematical helper to draw premium curved rescue paths
+            function getArcPoints(start, end, numPoints = 40) {
+                var points = [];
+                var lat1 = start[0], lon1 = start[1];
+                var lat2 = end[0], lon2 = end[1];
+                
+                // Calculate midpoint
+                var midLat = (lat1 + lat2) / 2;
+                var midLon = (lon1 + lon2) / 2;
+                
+                // Calculate vector from start to end
+                var dLat = lat2 - lat1;
+                var dLon = lon2 - lon1;
+                
+                // Perpendicular offset for arc curvature (adjusted curve amplitude)
+                var offsetStrength = 0.15;
+                var offsetLat = -dLon * offsetStrength;
+                var offsetLon = dLat * offsetStrength;
+                
+                var controlLat = midLat + offsetLat;
+                var controlLon = midLon + offsetLon;
+                
+                // Evaluate Quadratic Bezier Curve at numPoints intervals
+                for (var i = 0; i <= numPoints; i++) {
+                    var t = i / numPoints;
+                    var lat = (1 - t) * (1 - t) * lat1 + 2 * (1 - t) * t * controlLat + t * t * lat2;
+                    var lon = (1 - t) * (1 - t) * lon1 + 2 * (1 - t) * t * controlLon + t * t * lon2;
+                    points.push([lat, lon]);
+                }
+                return points;
+            }
+
+            // 7. Generate curves and project animated flowing SVGs onto Leaflet
+            // Flow 1: Reported ➔ Accepted (Sunset Blvd to NGO Hub)
+            L.polyline(getArcPoints(coords.emergency, coords.hub), {
+                color: '#ef4444',
+                weight: 2,
+                opacity: 0.6,
+                className: 'animated-route-line'
+            }).addTo(map);
+
+            // Flow 2: Accepted ➔ Dispatched (NGO Hub to Mission Team coords)
+            L.polyline(getArcPoints(coords.hub, coords.active), {
+                color: '#f97316',
+                weight: 2,
+                opacity: 0.6,
+                className: 'animated-route-line'
+            }).addTo(map);
+
+            // Flow 3: Dispatched ➔ Transporting (Mission Team to Panhandle clinic)
+            L.polyline(getArcPoints(coords.active, coords.transport), {
+                color: '#8b5cf6',
+                weight: 2,
+                opacity: 0.6,
+                className: 'animated-route-line'
+            }).addTo(map);
+
+            // Flow 4: Transporting ➔ Completed (Panhandle clinic to Marina shelter)
+            L.polyline(getArcPoints(coords.transport, coords.resolved), {
+                color: '#10b981',
+                weight: 2,
+                opacity: 0.6,
+                className: 'animated-route-line'
+            }).addTo(map);
+
+            // 8. Visual Linking: Hovering feed cards highlights the matching map pin!
+            var feedItems = document.querySelectorAll('.premium-item');
+            var keys = ['emergency', 'hub', 'active', 'transport', 'resolved'];
+
+            feedItems.forEach(function(item, idx) {
+                item.addEventListener('mouseenter', function() {
+                    var key = keys[idx];
+                    var marker = markers[key];
+                    if (marker) {
+                        marker.openTooltip();
+                        
+                        // Bounce the active element on map
+                        var iconEl = marker.getElement();
+                        if (iconEl) {
+                            iconEl.style.transform = iconEl.style.transform + ' translateY(-6px)';
+                            iconEl.style.transition = 'transform 0.2s ease-out';
+                        }
+                    }
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    var key = keys[idx];
+                    var marker = markers[key];
+                    if (marker) {
+                        marker.closeTooltip();
+                        
+                        // Reset map bounce
+                        var iconEl = marker.getElement();
+                        if (iconEl) {
+                            iconEl.style.transform = iconEl.style.transform.replace(' translateY(-6px)', '');
+                        }
+                    }
+                });
+            });
+
+            // 9. Mild highlight pulsation feed cycle (auto-highlights cards one by one!)
+            var currentHighlightIdx = 0;
+            setInterval(function() {
+                var prevIdx = (currentHighlightIdx - 1 + feedItems.length) % feedItems.length;
+                
+                // Clear previous highlights
+                feedItems[prevIdx].classList.remove('feed-active-highlight');
+                var prevMarker = markers[keys[prevIdx]];
+                if (prevMarker) prevMarker.closeTooltip();
+
+                // Apply new highlight
+                var targetItem = feedItems[currentHighlightIdx];
+                targetItem.classList.add('feed-active-highlight');
+                
+                var targetMarker = markers[keys[currentHighlightIdx]];
+                if (targetMarker) {
+                    targetMarker.openTooltip();
+                }
+
+                currentHighlightIdx = (currentHighlightIdx + 1) % feedItems.length;
+            }, 6000);
+        });
+    </script>
+</body>
+</html>

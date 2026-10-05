@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Management - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        body {
+            background-color: #fff9f5;
+            background-image:
+                radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.04;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.12;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.3));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.08;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        /* Nav Home button */
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Layout structure */
+        .ops-container {
+            max-width: 1300px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sidebar Styling */
+        .ops-sidebar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            box-shadow: 0 10px 25px -10px rgba(249, 115, 22, 0.04);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-brand-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .sidebar-brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-brand-section h3 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-item-left i {
+            font-size: 1.25rem;
+            transition: color 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(249, 115, 22, 0.05);
+            color: var(--primary);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, var(--primary), #ea580c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        .sidebar-item.active i {
+            color: white;
+        }
+
+        .sidebar-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .sidebar-badge.pulse-red {
+            background: #fee2e2;
+            color: #ef4444;
+            animation: pulseText 1.5s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .sidebar-badge.count-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        /* Main Content Styling */
+        .ops-main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Section Title Header */
+        .ops-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .ops-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ops-section-title i {
+            color: var(--primary);
+        }
+
+        /* Full Width Volunteer Cards */
+        .adopt-req-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            transition: all 0.25s ease;
+        }
+
+        .adopt-req-item:hover {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.2);
+            box-shadow: 0 8px 20px -8px rgba(249, 115, 22, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .adopt-req-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .adopt-req-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--primary);
+            font-size: 1.35rem;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .adopt-req-info h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .adopt-req-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .adopt-req-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Badges */
+        .status-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-badge.pending {
+            background: #fffbeb;
+            color: #d97706;
+            border-color: #fef3c7;
+        }
+
+        .status-badge.approved {
+            background: #ecfdf5;
+            color: #059669;
+            border-color: #d1fae5;
+        }
+
+        .status-badge.rejected {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fee2e2;
+        }
+
+        .status-badge.active {
+            background: #ecfdf5;
+            color: #059669;
+            border-color: #d1fae5;
+        }
+
+        .status-badge.inactive {
+            background: #f1f5f9;
+            color: #64748b;
+            border-color: #e2e8f0;
+        }
+
+        .status-badge.unavailable {
+            background: #fffbeb;
+            color: #d97706;
+            border-color: #fef3c7;
+        }
+
+        /* Custom buttons styling */
+        .btn-adopt-act {
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-adopt-act.review {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.25);
+            color: var(--primary);
+        }
+
+        .btn-adopt-act.review:hover {
+            background: rgba(249, 115, 22, 0.05);
+            border-color: var(--primary);
+        }
+
+        .btn-adopt-act.approve {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .btn-adopt-act.approve:hover {
+            background: #15803d;
+            color: white;
+            box-shadow: 0 4px 10px rgba(21, 128, 61, 0.15);
+        }
+
+        .btn-adopt-act.reject {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-adopt-act.reject:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
+        }
+
+        .btn-adopt-act.delete {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-adopt-act.delete:hover {
+            background: #64748b;
+            color: white;
+        }
+
+        /* Modal Overlays */
+        .ops-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .ops-modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .ops-modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: #fffdfb !important;
+            border: 1px solid rgba(249, 115, 22, 0.2) !important;
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .ops-modal-overlay.show .ops-modal-content {
+            transform: scale(1);
+        }
+
+        .ops-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .ops-modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .ops-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ops-modal-close:hover {
+            color: var(--primary);
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 2.2rem;
+            color: var(--primary);
+            opacity: 0.55;
+            background: rgba(249, 115, 22, 0.06);
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+        }
+
+        .empty-state h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            max-width: 300px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background decorations -->
+    <div class="bg-decorations">
+        <svg class="decor-item" style="top: 15%; left: 4%; width: 110px; transform: rotate(-10deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <svg class="decor-item" style="bottom: 12%; right: 5%; width: 130px; transform: rotate(18deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <svg class="decor-item sparkle" style="top: 25%; left: 35%; width: 24px;" viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="bottom: 28%; left: 20%; width: 28px; animation-delay: 1s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+    </div>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-home-link">
+                     <i class="ph ph-house"></i>
+                     <span>Home</span>
+                </a>
+            </div>
+
+            <!-- Logged-in State (Session Profile) -->
+            <div class="nav-actions logged-in-actions" style="display: flex;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="ops-container">
+
+        <!-- Sidebar -->
+        <aside class="ops-sidebar">
+            <div class="sidebar-brand-section">
+                <div class="sidebar-brand-icon">
+                    <i class="ph-fill ph-shield-heart"></i>
+                </div>
+                <div>
+                    <h3>Rescue Center</h3>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Ops Command</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="sidebar-item" onclick="window.location.href='ngo-dashboard.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Dashboard</span>
+                    </span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-reports-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-bell-ringing"></i>
+                        <span>Incoming Reports</span>
+                    </span>
+                    <span class="sidebar-badge pulse-red" id="sidebar-reports-badge">2 New</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-dashboard.html#active-cases-section'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-ambulance"></i>
+                        <span>Active Cases</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-cases-badge">2</span>
+                </div>
+                <div class="sidebar-item active">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-hand-heart"></i>
+                        <span>Volunteer Management</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-vol-count" style="background: #e0f2fe; color: #0284c7;">0</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-adopt-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-house-line"></i>
+                        <span>Adoption Requests</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-adoption-count"
+                        style="background: #fce7f3; color: #db2777;">1</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-pet-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-note-pencil"></i>
+                        <span>Manage Pets (Builder)</span>
+                    </span>
+                    <span class="sidebar-badge"
+                        style="background: rgba(249, 115, 22, 0.1); color: var(--primary); font-weight: 800;">Builder</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-donation-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-coins"></i>
+                        <span>Donations</span>
+                    </span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-settings.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-gear"></i>
+                        <span>Settings</span>
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Panel -->
+        <main class="ops-main-panel">
+
+            <!-- Page Header -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <h1 style="font-size: 2.1rem; font-weight: 900; color: #0f172a; letter-spacing: -0.5px; margin: 0;">
+                    Volunteer Management</h1>
+                <p style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin: 0;">Approve helper applications, oversee team dispatch rosters, and archive past records.</p>
+            </div>
+
+            <!-- Section: Pending Applications -->
+            <section class="glass-card" style="padding: 24px;">
+                <div class="ops-section-header">
+                    <span class="ops-section-title">
+                        <i class="ph-fill ph-hand-heart"></i>
+                        <span>Pending Applications</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="pending-applications-count"
+                        style="background: rgba(249, 115, 22, 0.08); color: var(--primary); font-weight: 800;">0 Pending</span>
+                </div>
+
+                <div class="adopt-req-list" id="pending-container">
+                    <!-- Cards will be dynamically injected here -->
+                </div>
+            </section>
+
+            <!-- Section: Approved Volunteers -->
+            <section class="glass-card" style="padding: 24px;">
+                <div class="ops-section-header">
+                    <span class="ops-section-title">
+                        <i class="ph-fill ph-check-circle" style="color: #059669;"></i>
+                        <span>Approved Volunteers</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="approved-volunteers-count"
+                        style="background: #ecfdf5; color: #059669; font-weight: 800;">0 Approved</span>
+                </div>
+
+                <div class="adopt-req-list" id="approved-container">
+                    <!-- Cards will be dynamically injected here -->
+                </div>
+            </section>
+
+            <!-- Section: Rejected Applications -->
+            <section class="glass-card" style="padding: 24px;">
+                <div class="ops-section-header">
+                    <span class="ops-section-title">
+                        <i class="ph-fill ph-x-circle" style="color: #dc2626;"></i>
+                        <span>Rejected Applications</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="rejected-applications-count"
+                        style="background: #fef2f2; color: #dc2626; font-weight: 800;">0 Rejected</span>
+                </div>
+
+                <div class="adopt-req-list" id="rejected-container">
+                    <!-- Cards will be dynamically injected here -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modals & Dialogs -->
+
+    <!-- View Volunteer Modal -->
+    <div id="details-modal" class="ops-modal-overlay">
+        <div class="ops-modal-content">
+            <div class="ops-modal-header">
+                <h3><i class="ph-fill ph-user" style="color: var(--primary);"></i> Volunteer Details</h3>
+                <button class="ops-modal-close" onclick="closeDetailsModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="ops-modal-body" id="details-modal-body">
+                <!-- Injected Form Details -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Ops Footer -->
+    <footer class="premium-footer"
+        style="background-color: #fcf6f0; padding: 48px 24px 32px; border-top: 1px solid rgba(249, 115, 22, 0.15); margin-top: auto; position: relative; z-index: 1;">
+        <div class="footer-bottom"
+            style="max-width: 1200px; margin: 0 auto; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">Made with <i class="ph-fill ph-heart" style="color: var(--alert);"></i> for stray rescue welfare NGOs</p>
+            <p>&copy; 2026 Voice of Stray NGO Operations. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Logic Controller Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Strict Auth Guards
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const role = localStorage.getItem("role");
+            if (!isLoggedIn || role !== "ngo") {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Sync NGO Profile avatar picture
+            const orgLogo = localStorage.getItem("avatarUrl") || "https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff";
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => img.src = orgLogo);
+
+            // Sync other sidebar badge items
+            syncSidebarBadges();
+
+            // Load volunteer data
+            loadVolunteerData();
+        });
+
+        function syncSidebarBadges() {
+            const storedAdoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+            const activeAdoptionsCount = storedAdoptions.filter(app => !app.archived && app.status !== "Approved" && app.status !== "Rejected" && app.status !== "Adopted").length;
+            const badge = document.getElementById("sidebar-adoption-count");
+            if (badge) {
+                badge.textContent = activeAdoptionsCount;
+            }
+
+            // Incoming Reports Badge Count
+            const storedReports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const sidebarReportsCountEl = document.getElementById("sidebar-reports-badge");
+            if (sidebarReportsCountEl) {
+                sidebarReportsCountEl.textContent = `${storedReports.length} New`;
+                sidebarReportsCountEl.style.display = storedReports.length > 0 ? "inline-block" : "none";
+            }
+
+            // Active Cases Badge Count
+            let activeCasesCount = 0;
+            try {
+                const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+                Object.keys(casesDb).forEach(id => {
+                    if (casesDb[id] && casesDb[id].statusStep < 6 && casesDb[id].statusStep >= 1) {
+                        activeCasesCount++;
+                    }
+                });
+            } catch(e) {}
+            const sidebarCasesCountEl = document.getElementById("sidebar-cases-badge");
+            if (sidebarCasesCountEl) {
+                sidebarCasesCountEl.textContent = activeCasesCount;
+            }
+        }
+
+        // Initialize state defaults if empty
+        function initializeDefaultApplications() {
+            let storedApps = [];
+            const stored = localStorage.getItem("voiceOfStrayVolunteerApplications");
+            if (stored) {
+                try {
+                    storedApps = JSON.parse(stored);
+                } catch (e) {
+                    storedApps = [];
+                }
+            }
+
+            if (storedApps.length === 0 || (storedApps[0] && storedApps[0].name === "Jane Doe")) {
+                storedApps = [
+                    {
+                        id: "VOL-APP-MOCK",
+                        volunteerId: "VOL-APP-MOCK",
+                        name: "Arjun",
+                        email: "user@voiceofstray.com",
+                        phone: "+91 98765 43211",
+                        role: "Emergency Rescue Support",
+                        type: "volunteer",
+                        status: "Pending Review",
+                        date: "1 day ago",
+                        availability: "Weekends",
+                        skills: ["First Aid", "Animal Handling"],
+                        housing: "",
+                        pets: ""
+                    },
+                    {
+                        id: "VOL-APP-RAVI",
+                        volunteerId: "VOL-APP-RAVI",
+                        name: "Ravi",
+                        email: "ravi@example.com",
+                        phone: "+91 98765 43212",
+                        role: "Feeding Drives",
+                        type: "volunteer",
+                        status: "Active",
+                        date: "3 days ago",
+                        availability: "Weekends",
+                        skills: ["Community Outreach"],
+                        approvalDate: "15 Jun 2026"
+                    },
+                    {
+                        id: "VOL-APP-PRIYA",
+                        volunteerId: "VOL-APP-PRIYA",
+                        name: "Priya",
+                        email: "priya@example.com",
+                        phone: "+91 98765 43213",
+                        role: "Emergency Rescue",
+                        type: "volunteer",
+                        status: "Unavailable",
+                        date: "4 days ago",
+                        availability: "Weekdays",
+                        skills: ["First Aid", "Animal Handling"],
+                        approvalDate: "14 Jun 2026"
+                    },
+                    {
+                        id: "VOL-APP-AKASH",
+                        volunteerId: "VOL-APP-AKASH",
+                        name: "Akash",
+                        email: "akash@example.com",
+                        phone: "+91 98765 43214",
+                        role: "Transport Assistance",
+                        type: "volunteer",
+                        status: "Inactive",
+                        date: "5 days ago",
+                        availability: "Weekends",
+                        skills: ["Driving"],
+                        approvalDate: "13 Jun 2026"
+                    }
+                ];
+                localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(storedApps));
+            }
+            return storedApps;
+        }
+
+        // Load and Render Lists
+        function loadVolunteerData() {
+            const storedApps = initializeDefaultApplications();
+
+            const pendingApps = storedApps.filter(app => app.status === "Pending Review" || app.status === "Pending");
+            const approvedApps = storedApps.filter(app => app.status === "Approved" || app.status === "Active" || app.status === "Inactive" || app.status === "Unavailable");
+            const rejectedApps = storedApps.filter(app => app.status === "Rejected");
+
+            // Update badge counts on page
+            document.getElementById("sidebar-vol-count").textContent = storedApps.length;
+            document.getElementById("pending-applications-count").textContent = `${pendingApps.length} Pending`;
+            document.getElementById("approved-volunteers-count").textContent = `${approvedApps.length} Approved`;
+            document.getElementById("rejected-applications-count").textContent = `${rejectedApps.length} Rejected`;
+
+            // 1. Render Pending
+            const pendingContainer = document.getElementById("pending-container");
+            if (pendingApps.length === 0) {
+                pendingContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="ph ph-hand-heart"></i>
+                        </div>
+                        <h4>No pending applications</h4>
+                        <p>All volunteer applications have been reviewed.</p>
+                    </div>
+                `;
+            } else {
+                let html = "";
+                pendingApps.forEach(app => {
+                    html += `
+                        <div class="adopt-req-item" id="vol-app-card-${app.id}" style="cursor: pointer;" onclick="if(event.target.tagName !== 'BUTTON' && !event.target.closest('button')) viewVolunteerDetails('${app.id}')">
+                            <div class="adopt-req-left">
+                                <div class="adopt-req-avatar">
+                                    <i class="ph-fill ph-user"></i>
+                                </div>
+                                <div class="adopt-req-info">
+                                    <h4>${app.name} <span class="status-badge pending">Pending</span></h4>
+                                    <p>Email: <strong>${app.email}</strong> &bull; Role: <strong>${app.role}</strong> &bull; Availability: <strong>${app.availability || 'Weekends'}</strong> &bull; Skills: <strong>${(app.skills && app.skills.length > 0) ? app.skills.join(', ') : 'None'}</strong></p>
+                                </div>
+                            </div>
+                            <div class="adopt-req-actions">
+                                <button class="btn-adopt-act approve" onclick="approveVolunteer('${app.id}')">Approve</button>
+                                <button class="btn-adopt-act reject" onclick="rejectVolunteer('${app.id}')">Reject</button>
+                                <button class="btn-adopt-act review" onclick="viewVolunteerDetails('${app.id}')">View Details</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                pendingContainer.innerHTML = html;
+            }
+
+            // 2. Render Approved
+            const approvedContainer = document.getElementById("approved-container");
+            if (approvedApps.length === 0) {
+                approvedContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon" style="background: rgba(5, 150, 105, 0.05); color: #059669;">
+                            <i class="ph ph-check-circle"></i>
+                        </div>
+                        <h4>No approved volunteers</h4>
+                        <p>There are no active approved volunteers currently registered.</p>
+                    </div>
+                `;
+            } else {
+                let html = "";
+                approvedApps.forEach(app => {
+                    const activityStatus = (app.status === "Approved") ? "Active" : app.status;
+                    const statusClass = activityStatus.toLowerCase();
+                    html += `
+                        <div class="adopt-req-item" id="vol-app-card-${app.id}" style="cursor: pointer;" onclick="if(event.target.tagName !== 'BUTTON' && !event.target.closest('button')) viewVolunteerDetails('${app.id}')">
+                            <div class="adopt-req-left">
+                                <div class="adopt-req-avatar" style="background: rgba(5, 150, 105, 0.08); color: #059669;">
+                                    <i class="ph-fill ph-user-check"></i>
+                                </div>
+                                <div class="adopt-req-info">
+                                    <h4>${app.name} <span class="status-badge approved">Approved</span> | <span class="status-badge ${statusClass}">${activityStatus}</span></h4>
+                                    <p>Role: <strong>${app.role}</strong> &bull; Availability: <strong>${app.availability || 'Weekends'}</strong> &bull; Skills: <strong>${(app.skills && app.skills.length > 0) ? app.skills.join(', ') : 'None'}</strong> &bull; Approval Date: <strong>${app.approvalDate || 'N/A'}</strong></p>
+                                </div>
+                            </div>
+                            <div class="adopt-req-actions">
+                                <button class="btn-adopt-act review" onclick="viewVolunteerDetails('${app.id}')">View Details</button>
+                                <button class="btn-adopt-act delete" onclick="removeVolunteer('${app.id}')"><i class="ph ph-trash"></i> Remove</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                approvedContainer.innerHTML = html;
+            }
+
+            // 3. Render Rejected
+            const rejectedContainer = document.getElementById("rejected-container");
+            if (rejectedApps.length === 0) {
+                rejectedContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon" style="background: rgba(220, 38, 38, 0.05); color: #dc2626;">
+                            <i class="ph ph-x-circle"></i>
+                        </div>
+                        <h4>No rejected applications</h4>
+                        <p>No applications have been rejected.</p>
+                    </div>
+                `;
+            } else {
+                let html = "";
+                rejectedApps.forEach(app => {
+                    html += `
+                        <div class="adopt-req-item" id="vol-app-card-${app.id}">
+                            <div class="adopt-req-left">
+                                <div class="adopt-req-avatar" style="background: rgba(220, 38, 38, 0.08); color: #dc2626;">
+                                    <i class="ph-fill ph-user-minus"></i>
+                                </div>
+                                <div class="adopt-req-info">
+                                    <h4>${app.name} <span class="status-badge rejected">Rejected</span></h4>
+                                    <p>Role: <strong>${app.role}</strong> &bull; Rejection Date: <strong>${app.rejectionDate || 'N/A'}</strong></p>
+                                </div>
+                            </div>
+                            <div class="adopt-req-actions">
+                                <!-- No actions needed for archived rejections -->
+                            </div>
+                        </div>
+                    `;
+                });
+                rejectedContainer.innerHTML = html;
+            }
+        }
+
+        // Date Formatting Helper
+        function formatDate(dateObj) {
+            const day = dateObj.getDate();
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const month = months[dateObj.getMonth()];
+            const year = dateObj.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
+
+        // Status Updater Helper
+        function updateVolunteerStatus(appId, newStatus) {
+            let storedApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            let app = storedApps.find(a => a.id === appId);
+            if (!app) return;
+            app.status = newStatus;
+            localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(storedApps));
+            loadVolunteerData();
+        }
+
+        // Approve Function
+        function approveVolunteer(appId) {
+            let storedApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            let app = storedApps.find(a => a.id === appId);
+            if (!app) return;
+
+            // Sync with voiceOfStrayUsers database and currentUser
+            const users = JSON.parse(localStorage.getItem("voiceOfStrayUsers") || "[]");
+            const userToApprove = users.find(u => u.email.toLowerCase() === app.email.toLowerCase() || (app.name === "Arjun" && u.email === "user@voiceofstray.com"));
+
+            app.status = "Active";
+            app.volunteerId = userToApprove ? userToApprove.id : app.id;
+            app.approvalDate = formatDate(new Date());
+            localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(storedApps));
+
+            // Sync user profile in localStorage if this is the active user
+            const currentEmail = localStorage.getItem("email");
+            const currentName = localStorage.getItem("username");
+            
+            if (app.email === currentEmail || app.name === currentName || (currentName === "Arjun" && app.id === "VOL-APP-MOCK")) {
+                let userProfile = {};
+                const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+                if (storedProfile) {
+                    try { userProfile = JSON.parse(storedProfile); } catch(e){}
+                }
+                userProfile.accountType = app.type === 'foster' ? 'Volunteer' : (app.role.includes('Rescue') ? 'Rescuer' : 'Volunteer');
+                localStorage.setItem("voiceOfStrayUserProfile", JSON.stringify(userProfile));
+
+                let volMeta = {};
+                const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+                if (storedVolMeta) {
+                    try { volMeta = JSON.parse(storedVolMeta); } catch(e){}
+                }
+                volMeta.status = "Approved Volunteer";
+                volMeta.role = app.role;
+                localStorage.setItem("voiceOfStrayVolunteer", JSON.stringify(volMeta));
+            }
+
+            if (userToApprove) {
+                userToApprove.volunteer.approved = true;
+                userToApprove.volunteer.status = "Approved";
+                localStorage.setItem("voiceOfStrayUsers", JSON.stringify(users));
+
+                const currentUserRaw = localStorage.getItem("currentUser");
+                if (currentUserRaw) {
+                    try {
+                        const currentUser = JSON.parse(currentUserRaw);
+                        if (currentUser.email.toLowerCase() === userToApprove.email.toLowerCase()) {
+                            currentUser.volunteer.approved = true;
+                            currentUser.volunteer.status = "Approved";
+                            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                        }
+                    } catch(e){}
+                }
+            }
+
+            // Create notification
+            let notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-check-circle",
+                message: `Congratulations ${app.name}! Your volunteer application has been approved.`,
+                time: "Just now",
+                unread: true
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            alert(`Volunteer application for ${app.name} has been approved.`);
+            loadVolunteerData();
+        }
+
+        // Reject Function
+        function rejectVolunteer(appId) {
+            let storedApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            let app = storedApps.find(a => a.id === appId);
+            if (!app) return;
+
+            app.status = "Rejected";
+            app.rejectionDate = formatDate(new Date());
+            localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(storedApps));
+
+            // Sync user profile if active user
+            const currentEmail = localStorage.getItem("email");
+            const currentName = localStorage.getItem("username");
+            
+            if (app.email === currentEmail || app.name === currentName || (currentName === "Arjun" && app.id === "VOL-APP-MOCK")) {
+                let volMeta = {};
+                const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+                if (storedVolMeta) {
+                    try { volMeta = JSON.parse(storedVolMeta); } catch(e){}
+                }
+                volMeta.status = "Rejected";
+                localStorage.setItem("voiceOfStrayVolunteer", JSON.stringify(volMeta));
+            }
+
+            // Sync with voiceOfStrayUsers database and currentUser
+            const users = JSON.parse(localStorage.getItem("voiceOfStrayUsers") || "[]");
+            const userToReject = users.find(u => u.email.toLowerCase() === app.email.toLowerCase() || (app.name === "Arjun" && u.email === "user@voiceofstray.com"));
+            if (userToReject) {
+                userToReject.volunteer.approved = false;
+                userToReject.volunteer.status = "Rejected";
+                localStorage.setItem("voiceOfStrayUsers", JSON.stringify(users));
+
+                const currentUserRaw = localStorage.getItem("currentUser");
+                if (currentUserRaw) {
+                    try {
+                        const currentUser = JSON.parse(currentUserRaw);
+                        if (currentUser.email.toLowerCase() === userToReject.email.toLowerCase()) {
+                            currentUser.volunteer.approved = false;
+                            currentUser.volunteer.status = "Rejected";
+                            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                        }
+                    } catch(e){}
+                }
+            }
+
+            // Create notification
+            let notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-x-circle",
+                message: `Hello ${app.name}, your volunteer application was not approved at this time.`,
+                time: "Just now",
+                unread: true
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            alert(`Volunteer application for ${app.name} has been rejected.`);
+            loadVolunteerData();
+        }
+
+        // Remove approved volunteer
+        function removeVolunteer(appId) {
+            if (confirm("Are you sure you want to remove this volunteer from your approved roster? This action is permanent.")) {
+                let storedApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+                let app = storedApps.find(a => a.id === appId);
+                if (app) {
+                    app.status = "Removed";
+                    app.removalDate = formatDate(new Date());
+                    localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(storedApps));
+
+                    // Sync user profile if active user
+                    const currentEmail = localStorage.getItem("email");
+                    const currentName = localStorage.getItem("username");
+                    
+                    if (app.email === currentEmail || app.name === currentName || (currentName === "Arjun" && app.id === "VOL-APP-MOCK")) {
+                        let volMeta = {};
+                        const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+                        if (storedVolMeta) {
+                            try { volMeta = JSON.parse(storedVolMeta); } catch(e){}
+                        }
+                        volMeta.status = "Removed";
+                        localStorage.setItem("voiceOfStrayVolunteer", JSON.stringify(volMeta));
+
+                        // Sync with profile accountType
+                        const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+                        if (storedProfile) {
+                            try {
+                                const profile = JSON.parse(storedProfile);
+                                profile.accountType = "Regular User";
+                                localStorage.setItem("voiceOfStrayUserProfile", JSON.stringify(profile));
+                            } catch(e){}
+                        }
+                    }
+
+                    // Sync with voiceOfStrayUsers database and currentUser
+                    const users = JSON.parse(localStorage.getItem("voiceOfStrayUsers") || "[]");
+                    const userToRemove = users.find(u => u.email.toLowerCase() === app.email.toLowerCase() || (app.name === "Arjun" && u.email === "user@voiceofstray.com"));
+                    if (userToRemove) {
+                        userToRemove.volunteer.approved = false;
+                        userToRemove.volunteer.status = "Not Applied";
+                        localStorage.setItem("voiceOfStrayUsers", JSON.stringify(users));
+
+                        const currentUserRaw = localStorage.getItem("currentUser");
+                        if (currentUserRaw) {
+                            try {
+                                const currentUser = JSON.parse(currentUserRaw);
+                                if (currentUser.email.toLowerCase() === userToRemove.email.toLowerCase()) {
+                                    currentUser.volunteer.approved = false;
+                                    currentUser.volunteer.status = "Not Applied";
+                                    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                                }
+                            } catch(e){}
+                        }
+                    }
+
+                    alert(`Volunteer ${app.name} has been removed.`);
+                    loadVolunteerData();
+                }
+            }
+        }
+
+        // View Details Modal Functionality
+        function viewVolunteerDetails(appId) {
+            const storedApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            const app = storedApps.find(a => a.id === appId);
+            if (!app) return;
+
+            const modalBody = document.getElementById("details-modal-body");
+            const isApproved = app.status === "Approved" || app.status === "Active" || app.status === "Inactive" || app.status === "Unavailable";
+            
+            let statusBadgeHtml = "";
+            let actionHtml = "";
+            let extraProfileHtml = "";
+
+            if (isApproved) {
+                const activityStatus = (app.status === "Approved") ? "Active" : app.status;
+                statusBadgeHtml = `<span class="status-badge approved">Approved</span> | <span class="status-badge ${activityStatus.toLowerCase()}">${activityStatus}</span>`;
+                
+                extraProfileHtml = `
+                    <div style="background: rgba(249, 115, 22, 0.05); padding: 16px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2); margin-top: 12px;">
+                        <h4 style="margin: 0 0 12px 0; color: #0f172a; font-weight: 800; font-size: 0.95rem;">Roster Management & Stats</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.88rem; margin-bottom: 12px;">
+                            <span><strong>Cases Completed:</strong> 0</span>
+                            <span><strong>Volunteer Hours:</strong> 0</span>
+                            <span><strong>Badges Earned:</strong> None</span>
+                            <div style="display: flex; align-items: center; gap: 6px; grid-column: span 2;">
+                                <strong>Change Status:</strong>
+                                <select onchange="updateVolunteerStatus('${app.id}', this.value); closeDetailsModal();" style="padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: white; font-family: inherit; font-size: 0.85rem; cursor: pointer;">
+                                    <option value="Active" ${activityStatus === 'Active' ? 'selected' : ''}>Active</option>
+                                    <option value="Inactive" ${activityStatus === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                    <option value="Unavailable" ${activityStatus === 'Unavailable' ? 'selected' : ''}>Unavailable</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                actionHtml = `
+                    <button class="btn-adopt-act reject" style="padding: 10px 20px; background: #fee2e2; color: #ef4444;" onclick="removeVolunteer('${app.id}'); closeDetailsModal();"><i class="ph ph-trash"></i> Remove Volunteer</button>
+                    <button class="btn-adopt-act review" style="padding: 10px 20px;" onclick="closeDetailsModal();">Close</button>
+                `;
+            } else if (app.status === "Rejected") {
+                statusBadgeHtml = `<span class="status-badge rejected">Rejected</span>`;
+                actionHtml = `
+                    <button class="btn-adopt-act review" style="padding: 10px 20px;" onclick="closeDetailsModal();">Close</button>
+                `;
+            } else {
+                statusBadgeHtml = `<span class="status-badge pending">Pending Review</span>`;
+                actionHtml = `
+                    <button class="btn-adopt-act reject" style="padding: 10px 20px;" onclick="rejectVolunteer('${app.id}'); closeDetailsModal();">Reject Application</button>
+                    <button class="btn-adopt-act approve" style="padding: 10px 20px;" onclick="approveVolunteer('${app.id}'); closeDetailsModal();">Approve Application</button>
+                `;
+            }
+
+            modalBody.innerHTML = `
+                <div style="font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; gap: 16px; color: #334155;">
+                    <div style="background: rgba(249, 115, 22, 0.05); padding: 20px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2);">
+                        <h4 style="margin: 0 0 12px 0; color: #0f172a; font-weight: 800; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <span>Roster Profile Card</span>
+                            <div style="display: flex; align-items: center; gap: 4px;">${statusBadgeHtml}</div>
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.9rem;">
+                            <span><strong>Name:</strong> ${app.name}</span>
+                            <span><strong>Email:</strong> ${app.email}</span>
+                            <span><strong>Phone:</strong> ${app.phone || 'N/A'}</span>
+                            <span><strong>Primary Role:</strong> ${app.role}</span>
+                            <span><strong>Availability:</strong> ${app.availability || 'Weekends'}</span>
+                            <span><strong>Selected Skills:</strong> ${(app.skills && app.skills.length > 0) ? app.skills.join(', ') : 'None'}</span>
+                            <span><strong>Application Date:</strong> ${app.date}</span>
+                            <span><strong>Approval Date:</strong> ${app.approvalDate || 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    ${extraProfileHtml}
+                    
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;">
+                        ${actionHtml}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("details-modal").classList.add("show");
+        }
+
+        function closeDetailsModal() {
+            document.getElementById("details-modal").classList.remove("show");
+        }
+    </script>
+</body>
+
+</html>

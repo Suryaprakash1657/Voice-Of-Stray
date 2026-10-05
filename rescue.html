@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Rescue Network - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        /* Rescue specific styles */
+        :root {
+            --tracking-blue: #2563eb;
+            --support-brown: #9a3412;
+            --success-green: #10b981;
+            --upcoming-gray: #f1f5f9;
+        }
+
+        /* Base Body Overrides for Warm Light Theme */
+        body {
+            background: radial-gradient(circle at top left, #fffcf9 0%, #faf6f0 100%) !important;
+            color: #2c1a11 !important;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Custom Scrollbar for Sidebar Cards */
+        .scrollable-card {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary, #f97316) transparent;
+        }
+
+        .scrollable-card::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollable-card::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollable-card::-webkit-scrollbar-thumb {
+            background-color: #fdba74;
+            border-radius: 10px;
+        }
+
+        .scrollable-card:hover::-webkit-scrollbar-thumb {
+            background-color: var(--primary, #f97316);
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+            }
+        }
+
+        /* Horizontal Scroll for Photos */
+        .photos-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary, #f97316) transparent;
+        }
+
+        .photos-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .photos-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .photos-scroll::-webkit-scrollbar-thumb {
+            background-color: #fdba74;
+            border-radius: 10px;
+        }
+
+        .photos-scroll .photo-placeholder {
+            min-width: 140px;
+            height: 140px;
+            flex-shrink: 0;
+        }
+
+        .rescue-container {
+            max-width: 1200px;
+            margin: 16px auto 32px;
+            padding: 0 24px;
+        }
+
+        .rescue-header {
+            margin-bottom: 24px;
+        }
+
+        /* Premium Light Glassmorphism Cards */
+        .card, .live-rescue-card, .rescue-card {
+            background: rgba(255, 255, 255, 0.88) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(249, 115, 22, 0.14) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 10px 30px -8px rgba(249, 115, 22, 0.04) !important;
+            padding: 24px !important;
+            margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .card:hover, .live-rescue-card:hover, .rescue-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 16px 36px -4px rgba(249, 115, 22, 0.08) !important;
+            border-color: rgba(249, 115, 22, 0.32) !important;
+        }
+
+        .info-card {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .info-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #9a3412;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: #431407;
+            font-size: 1.1rem;
+        }
+
+        .emergency-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--alert, #ef4444);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            margin-bottom: 40px;
+            padding: 0 40px;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            right: 70px;
+            height: 2px;
+            background: #ffedd5;
+            z-index: 0;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 120px;
+            text-align: center;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #fdba74;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fdba74;
+            font-size: 1.2rem;
+        }
+
+        .step-icon.completed {
+            background: var(--success-green);
+            border-color: var(--success-green);
+            color: white;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .step-icon.active {
+            background: var(--tracking-blue);
+            border-color: var(--tracking-blue);
+            color: white;
+            animation: pulse-ring 2s infinite;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #9a3412;
+        }
+
+        .step-label.active {
+            color: var(--tracking-blue);
+            font-weight: 700;
+        }
+
+        .step-label.completed {
+            color: var(--success-green);
+        }
+
+        .rescue-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
+
+        .map-section {
+            height: 450px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            background: #fbf9f5;
+            margin-bottom: 24px;
+            border: 1px solid rgba(249, 115, 22, 0.15);
+        }
+
+        .photos-section {
+            padding: 24px;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .photo-placeholder {
+            background: #fffcf9;
+            border: 2px dashed rgba(249, 115, 22, 0.15);
+            border-radius: 12px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #9a3412;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .rescue-card {
+            margin-bottom: 24px;
+        }
+
+        .rescue-card h3 {
+            font-size: 0.9rem;
+            color: #9a3412;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .team-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary, #f97316);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .volunteer-box {
+            background: #fffcf9;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            border: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .volunteer-box .name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #431407;
+        }
+
+        .volunteer-box .role {
+            font-size: 0.85rem;
+            color: #9a3412;
+            font-weight: 700;
+        }
+
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .action-buttons-grid button {
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-chat {
+            background: var(--primary, #f97316);
+            color: white;
+        }
+
+        .btn-chat:hover {
+            background: #ea580c;
+        }
+
+        .btn-support {
+            background: var(--support-brown);
+            color: white;
+        }
+
+        .btn-support:hover {
+            background: #7c2d12;
+        }
+
+        .btn-volunteer-action {
+            background: var(--primary, #f97316);
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-volunteer-action:hover {
+            background: #ea580c;
+        }
+
+        .timeline-vertical {
+            border-left: 2px solid var(--primary, #f97316);
+            margin-left: 10px;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: relative;
+        }
+
+        .timeline-item {
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 2px;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border: 2px solid var(--primary, #f97316);
+            border-radius: 50%;
+        }
+
+        .timeline-item:first-child::before {
+            background: var(--primary, #f97316);
+        }
+
+        .timeline-item:not(:first-child) {
+            border-color: #ffedd5;
+        }
+
+        .timeline-item:not(:first-child)::before {
+            border-color: #fdba74;
+        }
+
+        .timeline-item strong {
+            display: block;
+            font-size: 0.95rem;
+            color: #431407;
+            margin-bottom: 2px;
+        }
+
+        .timeline-item span {
+            font-size: 0.8rem;
+            color: #9a3412;
+            font-weight: 500;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .status-tag {
+            background: #fff;
+            border: 1px solid rgba(249, 115, 22, 0.12);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #7c2d12;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-tag.completed {
+            background: #ecfdf5;
+            border-color: var(--success-green);
+            color: #059669;
+        }
+
+        .status-tag.current {
+            background: #eff6ff;
+            border-color: var(--tracking-blue);
+            color: var(--tracking-blue);
+        }
+
+        .status-tag.upcoming {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            color: #94a3b8;
+        }
+
+        .help-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .help-action-btn {
+            background: #fff;
+            border: 1px solid rgba(249, 115, 22, 0.12);
+            border-radius: 8px;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #7c2d12;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .help-action-btn i {
+            font-size: 1.2rem;
+            color: #fdba74;
+        }
+
+        .help-action-btn:hover {
+            border-color: var(--primary, #f97316);
+            color: var(--primary, #f97316);
+            background: #fffcf9;
+        }
+
+        .help-action-btn:hover i {
+            color: var(--primary, #f97316);
+        }
+
+        .treatment-details {
+            margin-top: 16px;
+            padding: 16px;
+            background: white;
+            border: 1px solid rgba(249, 115, 22, 0.12);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #7c2d12;
+            display: none;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.05);
+            position: absolute;
+            top: 100%;
+            width: 200px;
+            z-index: 10;
+        }
+
+        .treatment-details.active {
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .rescue-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-tracker {
+                overflow-x: auto;
+                padding-bottom: 20px;
+                justify-content: flex-start;
+                gap: 40px;
+            }
+
+            .progress-line {
+                width: 500px;
+            }
+        }
+
+
+        /* ========================================================
+           COMPASSIONATE WARM LIGHT RESCUE FEED DESIGN SYSTEM
+           ======================================================== */
+
+        /* Navbar Warm Styling */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(249, 115, 22, 0.12) !important;
+        }
+
+        .nav-links a {
+            color: #7c2d12;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover, 
+        .nav-links a.active {
+            color: var(--primary, #f97316) !important;
+        }
+
+        .icon-btn {
+            background-color: #fffaf5;
+            color: #7c2d12;
+            border: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .icon-btn:hover {
+            background-color: #fff1e5;
+        }
+
+        /* Compassionate Hero Banner styling */
+        .live-hero {
+            text-align: center;
+            padding: 60px 24px 50px;
+            background: radial-gradient(circle at top right, #fff5eb 0%, #fffbf7 60%, #faf5ef 100%);
+            border-radius: 28px;
+            border: 1px solid rgba(249, 115, 22, 0.16);
+            margin-bottom: 36px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.03);
+        }
+
+        .live-hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(rgba(249, 115, 22, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(249, 115, 22, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .hero-badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fef2f2;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #ef4444;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            animation: pulse-border-red-light 2s infinite;
+        }
+
+        @keyframes pulse-border-red-light {
+            0% { border-color: rgba(239, 68, 68, 0.25); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.15); }
+            70% { border-color: rgba(239, 68, 68, 0.6); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { border-color: rgba(239, 68, 68, 0.25); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .live-hero h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #431407; /* Warm dark mahogany */
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .live-hero p {
+            color: #7c2d12; /* Warm terracotta text */
+            font-size: 1.15rem;
+            max-width: 650px;
+            margin: 0 auto 36px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .hero-counters {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .counter-box {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(249, 115, 22, 0.12);
+            border-radius: 18px;
+            padding: 20px 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.02);
+        }
+
+        .counter-box:hover {
+            transform: translateY(-4px);
+            border-color: rgba(249, 115, 22, 0.32);
+            box-shadow: 0 10px 22px rgba(249, 115, 22, 0.08);
+        }
+
+        .counter-val {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #f97316;
+            line-height: 1;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pulse-dot-green {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+            animation: pulse-dot-ping 1.5s infinite;
+        }
+
+        @keyframes pulse-dot-ping {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+            70% { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .counter-label {
+            font-size: 0.8rem;
+            color: #7c2d12;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        /* Filter Section Styling */
+        .filter-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tabs-dark {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .filter-tabs-dark::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab-dark {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: #7c2d12;
+            padding: 10px 22px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.02);
+        }
+
+        .filter-tab-dark:hover {
+            background: rgba(249, 115, 22, 0.08);
+            color: #f97316;
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+
+        .filter-tab-dark.active {
+            background: #f97316;
+            color: #ffffff;
+            border-color: #f97316;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.25);
+        }
+
+        /* Feed Grid and Cards */
+        .rescue-feed-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .live-rescue-card {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-id-badge {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #9a3412;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-dot-red {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+            animation: pulse-dot-ping-red 1.5s infinite;
+        }
+
+        @keyframes pulse-dot-ping-red {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .severity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .severity-critical {
+            background: #fee2e2;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #ef4444;
+        }
+
+        .severity-medium {
+            background: #ffedd5;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            color: #ea580c;
+        }
+
+        .severity-stable {
+            background: #dcfce7;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #10b981;
+        }
+
+        .card-body-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            border-top: 1px solid rgba(249, 115, 22, 0.12);
+            border-bottom: 1px solid rgba(249, 115, 22, 0.12);
+            padding: 16px 0;
+        }
+
+        .card-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-info-label {
+            font-size: 0.72rem;
+            color: #9a3412;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .card-info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2c1a11;
+        }
+
+        /* Card Inline Mini Timeline styling */
+        .mini-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 10px 0;
+            padding: 0 8px;
+        }
+
+        .mini-timeline::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background: #ffedd5;
+            z-index: 1;
+        }
+
+        .mini-timeline-progress {
+            position: absolute;
+            top: 10px;
+            left: 16px;
+            height: 2px;
+            background: #f97316;
+            z-index: 1;
+            transition: width 0.3s ease;
+        }
+
+        .mini-step {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 60px;
+        }
+
+        .mini-step-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #fdba74;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            color: #fdba74;
+        }
+
+        .mini-step.completed .mini-step-dot {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .mini-step.active .mini-step-dot {
+            background: #f97316;
+            border-color: #f97316;
+            color: white;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
+
+        .mini-step-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #9a3412;
+        }
+
+        .mini-step.completed .mini-step-label {
+            color: #10b981;
+        }
+
+        .mini-step.active .mini-step-label {
+            color: #f97316;
+        }
+
+        .card-footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .time-eta {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #f97316;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-track {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-track:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
+        }
+
+        /* Compassionate Overview Map (Natural Light Blend) */
+        .map-container-dark {
+            background: #fffdfb;
+            border: 1px solid rgba(249, 115, 22, 0.16);
+            border-radius: 24px;
+            height: 480px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(249, 115, 22, 0.01), 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        .map-grid-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(249, 115, 22, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249, 115, 22, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .radar-scanner {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.04) 0%, transparent 70%);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation: radar-sweep 10s linear infinite;
+        }
+
+        @keyframes radar-sweep {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .map-node {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .map-node-active {
+            background: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+        }
+
+        .map-node-active::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ef4444;
+            border-radius: 50%;
+            top: -8px; left: -8px;
+            animation: ping-ring 2s infinite;
+        }
+
+        .map-node-progress {
+            background: #f97316;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
+        }
+
+        .map-node-progress::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #f97316;
+            border-radius: 50%;
+            top: -8px; left: -8px;
+            animation: ping-ring 2s infinite;
+        }
+
+        .map-node-success {
+            background: #10b981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+        }
+
+        @keyframes ping-ring {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        .map-info-popup {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #431407;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 12;
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.08);
+            transform: translate(-50%, -130%);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .map-node:hover .map-info-popup {
+            opacity: 1;
+            display: block;
+            transform: translate(-50%, -140%);
+        }
+
+        .map-overlay-card {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            width: 250px;
+            z-index: 15;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.05);
+        }
+
+        .route-path {
+            stroke-dasharray: 6;
+            animation: dash-move 30s linear infinite;
+        }
+
+        @keyframes dash-move {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        /* Community Action Cards */
+        .help-section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #431407;
+            margin: 40px 0 20px;
+        }
+
+        .community-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .action-help-card {
+            background: rgba(255, 255, 255, 0.88) !important;
+            border: 1px solid rgba(249, 115, 22, 0.14) !important;
+            border-radius: 20px !important;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.02);
+        }
+
+        .action-help-card:hover {
+            transform: translateY(-5px);
+            border-color: #f97316 !important;
+            box-shadow: 0 12px 30px rgba(249, 115, 22, 0.08) !important;
+        }
+
+        .action-help-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: #fff7ed;
+            color: #f97316;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+        }
+
+        .action-help-card:hover .action-help-icon {
+            background: #f97316;
+            color: white;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.25);
+            border-color: #f97316;
+        }
+
+        .action-help-card h4 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #431407;
+        }
+
+        .action-help-card p {
+            font-size: 0.88rem;
+            color: #7c2d12;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* Success Strip */
+        .success-strip {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(255, 247, 237, 0.95) 50%, rgba(16, 185, 129, 0.08) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.22);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #059669;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.02);
+            animation: pulse-border-green 2.5s infinite;
+        }
+
+        @keyframes pulse-border-green {
+            0% { border-color: rgba(16, 185, 129, 0.22); }
+            50% { border-color: rgba(16, 185, 129, 0.6); }
+            100% { border-color: rgba(16, 185, 129, 0.22); }
+        }
+
+        /* Glassmorphism Login Required Modal */
+        .login-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(67, 20, 7, 0.15); /* Warm tinted soft backdrop overlay */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .login-modal-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 28px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.08);
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .login-modal-overlay.show {
+            display: flex;
+        }
+
+        .login-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #9a3412;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal-close:hover {
+            color: #f97316;
+            background: rgba(249, 115, 22, 0.08);
+        }
+
+        .login-modal-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #fff7ed;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 24px;
+        }
+
+        .login-modal-card h2 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #431407;
+            margin-bottom: 12px;
+        }
+
+        .login-modal-card p {
+            color: #7c2d12;
+            font-weight: 500;
+            font-size: 0.98rem;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .login-modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .login-modal-actions button {
+            width: 100%;
+            justify-content: center;
+            padding: 14px;
+            font-size: 1rem;
+        }
+
+        /* Footer styling alignment */
+        footer {
+            background-color: #faf6f0 !important;
+            border-top: 1px solid rgba(249, 115, 22, 0.12) !important;
+        }
+
+        footer h2, footer h4 {
+            color: #431407 !important;
+        }
+
+        footer p, footer a {
+            color: #7c2d12 !important;
+        }
+
+        footer a:hover {
+            color: var(--primary, #f97316) !important;
+        }
+
+        /* Responsive Adapting for Feed */
+        @media (max-width: 1024px) {
+            .rescue-feed-grid {
+                grid-template-columns: 1fr;
+            }
+            .community-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .live-hero h1 {
+                font-size: 2.6rem;
+            }
+            .hero-counters {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .community-actions-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-counters {
+                grid-template-columns: 1fr;
+            }
+            .card-body-details {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .live-hero h1 {
+                font-size: 2rem;
+            }
+            .filter-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print" style="color: var(--primary, #f97316);"></i>
+                <span style="color: var(--primary, #f97316); font-weight: 700; font-size: 1.4rem;">Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html" class="active" style="color: var(--primary, #f97316); border-bottom: 2px solid var(--primary, #f97316);">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ========================================================
+         VIEW 1: MAIN LIVE RESCUE DISCOVERY FEED & ECOLOGY
+         ======================================================== -->
+    <div id="live-network-feed-view">
+        <main class="rescue-container">
+            <!-- 1. Hero Section -->
+            <section class="live-hero">
+                <div class="hero-badge-live">
+                    <span class="live-dot-red" style="margin-right: 4px;"></span> Live Rescue Network
+                </div>
+                <h1>Live Rescue Network</h1>
+                <p>Real-time coordination, dispatch, and emergency response for stray animals in distress. See active cases, track dispatches, and volunteer nearby.</p>
+                
+                <div class="hero-counters">
+                    <div class="counter-box">
+                        <div class="counter-val" id="active-emergencies-val">
+                            12 <span class="live-dot-red" style="width: 8px; height: 8px; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);"></span>
+                        </div>
+                        <span class="counter-label">Active Emergencies</span>
+                    </div>
+                    <div class="counter-box">
+                        <div class="counter-val" id="ngos-responding-val">8</div>
+                        <span class="counter-label">NGOs Responding</span>
+                    </div>
+                    <div class="counter-box">
+                        <div class="counter-val">
+                            47 <span class="pulse-dot-green"></span>
+                        </div>
+                        <span class="counter-label">Volunteers Nearby</span>
+                    </div>
+                    <div class="counter-box">
+                        <div class="counter-val" id="rescues-today-val">14</div>
+                        <span class="counter-label">Rescues Today</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Success Strip -->
+            <section class="success-strip">
+                <i class="ph-fill ph-sparkle"></i> Today 14 animals were safely rescued ❤️ <i class="ph-fill ph-sparkle"></i>
+            </section>
+
+            <!-- 3. Filter Section -->
+            <section class="filter-section">
+                <div class="filter-tabs-dark">
+                    <button class="filter-tab-dark active" data-filter="all">All Missions</button>
+                    <button class="filter-tab-dark" data-filter="emergency">Emergency</button>
+                    <button class="filter-tab-dark" data-filter="in-progress">In Progress</button>
+                    <button class="filter-tab-dark" data-filter="treatment">Treatment</button>
+                    <button class="filter-tab-dark" data-filter="recovery">Recovery</button>
+                    <button class="filter-tab-dark" data-filter="resolved">Resolved</button>
+                </div>
+                <div style="font-size: 0.88rem; color: #9a3412; font-weight: 600;">
+                    <i class="ph ph-clock" style="color: #f97316;"></i> Auto-updating live feed
+                </div>
+            </section>
+
+            <!-- 4. Main Grid: Cards + Compassionate Light Map -->
+            <div class="rescue-feed-grid">
+                <!-- Left Column: Rescue Cards -->
+                <div class="cards-list" id="rescue-cards-list">
+                    
+                    <!-- Card 1: RSC-4902 (Navigates to detailed tracking screen) -->
+                    <div class="live-rescue-card" data-category="emergency in-progress">
+                        <div class="card-header-row">
+                            <span class="card-id-badge"><span class="live-dot-red"></span> #RSC-4902</span>
+                            <span class="severity-badge severity-critical"><i class="ph-fill ph-warning"></i> Critical</span>
+                        </div>
+                        <h3>Fractured Leg, Dehydrated</h3>
+                        
+                        <div class="card-body-details">
+                            <div class="card-info-item">
+                                <span class="card-info-label">Location</span>
+                                <span class="card-info-value"><i class="ph ph-map-pin" style="color: #ef4444;"></i> Bandra West</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">NGO Assigned</span>
+                                <span class="card-info-value">Paws Haven NGO</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">Current Status</span>
+                                <span class="card-info-value" style="color: #3b82f6; font-weight: 700;">Rescuer En Route</span>
+                            </div>
+                        </div>
+
+                        <!-- Mini Timeline Progress -->
+                        <div class="mini-timeline">
+                            <div class="mini-timeline-progress" style="width: 40%;"></div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Reported</span>
+                            </div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Assigned</span>
+                            </div>
+                            <div class="mini-step active">
+                                <div class="mini-step-dot"><i class="ph ph-path"></i></div>
+                                <span class="mini-step-label">En-Route</span>
+                            </div>
+                            <div class="mini-step">
+                                <div class="mini-step-dot"><i class="ph ph-first-aid"></i></div>
+                                <span class="mini-step-label">Treatment</span>
+                            </div>
+                            <div class="mini-step">
+                                <div class="mini-step-dot"><i class="ph ph-house"></i></div>
+                                <span class="mini-step-label">Resolved</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-row">
+                            <span class="time-eta"><i class="ph ph-hourglass-medium"></i> ETA 08 mins</span>
+                            <button class="btn-track track-rescue-btn" data-id="RSC-4902">
+                                Track Rescue <i class="ph ph-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: RSC-8812 -->
+                    <div class="live-rescue-card" data-category="treatment">
+                        <div class="card-header-row">
+                            <span class="card-id-badge"><span class="live-dot-red"></span> #RSC-8812</span>
+                            <span class="severity-badge severity-medium"><i class="ph-fill ph-info"></i> Medium</span>
+                        </div>
+                        <h3>Severe Skin Infection & Malnourished</h3>
+                        
+                        <div class="card-body-details">
+                            <div class="card-info-item">
+                                <span class="card-info-label">Location</span>
+                                <span class="card-info-value"><i class="ph ph-map-pin" style="color: #ef4444;"></i> Andheri East</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">NGO Assigned</span>
+                                <span class="card-info-value">Stray Aid Foundation</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">Current Status</span>
+                                <span class="card-info-value" style="color: #10b981; font-weight: 700;">Vet Stabilizing</span>
+                            </div>
+                        </div>
+
+                        <!-- Mini Timeline Progress -->
+                        <div class="mini-timeline">
+                            <div class="mini-timeline-progress" style="width: 70%;"></div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Reported</span>
+                            </div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Assigned</span>
+                            </div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Rescued</span>
+                            </div>
+                            <div class="mini-step active">
+                                <div class="mini-step-dot"><i class="ph ph-first-aid"></i></div>
+                                <span class="mini-step-label">Treatment</span>
+                            </div>
+                            <div class="mini-step">
+                                <div class="mini-step-dot"><i class="ph ph-house"></i></div>
+                                <span class="mini-step-label">Resolved</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-row">
+                            <span class="time-eta" style="color: #9a3412;"><i class="ph ph-clock"></i> Updated 12 mins ago</span>
+                            <button class="btn-track track-rescue-btn" data-id="RSC-8812">
+                                Track Rescue <i class="ph ph-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: RSC-2931 -->
+                    <div class="live-rescue-card" data-category="recovery">
+                        <div class="card-header-row">
+                            <span class="card-id-badge"><span class="live-dot-red"></span> #RSC-2931</span>
+                            <span class="severity-badge severity-stable"><i class="ph-fill ph-check-circle"></i> Stable</span>
+                        </div>
+                        <h3>Hit and Run Trauma Recovery</h3>
+                        
+                        <div class="card-body-details">
+                            <div class="card-info-item">
+                                <span class="card-info-label">Location</span>
+                                <span class="card-info-value"><i class="ph ph-map-pin" style="color: #ef4444;"></i> Colaba Causeway</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">NGO Assigned</span>
+                                <span class="card-info-value">Paws Haven NGO</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">Current Status</span>
+                                <span class="card-info-value" style="color: #10b981; font-weight: 700;">Shelter Care</span>
+                            </div>
+                        </div>
+
+                        <!-- Mini Timeline Progress -->
+                        <div class="mini-timeline">
+                            <div class="mini-timeline-progress" style="width: 75%;"></div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Reported</span>
+                            </div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Assigned</span>
+                            </div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Rescued</span>
+                            </div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Treatment</span>
+                            </div>
+                            <div class="mini-step active">
+                                <div class="mini-step-dot"><i class="ph ph-house"></i></div>
+                                <span class="mini-step-label">Recovery</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-row">
+                            <span class="time-eta" style="color: #9a3412;"><i class="ph ph-clock"></i> Updated 1 hour ago</span>
+                            <button class="btn-track track-rescue-btn" data-id="RSC-2931">
+                                Track Rescue <i class="ph ph-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: RSC-5091 -->
+                    <div class="live-rescue-card" data-category="emergency in-progress">
+                        <div class="card-header-row">
+                            <span class="card-id-badge"><span class="live-dot-red"></span> #RSC-5091</span>
+                            <span class="severity-badge severity-critical"><i class="ph-fill ph-warning"></i> Critical</span>
+                        </div>
+                        <h3>Stray Puppy Trapped in Drain</h3>
+                        
+                        <div class="card-body-details">
+                            <div class="card-info-item">
+                                <span class="card-info-label">Location</span>
+                                <span class="card-info-value"><i class="ph ph-map-pin" style="color: #ef4444;"></i> Ghatkopar West</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">NGO Assigned</span>
+                                <span class="card-info-value">Save Our Strays</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">Current Status</span>
+                                <span class="card-info-value" style="color: #9a3412; font-weight: 700;">Dispatched</span>
+                            </div>
+                        </div>
+
+                        <!-- Mini Timeline Progress -->
+                        <div class="mini-timeline">
+                            <div class="mini-timeline-progress" style="width: 30%;"></div>
+                            <div class="mini-step completed">
+                                <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                                <span class="mini-step-label">Reported</span>
+                            </div>
+                            <div class="mini-step active">
+                                <div class="mini-step-dot"><i class="ph ph-path"></i></div>
+                                <span class="mini-step-label">Dispatched</span>
+                            </div>
+                            <div class="mini-step">
+                                <div class="mini-step-dot"><i class="ph ph-van"></i></div>
+                                <span class="mini-step-label">On-Site</span>
+                            </div>
+                            <div class="mini-step">
+                                <div class="mini-step-dot"><i class="ph ph-first-aid"></i></div>
+                                <span class="mini-step-label">Treatment</span>
+                            </div>
+                            <div class="mini-step">
+                                <div class="mini-step-dot"><i class="ph ph-house"></i></div>
+                                <span class="mini-step-label">Resolved</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-row">
+                            <span class="time-eta"><i class="ph ph-hourglass-medium"></i> ETA 15 mins</span>
+                            <button class="btn-track track-rescue-btn" data-id="RSC-5091">
+                                Track Rescue <i class="ph ph-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Interactive Map Widget (Compassionate Sand Theme) -->
+                <div class="sidebar-column" style="position: sticky; top: 88px;">
+                    <div class="map-container-dark">
+                        <div class="map-grid-bg"></div>
+                        <div class="radar-scanner"></div>
+                        
+                        <!-- SVG connections and stylized streets -->
+                        <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                            <defs>
+                                <linearGradient id="glow-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#f97316" stop-opacity="0.8"/>
+                                    <stop offset="100%" stop-color="#ea580c" stop-opacity="0.1"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M 120 144 L 200 240 M 200 240 L 300 360" stroke="rgba(249,115,22,0.08)" stroke-width="1.5" />
+                            <path d="M 80 200 L 220 200 L 320 280" stroke="rgba(249,115,22,0.08)" stroke-width="1.5" />
+                            <path d="M 180 144 L 180 380" stroke="rgba(249,115,22,0.08)" stroke-width="1.5" />
+                            
+                            <!-- Glowing Route path for dispatched vehicle -->
+                            <path d="M 180 144 L 160 216 L 200 240" stroke="url(#glow-orange)" stroke-width="3" fill="none" class="route-path" />
+                        </svg>
+
+                        <!-- Glowing Active Map Pins -->
+                        <!-- RSC-4902 Bandra (In Progress) -->
+                        <div class="map-node map-node-progress" style="top: 30%; left: 40%;" onclick="highlightRescueCard('RSC-4902')">
+                            <div class="map-info-popup" style="display: block; opacity: 1;">#RSC-4902: Bandra (In Progress)</div>
+                        </div>
+
+                        <!-- RSC-8812 Andheri (Critical) -->
+                        <div class="map-node map-node-active" style="top: 55%; left: 35%;" onclick="highlightRescueCard('RSC-8812')">
+                            <div class="map-info-popup">#RSC-8812: Andheri (Critical)</div>
+                        </div>
+
+                        <!-- RSC-2931 Colaba (Recovering) -->
+                        <div class="map-node map-node-success" style="top: 75%; left: 55%;" onclick="highlightRescueCard('RSC-2931')">
+                            <div class="map-info-popup">#RSC-2931: Colaba (Recovery)</div>
+                        </div>
+
+                        <!-- RSC-5091 Ghatkopar (Dispatched) -->
+                        <div class="map-node map-node-active" style="top: 40%; left: 70%;" onclick="highlightRescueCard('RSC-5091')">
+                            <div class="map-info-popup">#RSC-5091: Ghatkopar (Dispatched)</div>
+                        </div>
+
+                        <!-- Simulated ambulance dispatch movement -->
+                        <div id="simulated-ambulance" style="position: absolute; top: 40%; left: 42%; transform: translate(-50%, -50%); z-index: 15; display: none;">
+                            <div style="width: 32px; height: 32px; background: rgba(59, 130, 246, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #3b82f6; animation: pulse-ring 2s infinite;">
+                                <i class="ph-fill ph-ambulance" style="color: #3b82f6; font-size: 0.9rem;"></i>
+                            </div>
+                        </div>
+
+                        <div class="map-overlay-card">
+                            <h4 style="font-size: 0.85rem; color: #431407; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                                <i class="ph ph-crosshair" style="color: #f97316; font-size: 1rem; animation: pulse-dot-ping 1.5s infinite;"></i> 
+                                Network Overview
+                            </h4>
+                            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.75rem;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></span>
+                                    <span style="color: #7c2d12;">2 Critical Cases</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="width: 6px; height: 6px; background: #f97316; border-radius: 50%;"></span>
+                                    <span style="color: #7c2d12;">5 Dispatches Live</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%;"></span>
+                                    <span style="color: #7c2d12;">Active Area Coverage</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Community Action Section -->
+            <section style="margin-top: 60px;">
+                <h3 class="help-section-title">How You Can Help</h3>
+                <div class="community-actions-grid">
+                    <div class="action-help-card help-trigger" data-action="volunteer">
+                        <div class="action-help-icon">
+                            <i class="ph ph-hand-heart"></i>
+                        </div>
+                        <h4>Volunteer Nearby</h4>
+                        <p>Join on-site emergency rescues, transport injured strays, or help lead distress search operations.</p>
+                    </div>
+                    <div class="action-help-card help-trigger" data-action="donate">
+                        <div class="action-help-icon">
+                            <i class="ph ph-first-aid-kit"></i>
+                        </div>
+                        <h4>Donate Supplies</h4>
+                        <p>Support our field responders and shelters by donating medications, high-quality dog/cat food, or blankets.</p>
+                    </div>
+                    <div class="action-help-card help-trigger" data-action="foster">
+                        <div class="action-help-icon">
+                            <i class="ph ph-house"></i>
+                        </div>
+                        <h4>Foster Animal</h4>
+                        <p>Provide a safe, quiet space for healing and recuperation for animals recovering from major surgeries.</p>
+                    </div>
+                    <div class="action-help-card help-trigger" data-action="sponsor">
+                        <div class="action-help-icon">
+                            <i class="ph ph-currency-circle-dollar"></i>
+                        </div>
+                        <h4>Sponsor Treatment</h4>
+                        <p>Fund critical veterinary surgeries, diagnostics, X-rays, or specialized medical treatments directly.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+
+    <!-- ========================================================
+         VIEW 2: EXISTING DETAILED RESCUE STATUS TRACKING VIEW
+         ======================================================== -->
+    <div id="detailed-tracking-view" style="display: none;">
+        <main class="rescue-container">
+            <header class="rescue-header">
+                <div style="margin-bottom: 12px;">
+                    <a href="rescue.html" style="color: var(--primary, #f97316); font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="ph ph-arrow-left"></i> Back to Live Rescue Network
+                    </a>
+                </div>
+                <h1 style="font-size: 2rem; color: #431407; font-weight: 800;">Track Rescue Status</h1>
+                <p style="font-size: 1rem; color: #7c2d12; margin-top: 4px; font-weight: 600;" id="detailed-case-subtitle">Monitor live status updates for case #RSC-4902</p>
+                <p style="color: #7c2d12; font-size: 1.1rem; margin-top: 8px; font-weight: 500;">Live updates from report to rescue, treatment, and safe recovery.</p>
+            </header>
+
+            <!-- Top Info Card -->
+            <div class="card info-card">
+                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200" alt="Reported Animal" id="detailed-info-img">
+                <div class="info-block" style="flex: 1; min-width: 150px;">
+                    <span class="info-label">Report ID</span>
+                    <span class="info-value" id="detailed-info-id">#RSC-4902</span>
+                    <span class="emergency-badge" id="detailed-info-badge"><i class="ph-fill ph-asterisk"></i> Emergency</span>
+                </div>
+                <div class="info-block" style="flex: 2; min-width: 200px;">
+                    <span class="info-label">Location</span>
+                    <span class="info-value" id="detailed-info-location">Linking Road, Bandra West</span>
+                </div>
+                <div class="info-block" style="flex: 2; min-width: 200px;">
+                    <span class="info-label">Condition</span>
+                    <span class="info-value" id="detailed-info-condition">Fractured Leg, Dehydrated</span>
+                </div>
+                <div class="info-block" style="flex: 1; min-width: 150px; text-align: right;">
+                    <span class="info-label">Estimated Arrival</span>
+                    <span class="info-value" style="color: #c2410c; font-size: 1.8rem;" id="detailed-info-eta">08 mins</span>
+                </div>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="progress-tracker">
+                <div class="progress-line" id="detailed-progress-line" style="width: 40%;"></div>
+                <div class="progress-step" id="detailed-step-reported">
+                    <div class="step-icon completed"><i class="ph ph-check"></i></div>
+                    <span class="step-label completed">Reported</span>
+                </div>
+                <div class="progress-step" id="detailed-step-assigned">
+                    <div class="step-icon completed"><i class="ph ph-check"></i></div>
+                    <span class="step-label completed">NGO Assigned</span>
+                </div>
+                <div class="progress-step" id="detailed-step-progress">
+                    <div class="step-icon active"><i class="ph ph-path"></i></div>
+                    <span class="step-label active">In Progress</span>
+                </div>
+                <div class="progress-step" id="detailed-step-treatment" style="cursor: pointer;" onclick="document.getElementById('treatment-details').classList.toggle('active')">
+                    <div class="step-icon"><i class="ph ph-first-aid"></i></div>
+                    <span class="step-label">Treatment</span>
+                    <div id="treatment-details" class="treatment-details">
+                        <strong style="display: block; margin-bottom: 8px; color: #431407;">Treatment Progress</strong>
+                        <ul style="list-style: none; text-align: left; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                            <li style="display: flex; align-items: center; gap: 6px;"><i class="ph-fill ph-check-circle" style="color: var(--success-green); font-size: 1.1rem;"></i> Vet Assigned</li>
+                            <li style="display: flex; align-items: center; gap: 6px;"><i class="ph ph-circle" style="font-size: 1.1rem;"></i> Shelter Assigned</li>
+                            <li style="display: flex; align-items: center; gap: 6px;"><i class="ph ph-circle" style="font-size: 1.1rem;"></i> Recovery Notes pending</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="progress-step" id="detailed-step-resolved">
+                    <div class="step-icon">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <i class="ph ph-house-line" style="font-size: 1.2rem; margin-bottom: -4px;"></i>
+                            <span style="font-size: 0.5rem; text-transform: uppercase;">Heart</span>
+                        </div>
+                    </div>
+                    <span class="step-label">Safe/Adoption</span>
+                </div>
+            </div>
+
+            <div class="rescue-grid">
+                <!-- Left Column -->
+                <div class="left-col">
+                    <div class="map-section" style="margin-bottom: 12px;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15000!2d-122.4194!3d37.7749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0; position: absolute; top: 0; left: 0; pointer-events: none; filter: grayscale(0.5) contrast(1.2) brightness(1.1);" allowfullscreen="" loading="lazy"></iframe>
+
+                        <!-- Top Map Badges/Buttons -->
+                        <div style="position: absolute; top: 16px; left: 16px; display: flex; gap: 8px; z-index: 5;">
+                            <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(249, 115, 22, 0.15); color: #431407; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                                <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);"></span>
+                                Live GPS Tracking
+                            </div>
+                        </div>
+                        <div style="position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; z-index: 5; pointer-events: auto;">
+                            <button style="background: white; border: 1px solid rgba(249, 115, 22, 0.15); padding: 8px 12px; border-radius: 8px; font-weight: 700; color: #7c2d12; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 6px;">
+                                <i class="ph ph-arrows-clockwise"></i> Refresh
+                            </button>
+                            <button style="background: white; border: 1px solid rgba(249, 115, 22, 0.15); padding: 8px 12px; border-radius: 8px; font-weight: 700; color: #7c2d12; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 6px;">
+                                <i class="ph ph-share-network"></i> Share
+                            </button>
+                        </div>
+
+                        <!-- Simulated Route styling -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                            <!-- Route Line -->
+                            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" preserveAspectRatio="none">
+                                <line x1="30%" y1="50%" x2="50%" y2="80%" stroke="var(--tracking-blue)" stroke-width="4" stroke-dasharray="8,8" />
+                            </svg>
+                            <!-- Marker A (Vehicle) -->
+                            <div style="position: absolute; top: 50%; left: 30%; transform: translate(-50%, -50%); z-index: 2; animation: pulse-ring 2s infinite;">
+                                <div style="width: 56px; height: 56px; background: rgba(37, 99, 235, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--tracking-blue), #1d4ed8); border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);">
+                                        <i class="ph-fill ph-van"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Marker B (Destination) -->
+                            <div style="position: absolute; top: 80%; left: 50%; transform: translate(-50%, -100%); z-index: 2;">
+                                <i class="ph-fill ph-map-pin" style="color: #ef4444; font-size: 2.5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));"></i>
+                            </div>
+                            <!-- Current Location Button -->
+                            <div style="position: absolute; bottom: 20px; right: 20px; width: 44px; height: 44px; background: white; border: 1px solid rgba(249, 115, 22, 0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; pointer-events: auto;">
+                                <i class="ph ph-crosshair" style="font-size: 1.4rem; color: #7c2d12;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; color: #9a3412; font-size: 0.95rem; margin-bottom: 24px; font-weight: 600;">
+                        <i class="ph-fill ph-info"></i> Rescue team is 2.3 km away
+                    </div>
+
+                    <div class="card photos-section">
+                        <h3 style="font-size: 0.9rem; color: #9a3412; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">On-Site & Treatment Photos</h3>
+                        <div class="photos-scroll">
+                            <div class="photo-placeholder">
+                                <i class="ph ph-camera" style="font-size: 2rem;"></i>
+                                <span style="font-size: 0.75rem; font-weight: 700;">BEFORE RESCUE</span>
+                            </div>
+                            <div class="photo-placeholder">
+                                <i class="ph ph-first-aid" style="font-size: 2rem;"></i>
+                                <span style="font-size: 0.75rem; font-weight: 700;">DURING TREATMENT</span>
+                            </div>
+                            <div class="photo-placeholder" style="background: white; border: 1px solid rgba(249, 115, 22, 0.15);">
+                                <i class="ph ph-house" style="font-size: 2rem; color: #fdba74;"></i>
+                                <span style="font-size: 0.75rem; font-weight: 700; color: #9a3412;">SHELTER INTAKE</span>
+                            </div>
+                            <div class="photo-placeholder" style="background: white; border: 1px solid rgba(249, 115, 22, 0.15);">
+                                <i class="ph ph-heartbeat" style="font-size: 2rem; color: #fdba74;"></i>
+                                <span style="font-size: 0.75rem; font-weight: 700; color: #9a3412;">RECOVERY PROGRESS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="right-col">
+                    <div class="card rescue-card">
+                        <h3><i class="ph ph-shield-check"></i> Rescue Team</h3>
+
+                        <div class="team-header">
+                            <div class="team-avatar" id="detailed-team-avatar">PH</div>
+                            <div>
+                                <div style="font-weight: 700; color: #431407; font-size: 1.1rem; display: flex; align-items: center; gap: 4px;" id="detailed-team-ngo">
+                                    Paws Haven NGO <i class="ph-fill ph-seal-check" style="color: var(--success-green); font-size: 1rem;"></i>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #9a3412; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <span>Assigned Organization</span> •
+                                    <span style="display: flex; align-items: center; color: #fbbf24;"><i class="ph-fill ph-star"></i> 4.9</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="volunteer-box" id="detailed-team-lead-box">
+                            <div class="name" id="detailed-team-lead-name"><i class="ph ph-user" style="color: var(--primary, #f97316); font-size: 1.2rem;"></i> Sarah Jenkins</div>
+                            <div class="role">Volunteer Lead</div>
+                        </div>
+
+                        <div class="action-buttons-grid">
+                            <button class="btn-chat"><i class="ph-fill ph-chat-text"></i> Chat</button>
+                            <button style="background: white; border: 1px solid rgba(249, 115, 22, 0.15); color: #7c2d12;"><i class="ph ph-phone"></i> Contact</button>
+                            <button class="btn-support" style="grid-column: span 2;"><i class="ph-fill ph-heart"></i> Support</button>
+                        </div>
+
+                        <!-- Help Actions -->
+                        <div style="margin-top: 24px; border-top: 1px solid rgba(249, 115, 22, 0.12); padding-top: 20px;">
+                            <h4 style="font-size: 0.95rem; color: #431407; margin-bottom: 12px; font-weight: 800;">Help This Rescue</h4>
+                            <div class="help-actions-grid">
+                                <div class="help-action-btn">
+                                    <i class="ph ph-currency-circle-dollar"></i>
+                                    Donate to Case
+                                </div>
+                                <div class="help-action-btn">
+                                    <i class="ph ph-share-network"></i>
+                                    Share Rescue
+                                </div>
+                                <div class="help-action-btn">
+                                    <i class="ph ph-hand-heart"></i>
+                                    Volunteer Nearby
+                                </div>
+                                <div class="help-action-btn">
+                                    <i class="ph ph-first-aid-kit"></i>
+                                    Medical Sponsor
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card rescue-card">
+                        <h3>
+                            <i class="ph ph-clock-counter-clockwise"></i> Live Updates
+                            <span style="margin-left: auto; width: 8px; height: 8px; background: var(--primary, #f97316); border-radius: 50%; box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.25);"></span>
+                        </h3>
+
+                        <div class="scrollable-card">
+                            <div class="timeline-vertical" id="detailed-timeline-vertical">
+                                <div class="timeline-item">
+                                    <strong>En-route to location.</strong>
+                                    <span>10:55 AM</span>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong style="color: #7c2d12;">Team dispatched from North Base.</strong>
+                                    <span>10:42 AM</span>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong style="color: #7c2d12;">Volunteer 'Sarah' accepted the case.</strong>
+                                    <span>10:38 AM</span>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong style="color: #7c2d12;">NGO assigned (Paws Haven).</strong>
+                                    <span>10:30 AM</span>
+                                </div>
+                                <div class="timeline-item">
+                                    <strong style="color: #7c2d12;">Report received and verified.</strong>
+                                    <span>10:25 AM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Volunteer Mission Panel -->
+                    <div class="card rescue-card" id="volunteer-mission-panel" style="display: none;">
+                        <h3 style="font-size: 1.1rem; color: #431407; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                            <i class="ph-fill ph-shield-check" style="color: var(--primary, #f97316);"></i> Volunteer Mission Panel
+                        </h3>
+                        <div id="volunteer-mission-content">
+                            <!-- Dynamic Content populated via JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Animal Status Panel -->
+                    <div class="card rescue-card">
+                        <h3><i class="ph ph-heartbeat"></i> Animal Status</h3>
+                        <div class="scrollable-card" style="max-height: 200px;">
+                            <div class="tags-container" id="detailed-animal-status-tags">
+                                <div class="status-tag completed"><i class="ph-fill ph-check-circle"></i> Stabilized</div>
+                                <div class="status-tag completed"><i class="ph-fill ph-check-circle"></i> Water Given</div>
+                                <div class="status-tag current"><i class="ph-fill ph-activity"></i> First Aid Started</div>
+                                <div class="status-tag upcoming"><i class="ph ph-ambulance"></i> Transporting</div>
+                                <div class="status-tag upcoming"><i class="ph ph-house"></i> Shelter Intake</div>
+                                <div class="status-tag upcoming"><i class="ph ph-bandaids"></i> Recovery Ongoing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rescue Outcome States -->
+                    <div class="card rescue-card">
+                        <h3><i class="ph ph-flag-checkered"></i> Rescue Outcome</h3>
+                        <div class="scrollable-card" style="max-height: 200px;">
+                            <div class="tags-container" id="detailed-rescue-outcome-tags">
+                                <div class="status-tag upcoming"><i class="ph ph-bandaids"></i> Medical recovery</div>
+                                <div class="status-tag upcoming"><i class="ph ph-house"></i> Shelter care</div>
+                                <div class="status-tag upcoming"><i class="ph ph-heart"></i> Foster</div>
+                                <div class="status-tag upcoming"><i class="ph ph-user"></i> Returned to owner</div>
+                                <div class="status-tag upcoming"><i class="ph ph-check-circle"></i> Adopted</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- ========================================================
+         3. GENTLE WARM GLASSMORPHISM POPUP / MODAL
+         ======================================================== -->
+    <div id="login-modal" class="login-modal-overlay">
+        <div class="login-modal-card">
+            <button class="login-modal-close" id="close-modal-btn">
+                <i class="ph ph-x"></i>
+            </button>
+            <div class="login-modal-icon">
+                <i class="ph-fill ph-shield-warning"></i>
+            </div>
+            <h2>Login Required</h2>
+            <p>Login to track rescue missions, support cases, volunteer nearby, and participate in the rescue ecosystem.</p>
+            <div class="login-modal-actions">
+                <button class="btn-premium primary login-redirect-btn">Login</button>
+                <button class="btn-premium secondary signup-redirect-btn">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer style="margin-top: 64px; padding: 60px 0 40px; border-top: 1px solid rgba(249, 115, 22, 0.12); background: #faf6f0;">
+        <div class="rescue-container" style="margin-top: 0; margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 40px;">
+                <div style="max-width: 320px;">
+                    <h2 style="color: var(--primary, #f97316); font-size: 1.6rem; margin-bottom: 16px; font-weight: 700;">Voice of Stray</h2>
+                    <p style="color: #7c2d12; font-size: 0.95rem; line-height: 1.6; font-weight: 500;">Saving lives, one tail at a time. Join our community of rescuers and adopters today.</p>
+                </div>
+                <div style="display: flex; gap: 64px; flex-wrap: wrap;">
+                    <div>
+                        <h4 style="margin-bottom: 20px; color: #431407; font-size: 1.1rem;">Quick Links</h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #7c2d12;">
+                            <a href="#" style="color: inherit; text-decoration: none;">Report Case</a>
+                            <a href="rescue.html" style="color: inherit; text-decoration: none;">Track Rescue</a>
+                            <a href="adopt.html" style="color: inherit; text-decoration: none;">Adopt</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 20px; color: #431407; font-size: 1.1rem;">Support</h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #7c2d12;">
+                            <a href="donate.html" style="color: inherit; text-decoration: none;">Donate</a>
+                            <a href="volunteer.html" style="color: inherit; text-decoration: none;">Volunteer</a>
+                            <a href="#" style="color: inherit; text-decoration: none;">Partner NGOs</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 20px; color: #431407; font-size: 1.1rem;">Contact</h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #7c2d12;">
+                            <a href="#" style="color: inherit; text-decoration: none;">Help Center</a>
+                            <a href="#" style="color: inherit; text-decoration: none;">Legal Info</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 60px; padding-top: 24px; border-top: 1px solid rgba(249, 115, 22, 0.12); display: flex; justify-content: space-between; align-items: center; color: #7c2d12; font-size: 0.85rem;">
+                <span>&copy; 2024 Voice of Stray. All rights reserved.</span>
+                <div style="display: flex; gap: 16px; font-size: 1.5rem; color: #431407;">
+                    <i class="ph ph-instagram-logo"></i>
+                    <i class="ph ph-facebook-logo"></i>
+                    <i class="ph ph-twitter-logo"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ========================================================
+         4. JAVASCRIPT ROUTER, FILTERING, & AUTH PROTECTION LOGIC
+         ======================================================== -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Seed default cases if empty
+            initializeRescueCases();
+
+            // Render live rescue cards
+            renderRescueCards();
+
+            // Setup Single-Page Router
+            handleRouting();
+            window.addEventListener('popstate', handleRouting);
+            window.addEventListener('hashchange', handleRouting);
+
+            // Hook up Filter Tabs
+            initCategoryFilters();
+
+            // Hook up Track Rescue & Help triggers
+            initActionInterceptors();
+
+            // Setup Modal dismissal & redirection
+            initModalControls();
+        });
+
+        // Helper to map location to coordinates for the network overview map
+        function getMapCoordinates(c) {
+            const loc = (c.location || "").toLowerCase();
+            if (loc.includes("bandra") || loc.includes("linking")) {
+                return { top: "30%", left: "40%" };
+            }
+            if (loc.includes("andheri") || loc.includes("anna")) {
+                return { top: "55%", left: "35%" };
+            }
+            if (loc.includes("colaba")) {
+                return { top: "75%", left: "55%" };
+            }
+            if (loc.includes("ghatkopar")) {
+                return { top: "40%", left: "70%" };
+            }
+            
+            // Otherwise hash the ID to get relatively clean coordinates
+            let hash = 0;
+            const str = String(c.id);
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const top = 30 + Math.abs((hash * 7) % 50); // between 30% and 80%
+            const left = 20 + Math.abs((hash * 13) % 60); // between 20% and 80%
+            return { top: `${top}%`, left: `${left}%` };
+        }
+
+        // Render map nodes dynamically on the network map
+        function renderMapNodes(activeCases) {
+            const mapContainer = document.querySelector(".map-container-dark");
+            if (!mapContainer) return;
+            
+            // Remove existing dynamic map nodes
+            const existingNodes = mapContainer.querySelectorAll(".map-node");
+            existingNodes.forEach(node => node.remove());
+            
+            // Render new map nodes for active cases
+            activeCases.forEach(c => {
+                const coords = getMapCoordinates(c);
+                
+                let nodeClass = "map-node-progress";
+                const severity = c.severity || c.priority || "";
+                if (c.statusStep >= 6) {
+                    nodeClass = "map-node-success";
+                } else if (severity.toLowerCase().includes("emergency") || severity.toLowerCase().includes("critical")) {
+                    nodeClass = "map-node-active";
+                }
+                
+                const nodeEl = document.createElement("div");
+                nodeEl.className = `map-node ${nodeClass}`;
+                nodeEl.style.top = coords.top;
+                nodeEl.style.left = coords.left;
+                nodeEl.setAttribute("onclick", `highlightRescueCard('RSC-${c.id}')`);
+                
+                const popupEl = document.createElement("div");
+                popupEl.className = "map-info-popup";
+                popupEl.textContent = `#RSC-${c.id}: ${c.breed || c.animalType || "Animal"} (${c.status})`;
+                
+                nodeEl.appendChild(popupEl);
+                mapContainer.appendChild(nodeEl);
+            });
+            
+            // Update the overlay card details dynamically
+            const criticalCount = activeCases.filter(c => {
+                const sev = c.severity || c.priority || "";
+                return sev.toLowerCase().includes("emergency") || sev.toLowerCase().includes("critical");
+            }).length;
+            
+            const dispatchCount = activeCases.filter(c => c.status === "Volunteer En Route" || c.statusStep === 3).length;
+            
+            const overlayLines = mapContainer.querySelectorAll(".map-overlay-card span");
+            if (overlayLines.length >= 2) {
+                overlayLines[0].textContent = `${criticalCount} Critical Cases`;
+                overlayLines[1].textContent = `${dispatchCount} Dispatches Live`;
+            }
+
+            // Update the simulated ambulance position based on the first en-route case
+            const ambulance = document.getElementById("simulated-ambulance");
+            if (ambulance) {
+                const enRouteCase = activeCases.find(c => c.status === "Volunteer En Route" || c.statusStep === 3);
+                if (enRouteCase) {
+                    const coords = getMapCoordinates(enRouteCase);
+                    const topPercent = parseFloat(coords.top);
+                    const leftPercent = parseFloat(coords.left);
+                    // Position slightly offset to represent en-route
+                    ambulance.style.top = `${topPercent + 5}%`;
+                    ambulance.style.left = `${leftPercent - 8}%`;
+                    ambulance.style.display = "block";
+                } else {
+                    ambulance.style.display = "none";
+                }
+            }
+        }
+
+        // Update hero counters dynamically based on actual database cases
+        function updateRescueStats(cases) {
+            const activeCases = cases.filter(c => c.statusStep >= 1 && c.statusStep < 8 && c.status !== "Completed" && c.status !== "Adopted" && c.status !== "Archived" && c.status !== "Rejected");
+            const emergencyCount = activeCases.filter(c => {
+                const sev = c.severity || c.priority || "";
+                return sev.toLowerCase().includes("emergency") || sev.toLowerCase().includes("critical");
+            }).length;
+            
+            const ngos = new Set();
+            activeCases.forEach(c => {
+                if (c.team && c.team.ngo) ngos.add(c.team.ngo);
+            });
+            const ngoCount = ngos.size || 0;
+
+            const resolvedCount = cases.filter(c => c.statusStep === 9 || c.status === "Completed" || c.status === "Adopted").length;
+
+            // Update DOM element values
+            const emergenciesEl = document.getElementById("active-emergencies-val");
+            if (emergenciesEl) {
+                emergenciesEl.innerHTML = `${emergencyCount} <span class="live-dot-red" style="width: 8px; height: 8px; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);"></span>`;
+            }
+            const ngosEl = document.getElementById("ngos-responding-val");
+            if (ngosEl) {
+                ngosEl.textContent = ngoCount;
+            }
+            const resolvedEl = document.getElementById("rescues-today-val");
+            if (resolvedEl) {
+                resolvedEl.textContent = resolvedCount;
+            }
+            
+            const successStrip = document.querySelector(".success-strip");
+            if (successStrip) {
+                successStrip.innerHTML = `<i class="ph-fill ph-sparkle"></i> Today ${resolvedCount} animals were safely rescued ❤️ <i class="ph-fill ph-sparkle"></i>`;
+            }
+        }
+
+        // Initialize cases Db in localStorage with consistent seeding
+        function initializeRescueCases() {
+            if (!localStorage.getItem("voiceOfStrayCases")) {
+                const defaultCases = {
+                    "4902": {
+                        id: "4902",
+                        animal: "Dog (Golden Retriever Mix)",
+                        animalType: "Dog",
+                        breed: "Golden Retriever Mix",
+                        breedDesc: "Golden Retriever Mix",
+                        estimatedAge: "Puppy / Kitten",
+                        issueCategory: "Injury",
+                        location: "Linking Road, Bandra West",
+                        reportedTime: "10:25 AM",
+                        condition: "Fractured Leg, Dehydrated",
+                        observedCondition: "Fractured Leg, Dehydrated",
+                        severity: "Emergency",
+                        status: "Reported",
+                        statusStep: 0,
+                        reporter: { name: "Anjali Sharma", phone: "+91 98200 12345", notes: "Puppy unable to walk. Seen near roadside." },
+                        team: { ngo: "Paws Haven NGO", lead: null, volunteers: [] },
+                        timeline: [{ time: "10:25 AM", text: "Rescue report received." }],
+                        notes: "Possible fracture. Requires X-ray evaluation.",
+                        photos: { before: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+                    },
+                    "4888": {
+                        id: "4888",
+                        animal: "Dog (Other / Unknown)",
+                        animalType: "Dog",
+                        breed: "Other / Unknown",
+                        breedDesc: "Other / Unknown",
+                        estimatedAge: "Adult",
+                        issueCategory: "Injury",
+                        location: "Anna Nagar Area",
+                        reportedTime: "09:15 AM",
+                        condition: "Bleeding near paw, whimpering",
+                        observedCondition: "Bleeding near paw, whimpering",
+                        severity: "Emergency",
+                        status: "Volunteer Assigned",
+                        statusStep: 2,
+                        reporter: { name: "Rohan Sharma", phone: "+91 98765 43210", notes: "Dog is sitting under the green dustbin. Limping and whimpering." },
+                        team: {
+                            ngo: "Paws Haven NGO",
+                            lead: {
+                                username: "Priya",
+                                email: "priya@example.com",
+                                role: "Emergency Rescue",
+                                assignedDate: "14 Jun 2026",
+                                status: "Assigned"
+                            },
+                            volunteers: []
+                        },
+                        timeline: [{ time: "09:20 AM", text: "Case accepted by Paws Haven NGO." }, { time: "09:15 AM", text: "Rescue report received." }],
+                        notes: "Volunteer Priya en-route with ambulance.",
+                        photos: { before: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+                    },
+                    "4871": {
+                        id: "4871",
+                        animal: "Cat (Other / Unknown)",
+                        animalType: "Cat",
+                        breed: "Other / Unknown",
+                        breedDesc: "Other / Unknown",
+                        estimatedAge: "Young",
+                        issueCategory: "Injury",
+                        location: "Metro Vet Center",
+                        reportedTime: "08:30 AM",
+                        condition: "Fractured hind leg, skin scabs",
+                        observedCondition: "Fractured hind leg, skin scabs",
+                        severity: "High Priority",
+                        status: "Treatment",
+                        statusStep: 5,
+                        reporter: { name: "Meera Nair", phone: "+91 87654 32109", notes: "Found limping near Andheri subway under a parked car." },
+                        team: {
+                            ngo: "Paws Haven NGO",
+                            lead: {
+                                username: "Akash",
+                                email: "akash@example.com",
+                                role: "Transport Assistance",
+                                assignedDate: "13 Jun 2026",
+                                status: "Assigned"
+                            },
+                            volunteers: []
+                        },
+                        timeline: [{ time: "09:00 AM", text: "Treatment started at Metro Vet Center." }, { time: "08:50 AM", text: "Animal safely reached Metro Vet clinic." }, { time: "08:45 AM", text: "Cat successfully rescued and placed in carrier." }, { time: "08:30 AM", text: "Rescue report received." }],
+                        notes: "Hind leg splinted. Antibiotics started.",
+                        photos: { before: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300", during: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&q=80&w=300", treatment: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=300", recovery: "" }
+                    }
+                };
+                localStorage.setItem("voiceOfStrayCases", JSON.stringify(defaultCases));
+            }
+        }
+
+        // Render cards dynamically
+        function renderRescueCards() {
+            const listEl = document.getElementById("rescue-cards-list");
+            if (!listEl) return;
+            listEl.innerHTML = "";
+
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const allCases = Object.keys(casesDb)
+                .map(id => casesDb[id])
+                .filter(c => c && c.id);
+
+            // Filter active rescue operations matching all display criteria
+            const activeCases = allCases.filter(c => c.statusStep >= 1 && c.statusStep < 8 && c.status !== "Completed" && c.status !== "Adopted" && c.status !== "Archived" && c.status !== "Rejected");
+
+            // Update statistics panel dynamically
+            updateRescueStats(allCases);
+
+            // Populate Map nodes dynamically
+            renderMapNodes(activeCases);
+
+            if (activeCases.length === 0) {
+                listEl.innerHTML = `<div style="padding: 40px; text-align: center; color: #7c2d12; font-weight: 600;">No active rescue cases found.</div>`;
+                return;
+            }
+
+            // Sort cases by ID descending so newest appears first safely
+            activeCases.sort((a, b) => {
+                const idA = String(a.id || "");
+                const idB = String(b.id || "");
+                return idB.localeCompare(idA);
+            });
+
+            activeCases.forEach(c => {
+                const severity = c.severity || c.priority || "Normal";
+                let severityClass = "severity-stable";
+                let severityIcon = "ph-fill ph-check-circle";
+                if (severity.toLowerCase().includes("emergency") || severity.toLowerCase().includes("critical")) {
+                    severityClass = "severity-critical";
+                    severityIcon = "ph-fill ph-warning";
+                } else if (severity.toLowerCase().includes("high") || severity.toLowerCase().includes("medium")) {
+                    severityClass = "severity-medium";
+                    severityIcon = "ph-fill ph-info";
+                }
+
+                // Map statusStep dynamically to progress percentage from the standardized rescue lifecycle (10 stages)
+                const totalSteps = 10;
+                const progressPercent = Math.min(100, Math.max(0, (c.statusStep / (totalSteps - 1)) * 100));
+
+                // Steps class mappings dynamically calculated
+                const trackerMapping = [
+                    0, // 0: Reported -> Tracker Step 0
+                    1, // 1: Waiting for Volunteer -> Tracker Step 1
+                    1, // 2: Volunteer Assigned -> Tracker Step 1
+                    2, // 3: Volunteer En Route -> Tracker Step 2
+                    3, // 4: Animal Rescued -> Tracker Step 3
+                    3, // 5: Treatment -> Tracker Step 3
+                    3, // 6: Recovery -> Tracker Step 3
+                    4, // 7: Ready for Adoption -> Tracker Step 4
+                    4, // 8: Adopted -> Tracker Step 4
+                    4  // 9: Completed -> Tracker Step 4
+                ];
+                const activeIndex = trackerMapping[c.statusStep] !== undefined ? trackerMapping[c.statusStep] : 0;
+
+                const step1Class = activeIndex === 0 ? "active" : (activeIndex > 0 ? "completed" : "");
+                const step2Class = activeIndex === 1 ? "active" : (activeIndex > 1 ? "completed" : "");
+                const step3Class = activeIndex === 2 ? "active" : (activeIndex > 2 ? "completed" : "");
+                const step4Class = activeIndex === 3 ? "active" : (activeIndex > 3 ? "completed" : "");
+                const step5Class = activeIndex === 4 ? "active" : (activeIndex > 4 ? "completed" : "");
+
+                // Map data-categories
+                const categories = [];
+                if (severity.toLowerCase().includes("emergency") || severity.toLowerCase().includes("critical")) {
+                    categories.push("emergency");
+                }
+                if (c.statusStep >= 1 && c.statusStep < 8) {
+                    categories.push("in-progress");
+                }
+                if (c.statusStep === 5 || c.status === "Treatment") {
+                    categories.push("treatment");
+                }
+                if (c.statusStep === 6 || c.status === "Recovery" || c.status === "Ready for Adoption") {
+                    categories.push("recovery");
+                }
+                if (c.statusStep >= 8 || c.status === "Completed") {
+                    categories.push("resolved");
+                }
+
+                const categoryAttr = categories.join(" ");
+
+                const breedVal = c.breed || c.breedDesc || "Other / Unknown";
+                const animalType = c.animalType || "Animal";
+                const displayTitle = c.condition || c.observedCondition || `${animalType} (${breedVal})`;
+
+                // Render dynamic card markup preserving layout
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "live-rescue-card";
+                cardDiv.setAttribute("data-category", categoryAttr);
+                cardDiv.innerHTML = `
+                    <div class="card-header-row">
+                        <span class="card-id-badge"><span class="live-dot-red"></span> #RSC-${c.id}</span>
+                        <span class="severity-badge ${severityClass}"><i class="${severityIcon}"></i> ${severity}</span>
+                    </div>
+                    <h3>${displayTitle}</h3>
+                    
+                    <div class="card-body-details">
+                        <div class="card-info-item">
+                            <span class="card-info-label">Location</span>
+                            <span class="card-info-value"><i class="ph ph-map-pin" style="color: #ef4444;"></i> ${c.location}</span>
+                        </div>
+                        <div class="card-info-item">
+                            <span class="card-info-label">NGO Assigned</span>
+                            <span class="card-info-value">${c.team?.ngo || "Paws Haven NGO"}</span>
+                        </div>
+                        <div class="card-info-item">
+                            <span class="card-info-label">Current Status</span>
+                            <span class="card-info-value" style="color: #3b82f6; font-weight: 700;">${c.status || "NGO Accepted"}</span>
+                        </div>
+                    </div>
+
+                    <!-- Mini Timeline Progress -->
+                    <div class="mini-timeline">
+                        <div class="mini-timeline-progress" style="width: ${progressPercent}%;"></div>
+                        <div class="mini-step ${step1Class}">
+                            <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                            <span class="mini-step-label">Reported</span>
+                        </div>
+                        <div class="mini-step ${step2Class}">
+                            <div class="mini-step-dot"><i class="ph ph-check"></i></div>
+                            <span class="mini-step-label">Assigned</span>
+                        </div>
+                        <div class="mini-step ${step3Class}">
+                            <div class="mini-step-dot"><i class="ph ph-path"></i></div>
+                            <span class="mini-step-label">En-Route</span>
+                        </div>
+                        <div class="mini-step ${step4Class}">
+                            <div class="mini-step-dot"><i class="ph ph-first-aid"></i></div>
+                            <span class="mini-step-label">Treatment</span>
+                        </div>
+                        <div class="mini-step ${step5Class}">
+                            <div class="mini-step-dot"><i class="ph ph-house"></i></div>
+                            <span class="mini-step-label">Resolved</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer-row">
+                        <span class="time-eta"><i class="ph ph-clock"></i> Reported ${c.reportedTime || "N/A"}</span>
+                        <button class="btn-track track-rescue-btn" data-id="RSC-${c.id}">
+                            Track Rescue <i class="ph ph-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(cardDiv);
+            });
+        }
+
+        // Dynamically populate tracking parameters onto detailed-tracking-view
+        function renderDetailedView(c) {
+            const subtitleEl = document.getElementById("detailed-case-subtitle");
+            if (subtitleEl) subtitleEl.textContent = `Monitor live status updates for case #RSC-${c.id}`;
+
+            const imgEl = document.getElementById("detailed-info-img");
+            if (imgEl) imgEl.src = c.photos?.before || c.photo || "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200";
+
+            const idEl = document.getElementById("detailed-info-id");
+            if (idEl) idEl.textContent = `#RSC-${c.id}`;
+
+            const severity = c.severity || c.priority || "Normal";
+            const badgeEl = document.getElementById("detailed-info-badge");
+            if (badgeEl) {
+                badgeEl.innerHTML = `<i class="ph-fill ph-asterisk"></i> ${severity}`;
+                badgeEl.className = severity.toLowerCase().includes("emergency") ? "emergency-badge" : "emergency-badge stable";
+            }
+
+            // Dynamically update or create Current Status Badge next to severity badge
+            let statusBadge = document.getElementById("detailed-status-badge");
+            if (!statusBadge) {
+                statusBadge = document.createElement("span");
+                statusBadge.id = "detailed-status-badge";
+                statusBadge.className = "emergency-badge";
+                statusBadge.style.marginLeft = "8px";
+                statusBadge.style.marginTop = "4px";
+                if (badgeEl && badgeEl.parentNode) {
+                    badgeEl.parentNode.appendChild(statusBadge);
+                }
+            }
+            if (statusBadge) {
+                const isCompleted = c.statusStep === 9 || (c.status || "").toLowerCase().includes("completed") || (c.status || "").toLowerCase().includes("adopted") || (c.status || "").toLowerCase().includes("resolved");
+                statusBadge.className = isCompleted ? "emergency-badge stable" : "emergency-badge";
+                statusBadge.style.background = isCompleted ? "var(--success-green)" : "var(--tracking-blue)";
+                
+                let iconClass = "ph-activity";
+                if (isCompleted) iconClass = "ph-check-circle";
+                else if (c.statusStep === 3) iconClass = "ph-ambulance";
+                else if (c.statusStep === 5) iconClass = "ph-first-aid";
+
+                statusBadge.innerHTML = `<i class="ph-fill ${iconClass}"></i> ${c.status || 'Reported'}`;
+            }
+
+            const locationEl = document.getElementById("detailed-info-location");
+            if (locationEl) locationEl.textContent = c.location;
+
+            const breedVal = c.breed || c.breedDesc || "Other / Unknown";
+            const animalType = c.animalType || "Animal";
+            const conditionEl = document.getElementById("detailed-info-condition");
+            if (conditionEl) conditionEl.textContent = c.condition || c.observedCondition || `${animalType} (${breedVal})`;
+
+            const etaEl = document.getElementById("detailed-info-eta");
+            if (etaEl) {
+                etaEl.textContent = c.statusStep >= 8 ? "Resolved" : (c.statusStep >= 4 ? "At Base" : "08 mins");
+            }
+
+            // Progress steps
+            const steps = [
+                document.getElementById("detailed-step-reported"),
+                document.getElementById("detailed-step-assigned"),
+                document.getElementById("detailed-step-progress"),
+                document.getElementById("detailed-step-treatment"),
+                document.getElementById("detailed-step-resolved")
+            ];
+
+            // Map statusStep dynamically to tracker indices from the standardized rescue lifecycle (10 stages)
+            const trackerMapping = [
+                0, // 0: Reported -> Tracker Step 0 (Reported)
+                1, // 1: Waiting for Volunteer -> Tracker Step 1 (Assigned)
+                1, // 2: Volunteer Assigned -> Tracker Step 1 (Assigned)
+                2, // 3: Volunteer En Route -> Tracker Step 2 (In Progress)
+                3, // 4: Animal Rescued -> Tracker Step 3 (Treatment)
+                3, // 5: Treatment -> Tracker Step 3 (Treatment)
+                3, // 6: Recovery -> Tracker Step 3 (Treatment)
+                4, // 7: Ready for Adoption -> Tracker Step 4 (Resolved)
+                4, // 8: Adopted -> Tracker Step 4 (Resolved)
+                4  // 9: Completed -> Tracker Step 4 (Resolved)
+            ];
+            const activeIndex = trackerMapping[c.statusStep] !== undefined ? trackerMapping[c.statusStep] : 0;
+
+            steps.forEach((step, idx) => {
+                if (!step) return;
+                const icon = step.querySelector(".step-icon");
+                const label = step.querySelector(".step-label");
+                if (!icon || !label) return;
+
+                icon.className = "step-icon";
+                label.className = "step-label";
+
+                const iconInner = icon.querySelector("i") || icon.querySelector("div");
+
+                if (idx < activeIndex) {
+                    icon.classList.add("completed");
+                    label.classList.add("completed");
+                    if (iconInner) iconInner.className = "ph ph-check";
+                } else if (idx === activeIndex) {
+                    icon.classList.add("active");
+                    label.classList.add("active");
+                    if (iconInner) {
+                        if (idx === 0) iconInner.className = "ph ph-check";
+                        else if (idx === 1) iconInner.className = "ph ph-check";
+                        else if (idx === 2) iconInner.className = "ph ph-path";
+                        else if (idx === 3) iconInner.className = "ph ph-first-aid";
+                        else if (idx === 4) iconInner.className = "ph ph-house-line";
+                    }
+                } else {
+                    if (iconInner) {
+                        if (idx === 0) iconInner.className = "ph ph-check";
+                        else if (idx === 1) iconInner.className = "ph ph-check";
+                        else if (idx === 2) iconInner.className = "ph ph-path";
+                        else if (idx === 3) iconInner.className = "ph ph-first-aid";
+                        else if (idx === 4) iconInner.className = "ph ph-house-line";
+                    }
+                }
+            });
+
+            const line = document.getElementById("detailed-progress-line");
+            if (line) {
+                // Calculate progress dynamically from lifecycle
+                const totalSteps = 10;
+                const percent = Math.min(100, Math.max(0, (c.statusStep / (totalSteps - 1)) * 100));
+                line.style.width = `${percent}%`;
+            }
+
+            // Update Animal Status Tags dynamically based on statusStep
+            const animalStatusContainer = document.getElementById("detailed-animal-status-tags");
+            if (animalStatusContainer) {
+                const tags = animalStatusContainer.querySelectorAll(".status-tag");
+                // Indices: 0: Stabilized, 1: Water Given, 2: First Aid Started, 3: Transporting, 4: Shelter Intake, 5: Recovery Ongoing
+                tags.forEach((tag, idx) => {
+                    tag.className = "status-tag upcoming"; // Default to upcoming
+                    
+                    if (idx === 0 || idx === 1) { // Stabilized, Water Given
+                        if (c.statusStep >= 4) {
+                            tag.className = "status-tag completed";
+                        }
+                    } else if (idx === 2) { // First Aid Started
+                        if (c.statusStep === 4) {
+                            tag.className = "status-tag current";
+                        } else if (c.statusStep > 4) {
+                            tag.className = "status-tag completed";
+                        }
+                    } else if (idx === 3) { // Transporting
+                        if (c.statusStep === 3) {
+                            tag.className = "status-tag current";
+                        } else if (c.statusStep > 3) {
+                            tag.className = "status-tag completed";
+                        }
+                    } else if (idx === 4) { // Shelter Intake
+                        if (c.statusStep === 4 || c.statusStep === 5) {
+                            tag.className = "status-tag current";
+                        } else if (c.statusStep > 5) {
+                            tag.className = "status-tag completed";
+                        }
+                    } else if (idx === 5) { // Recovery Ongoing
+                        if (c.statusStep === 6) {
+                            tag.className = "status-tag current";
+                        } else if (c.statusStep > 6) {
+                            tag.className = "status-tag completed";
+                        }
+                    }
+                });
+            }
+
+            // Update Rescue Outcome Tags dynamically based on statusStep
+            const rescueOutcomeContainer = document.getElementById("detailed-rescue-outcome-tags");
+            if (rescueOutcomeContainer) {
+                const tags = rescueOutcomeContainer.querySelectorAll(".status-tag");
+                // Indices: 0: Medical recovery, 1: Shelter care, 2: Foster, 3: Returned to owner, 4: Adopted
+                tags.forEach((tag, idx) => {
+                    tag.className = "status-tag upcoming"; // Default to upcoming
+
+                    if (idx === 0) { // Medical recovery
+                        if (c.statusStep === 5) {
+                            tag.className = "status-tag current";
+                        } else if (c.statusStep > 5) {
+                            tag.className = "status-tag completed";
+                        }
+                    } else if (idx === 1) { // Shelter care
+                        if (c.statusStep === 6) {
+                            tag.className = "status-tag current";
+                        } else if (c.statusStep > 6) {
+                            tag.className = "status-tag completed";
+                        }
+                    } else if (idx === 4) { // Adopted
+                        if (c.statusStep === 8) {
+                            tag.className = "status-tag current";
+                        } else if (c.statusStep > 8) {
+                            tag.className = "status-tag completed";
+                        }
+                    }
+                });
+            }
+
+            // Rescue team card
+            const avatarEl = document.getElementById("detailed-team-avatar");
+            const ngoName = c.team?.ngo || "Paws Haven NGO";
+            if (avatarEl) avatarEl.textContent = ngoName.substring(0, 2).toUpperCase();
+
+            const ngoEl = document.getElementById("detailed-team-ngo");
+            if (ngoEl) ngoEl.innerHTML = `${ngoName} <i class="ph-fill ph-seal-check" style="color: var(--success-green); font-size: 1rem;"></i>`;
+
+            const leadNameEl = document.getElementById("detailed-team-lead-name");
+            const leadBox = document.getElementById("detailed-team-lead-box");
+            if (leadBox) {
+                const leadName = c.assignedVolunteerName || (c.team?.lead ? (typeof c.team.lead === "object" ? (c.team.lead.username || c.team.lead.name) : c.team.lead) : null);
+                if (leadName) {
+                    leadBox.innerHTML = `
+                        <div class="name" id="detailed-team-lead-name"><i class="ph ph-user" style="color: var(--primary, #f97316); font-size: 1.2rem;"></i> ${leadName}</div>
+                        <div class="role">Volunteer Lead</div>
+                    `;
+                    leadBox.style.display = "block";
+                } else {
+                    leadBox.innerHTML = `
+                        <div style="padding: 12px; border: 1.5px dashed rgba(249, 115, 22, 0.3); border-radius: 8px; text-align: center; background: rgba(249, 115, 22, 0.02); width: 100%;">
+                            <p style="font-size: 0.8rem; color: #7c2d12; margin: 0 0 8px 0; font-weight: 600;">
+                                <i class="ph ph-user-plus" style="font-size: 1.1rem; vertical-align: middle; margin-right: 4px;"></i>
+                                No volunteer assigned yet
+                            </p>
+                            <button class="action-btn-join-rescue" style="background: var(--primary); color: white; border: none; padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; font-weight: 600; cursor: pointer; opacity: 0.8;" disabled>
+                                Request to Join (Upcoming)
+                            </button>
+                        </div>
+                    `;
+                    leadBox.style.display = "block";
+                }
+            }
+
+            // Timeline updates
+            const timelineContainer = document.getElementById("detailed-timeline-vertical");
+            if (timelineContainer) {
+                timelineContainer.innerHTML = "";
+                const timeline = c.timeline || [];
+                timeline.forEach(t => {
+                    timelineContainer.innerHTML += `
+                        <div class="timeline-item">
+                            <strong style="color: #7c2d12;">${t.text}</strong>
+                            <span>${t.time || "N/A"}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // Volunteer Mission Panel assigned user check & update
+            const currentUserRaw = localStorage.getItem("currentUser");
+            const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+            const missionPanel = document.getElementById("volunteer-mission-panel");
+            const missionContent = document.getElementById("volunteer-mission-content");
+
+            if (missionPanel && missionContent) {
+                if (isUserAssignedVolunteer(c, currentUser)) {
+                    missionPanel.style.display = "block";
+                    if (c.statusStep === 2 || c.status === "Volunteer Assigned") {
+                        missionContent.innerHTML = `
+                            <p style="color: #7c2d12; font-size: 0.95rem; margin-bottom: 16px; font-weight: 500; line-height: 1.5;">
+                                You have been assigned to this rescue mission. Click below to indicate you are heading to the location.
+                            </p>
+                            <button class="btn-volunteer-action" onclick="updateVolunteerStatus(3)">
+                                <i class="ph ph-path"></i> Mark En Route
+                            </button>
+                        `;
+                    } else if (c.statusStep === 3 || c.status === "Volunteer En Route") {
+                        missionContent.innerHTML = `
+                            <p style="color: #7c2d12; font-size: 0.95rem; margin-bottom: 16px; font-weight: 500; line-height: 1.5;">
+                                You are en route. Click below once you have successfully rescued the animal and handed them over to the NGO.
+                            </p>
+                            <button class="btn-volunteer-action" onclick="updateVolunteerStatus(4)">
+                                <i class="ph ph-first-aid"></i> Mark Animal Rescued
+                            </button>
+                        `;
+                    } else {
+                        // Animal Rescued or higher
+                        missionContent.innerHTML = `
+                            <blockquote style="margin: 0; padding: 12px 16px; border-left: 4px solid var(--success-green, #10b981); background: rgba(16, 185, 129, 0.05); color: #065f46; font-size: 0.95rem; font-weight: 600; line-height: 1.5; border-radius: 0 8px 8px 0;">
+                                Mission Completed. The rescued animal has been safely handed over to the NGO. Further updates will now be managed by the NGO.
+                            </blockquote>
+                        `;
+                    }
+                } else {
+                    missionPanel.style.display = "none";
+                }
+            }
+        }
+
+        // 1. Single-Page Routing Implementation
+        function handleRouting() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || window.location.hash.replace('#', '');
+            
+            const feedView = document.getElementById('live-network-feed-view');
+            const detailedView = document.getElementById('detailed-tracking-view');
+            
+            const cleanId = id ? (id.startsWith('RSC-') ? id.replace('RSC-', '') : id) : null;
+            if (cleanId) {
+                const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+                const c = casesDb[cleanId];
+                if (c) {
+                    renderDetailedView(c);
+                    feedView.style.display = 'none';
+                    detailedView.style.display = 'block';
+                    document.title = "Rescue Case #RSC-" + cleanId + " - Voice of Stray";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    feedView.style.display = 'block';
+                    detailedView.style.display = 'none';
+                    document.title = "Live Rescue Network - Voice of Stray";
+                }
+            } else {
+                feedView.style.display = 'block';
+                detailedView.style.display = 'none';
+                document.title = "Live Rescue Network - Voice of Stray";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // 2. Active Feed Tab Categories Filtering
+        function initCategoryFilters() {
+            const tabs = document.querySelectorAll(".filter-tab-dark");
+
+            tabs.forEach(tab => {
+                tab.addEventListener("click", function () {
+                    // Toggle active tab
+                    tabs.forEach(t => t.classList.remove("active"));
+                    tab.classList.add("active");
+
+                    const filterValue = tab.getAttribute("data-filter");
+                    const cards = document.querySelectorAll(".live-rescue-card");
+
+                    cards.forEach(card => {
+                        const categories = card.getAttribute("data-category");
+                        if (filterValue === "all") {
+                            card.style.display = "flex";
+                        } else if (categories && categories.includes(filterValue)) {
+                            card.style.display = "flex";
+                        } else {
+                            card.style.display = "none";
+                        }
+                    });
+                });
+            });
+        }
+
+        // 3. Authenticate-Aware Action Interceptors
+        function initActionInterceptors() {
+            // Event delegation for dynamic tracking buttons
+            const cardsContainer = document.getElementById("rescue-cards-list");
+            if (cardsContainer) {
+                cardsContainer.addEventListener("click", function (e) {
+                    const btn = e.target.closest(".track-rescue-btn");
+                    if (!btn) return;
+
+                    e.preventDefault();
+                    const caseId = btn.getAttribute("data-id");
+                    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+                    const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+                    const cleanId = caseId.replace("RSC-", "");
+
+                    if (casesDb[cleanId]) {
+                        if (isLoggedIn) {
+                            history.pushState(null, "", "rescue.html?id=RSC-" + cleanId);
+                            handleRouting();
+                        } else {
+                            showLoginModal();
+                        }
+                    } else {
+                        if (isLoggedIn) {
+                            alert("Case details for " + caseId + " are restricted to the dispatched responders. You can volunteer for active dispatch in your Community panel.");
+                        } else {
+                            showLoginModal();
+                        }
+                    }
+                });
+            }
+
+            // How You Can Help cards
+            const helpCards = document.querySelectorAll(".help-trigger");
+            helpCards.forEach(card => {
+                card.addEventListener("click", function () {
+                    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+                    const action = card.getAttribute("data-action");
+
+                    if (isLoggedIn) {
+                        // Logged-in navigation
+                        if (action === "volunteer") {
+                            window.location.href = "volunteer.html";
+                        } else if (action === "donate") {
+                            window.location.href = "donate.html";
+                        } else {
+                            alert("Thank you! You are logged in. The ecosystem foster/sponsor panel is loading soon.");
+                        }
+                    } else {
+                        // Guest user triggers popup
+                        showLoginModal();
+                    }
+                });
+            });
+        }
+
+        // 4. Glassmorphism Login Modal control functions
+        function initModalControls() {
+            const modal = document.getElementById("login-modal");
+            const closeBtn = document.getElementById("close-modal-btn");
+            const loginBtn = document.querySelector(".login-redirect-btn");
+            const signupBtn = document.querySelector(".signup-redirect-btn");
+
+            // Close modal events
+            closeBtn.addEventListener("click", hideLoginModal);
+            modal.addEventListener("click", function (e) {
+                if (e.target === modal) hideLoginModal();
+            });
+
+            // Button redirects
+            loginBtn.addEventListener("click", function () {
+                window.location.href = "login.html";
+            });
+            signupBtn.addEventListener("click", function () {
+                window.location.href = "signup.html";
+            });
+        }
+
+        function showLoginModal() {
+            const modal = document.getElementById("login-modal");
+            if (modal) modal.classList.add("show");
+        }
+
+        function hideLoginModal() {
+            const modal = document.getElementById("login-modal");
+            if (modal) modal.classList.remove("show");
+        }
+
+        // Check if the current user is authorized to perform volunteer updates on this case.
+        // Abstracted to support future backend authorization validation.
+        function isUserAssignedVolunteer(c, currentUser) {
+            if (!currentUser || !c) return false;
+            return String(c.assignedVolunteerId) === String(currentUser.id);
+        }
+
+        // Volunteer status transitions management
+        function updateVolunteerStatus(newStep) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || window.location.hash.replace('#', '');
+            const cleanId = id ? (id.startsWith('RSC-') ? id.replace('RSC-', '') : id) : null;
+            if (!cleanId) return;
+
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            const c = casesDb[cleanId];
+            if (!c) return;
+
+            // Authentication & Authorization check
+            const currentUserRaw = localStorage.getItem("currentUser");
+            const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+            if (!currentUser) {
+                alert("You must be logged in to update the mission status.");
+                return;
+            }
+
+            if (!isUserAssignedVolunteer(c, currentUser)) {
+                alert("You are not authorized to update this case.");
+                return;
+            }
+
+            // Progress validation: ensure step can only transition from 2 -> 3 -> 4
+            // Block updates if status is already at 4 or higher (managed by NGO)
+            if (c.statusStep >= 4) {
+                alert("This mission is already completed. Further updates are managed by the NGO.");
+                return;
+            }
+
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (newStep === 3) {
+                if (c.statusStep !== 2 && c.status !== "Volunteer Assigned") {
+                    alert("Invalid status progression.");
+                    return;
+                }
+                c.statusStep = 3;
+                c.status = "Volunteer En Route";
+                c.timeline = c.timeline || [];
+                c.timeline.unshift({
+                    time: nowTime,
+                    text: `Volunteer ${currentUser.name || "Volunteer"} is en route to the rescue location.`
+                });
+            } else if (newStep === 4) {
+                if (c.statusStep !== 3 && c.status !== "Volunteer En Route") {
+                    alert("Invalid status progression.");
+                    return;
+                }
+                c.statusStep = 4;
+                c.status = "Animal Rescued";
+                c.timeline = c.timeline || [];
+                c.timeline.unshift({
+                    time: nowTime,
+                    text: "Animal rescued successfully and handed over to the NGO."
+                });
+            } else {
+                return; // Prevent modifying any other status
+            }
+
+            // Persist the changes
+            casesDb[cleanId] = c;
+            localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+
+            // Sync rendering
+            renderDetailedView(c);
+            renderRescueCards();
+
+            // Dispatch storage event to sync other open tabs/windows
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'voiceOfStrayCases',
+                newValue: JSON.stringify(casesDb)
+            }));
+        }
+
+        // Global Storage Event Listener to automatically refresh the view if changed from other tabs/dashboards
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'voiceOfStrayCases') {
+                renderRescueCards();
+                const urlParams = new URLSearchParams(window.location.search);
+                const id = urlParams.get('id') || window.location.hash.replace('#', '');
+                const cleanId = id ? (id.startsWith('RSC-') ? id.replace('RSC-', '') : id) : null;
+                if (cleanId) {
+                    const casesDb = JSON.parse(e.newValue || "{}");
+                    const c = casesDb[cleanId];
+                    if (c) {
+                        renderDetailedView(c);
+                    }
+                }
+            }
+        });
+
+        // Map node click highlighting helper
+        function highlightRescueCard(caseId) {
+            const allCards = document.querySelectorAll(".live-rescue-card");
+            allCards.forEach(c => {
+                c.style.borderColor = "rgba(249, 115, 22, 0.14)";
+                c.style.boxShadow = "0 10px 30px -8px rgba(249, 115, 22, 0.04)";
+            });
+
+            const targetCard = Array.from(allCards).find(c => c.textContent.includes(caseId));
+            if (targetCard) {
+                targetCard.style.borderColor = "#f97316";
+                targetCard.style.boxShadow = "0 0 20px rgba(249, 115, 22, 0.25)";
+                targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+    </script>
+</body>
+
+</html>
