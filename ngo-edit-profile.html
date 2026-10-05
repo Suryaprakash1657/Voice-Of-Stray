@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit NGO Profile - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        /* Custom Styles for NGO Edit Profile */
+        body {
+            background-color: #fff9f5;
+            background-image: radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Replicated Layered Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.04;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.12;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.3));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.08;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .ops-container {
+            max-width: 1200px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 992px) {
+            .ops-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .back-btn-container {
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            padding: 8px 18px;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: rgba(249, 115, 22, 0.3);
+            background: white;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.06);
+        }
+
+        .ops-hero {
+            background: linear-gradient(135deg, #fff2e8 0%, #ffe3d1 100%);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 32px 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 15px 35px -10px rgba(249, 115, 22, 0.1);
+            position: relative;
+            margin-bottom: 32px;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .ops-hero-info {
+            flex: 1;
+            min-width: 250px;
+            z-index: 2;
+        }
+
+        .ops-hero-info h1 {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .ops-hero-info p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .ngo-identity-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .avatar-edit-wrapper {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar-edit-wrapper img {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+            display: block;
+        }
+
+        .avatar-edit-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: white;
+        }
+
+        .avatar-edit-wrapper:hover .avatar-edit-overlay {
+            opacity: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.04);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 15px 35px -12px rgba(249, 115, 22, 0.08);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 576px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.span-2 {
+                grid-column: span 1 !important;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.span-2 {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-glass {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            width: 100%;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .input-glass:focus,
+        .input-glass:hover {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        textarea.input-glass {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .hours-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hour-row {
+            display: grid;
+            grid-template-columns: 120px 1.2fr 1.2fr auto;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        @media (max-width: 576px) {
+            .hour-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        .hour-row:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .day-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .time-select-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-select-wrap label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .time-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 600;
+            background: white;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .time-select:focus {
+            border-color: var(--primary);
+        }
+
+        .time-select:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .closed-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            user-select: none;
+            min-width: 50px;
+        }
+
+        /* Action Buttons */
+        .actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: var(--radius-full);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-action.save {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+        }
+
+        .btn-action.save:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+        }
+
+        .btn-action.cancel {
+            background: white;
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .btn-action.cancel:hover {
+            border-color: #cbd5e1;
+            color: var(--text-main);
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+
+        /* RIGHT STICKY PREVIEW CARD */
+        .preview-column {
+            position: relative;
+        }
+
+        .sticky-card {
+            position: sticky;
+            top: 100px;
+            padding: 32px 24px;
+            border-top: 4px solid var(--primary);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preview-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .ngo-header {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .ngo-avatar {
+            width: 64px;
+            height: 64px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ngo-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ngo-title h3 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .verified-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #0ea5e9;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .ngo-stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .n-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .n-stat strong {
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+        .n-stat span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .n-stat i {
+            color: #f59e0b;
+        }
+
+        .ngo-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .ngo-contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .ngo-contact-info p {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .ngo-contact-info i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .ngo-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .w-full {
+            width: 100%;
+            padding: 14px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* Avatar Selection Modal */
+        .photo-selector-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10002;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-modal-card {
+            background: #fffdfb;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px -15px rgba(249, 115, 22, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .modal-header-row h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .image-option-item {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .image-option-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-option-item.selected,
+        .image-option-item:hover {
+            border-color: var(--primary);
+            transform: scale(1.03);
+        }
+
+        .url-input-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .url-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-actions-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid rgba(249, 115, 22, 0.1);
+            padding-top: 16px;
+        }
+
+        /* Toast notification */
+        .editor-notification {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 10005;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .editor-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .editor-notification i {
+            color: #22c55e;
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Shared Background Sparkles -->
+    <div class="bg-decorations">
+        <svg class="decor-item sparkle" style="top: 15%; left: 8%; width: 40px; height: 40px;" viewBox="0 0 256 256">
+            <path
+                d="M243,128.5A115,115,0,0,1,128.5,243,115,115,0,0,1,14,128.5,115,115,0,0,1,128.5,14,115,115,0,0,1,243,128.5Z"
+                fill="none" stroke="currentColor" stroke-width="16" />
+            <path d="M128,80v96M80,128h96" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" />
+        </svg>
+        <svg class="decor-item sparkle" style="top: 60%; right: 5%; width: 50px; height: 50px;" viewBox="0 0 256 256">
+            <path
+                d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" />
+        </svg>
+    </div>
+
+    <!-- Navbar (Shared) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <a href="ngo-dashboard.html" class="nav-home-link">
+                    <i class="ph-bold ph-layout"></i>
+                    <span>NGO Dashboard</span>
+                </a>
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+                <button class="icon-btn"><i class="ph ph-bell"></i></button>
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=City+Rescue&background=f97316&color=fff"
+                        alt="NGO Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="ops-container">
+
+        <!-- Left Column: Edit Forms -->
+        <div>
+            <div class="back-btn-container">
+                <a href="ngo-dashboard.html" class="back-link">
+                    <i class="ph ph-arrow-left"></i> Back to NGO Dashboard
+                </a>
+            </div>
+
+            <!-- Hero Header -->
+            <section class="ops-hero">
+                <div class="ops-hero-info">
+                    <h1>Edit NGO Profile</h1>
+                    <p>Manage the information adopters, volunteers, donors, and community members see across Voice of
+                        Stray.</p>
+                </div>
+                <!-- NGO Identity Display -->
+                <div class="ngo-identity-display">
+                    <div class="avatar-edit-wrapper" onclick="openLogoSelector()" title="Change Logo" id="ngo-hero-avatar-container" style="width: 80px; height: 80px; border-radius: var(--radius-md); border: 3px solid white; box-shadow: var(--shadow-md); background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; overflow: hidden; position: relative; cursor: pointer;">
+                        <img id="ngo-hero-avatar"
+                            src=""
+                            alt="NGO Logo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <span id="ngo-hero-avatar-fallback">PH</span>
+                        <div class="avatar-edit-overlay">
+                            <i class="ph ph-camera" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 id="ngo-hero-name"
+                            style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                            Paws Haven NGO</h2>
+                        <span id="ngo-hero-status-label"
+                            style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Partner NGO</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 0. Organization Logo Section -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-image"></i> Organization Logo
+                </h3>
+                <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+                    <div class="logo-preview-container" style="position: relative; width: 100px; height: 100px; border-radius: var(--radius-md); overflow: hidden; background: var(--primary); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 800; color: white; box-shadow: var(--shadow-sm); flex-shrink: 0;">
+                        <img id="logo-management-preview" src="" alt="NGO Logo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <span id="logo-management-fallback">PH</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <input type="file" id="logo-file-input" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="handleLogoUpload(event)">
+                            <button type="button" class="btn-action save" style="padding: 10px 22px; font-size: 0.9rem; border-radius: var(--radius-full);" onclick="document.getElementById('logo-file-input').click()">
+                                <i class="ph ph-upload-simple"></i> Upload New Logo
+                            </button>
+                            <button type="button" class="btn-action cancel" style="padding: 10px 22px; font-size: 0.9rem; border-radius: var(--radius-full); color: #ef4444; border-color: rgba(239, 68, 68, 0.2);" onclick="removeLogo()">
+                                <i class="ph ph-trash"></i> Remove Logo
+                            </button>
+                        </div>
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Supported formats: PNG, JPG, JPEG</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. Organization Information -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-buildings"></i> Organization Information
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label for="input-ngo-name">NGO Name</label>
+                        <input type="text" id="input-ngo-name" class="input-glass" placeholder="e.g. Paws Haven NGO">
+                    </div>
+                    <div class="form-group span-2">
+                        <label for="input-ngo-desc">Description</label>
+                        <textarea id="input-ngo-desc" class="input-glass"
+                            placeholder="Describe your organization's mission, history, and goals..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-founded-year">Founded Year</label>
+                        <input type="number" id="input-founded-year" class="input-glass" placeholder="e.g. 2018">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-reg-number">Registration Number</label>
+                        <input type="text" id="input-reg-number" class="input-glass"
+                            placeholder="e.g. NGO-12345-IND">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Contact Information -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-phone-call"></i> Contact Information
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-ngo-email">Contact Email</label>
+                        <input type="email" id="input-ngo-email" class="input-glass"
+                            placeholder="e.g. contact@pawshaven.org">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-ngo-phone">Phone Number</label>
+                        <input type="text" id="input-ngo-phone" class="input-glass"
+                            placeholder="e.g. +91 98765 43210">
+                    </div>
+                    <div class="form-group span-2">
+                        <label for="input-ngo-website">Website</label>
+                        <input type="text" id="input-ngo-website" class="input-glass"
+                            placeholder="e.g. www.pawshaven.org">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Location Information -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-map-pin"></i> Location Information
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label for="input-ngo-address">Address</label>
+                        <input type="text" id="input-ngo-address" class="input-glass"
+                            placeholder="e.g. 124 Rescue Ave">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-ngo-city">City</label>
+                        <input type="text" id="input-ngo-city" class="input-glass" placeholder="e.g. North District">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-ngo-state">State</label>
+                        <input type="text" id="input-ngo-state" class="input-glass" placeholder="e.g. Tamil Nadu">
+                    </div>
+                    <div class="form-group span-2">
+                        <label for="input-ngo-pincode">Pincode</label>
+                        <input type="text" id="input-ngo-pincode" class="input-glass" placeholder="e.g. 627001">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Operating Hours -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-calendar"></i> Operating Hours
+                </h3>
+                <div class="hours-grid">
+                    <!-- Hours rows will be generated dynamically by JS for customization -->
+                </div>
+            </section>
+
+            <!-- 5. Social Links -->
+            <section class="glass-card">
+                <h3 class="card-title">
+                    <i class="ph ph-share-network"></i> Social Links
+                </h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-social-instagram"><i class="ph ph-instagram"
+                                style="vertical-align: middle; margin-right: 4px;"></i> Instagram</label>
+                        <input type="text" id="input-social-instagram" class="input-glass"
+                            placeholder="Instagram URL (Optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-social-facebook"><i class="ph ph-facebook-logo"
+                                style="vertical-align: middle; margin-right: 4px;"></i> Facebook</label>
+                        <input type="text" id="input-social-facebook" class="input-glass"
+                            placeholder="Facebook URL (Optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-social-linkedin"><i class="ph ph-linkedin-logo"
+                                style="vertical-align: middle; margin-right: 4px;"></i> LinkedIn</label>
+                        <input type="text" id="input-social-linkedin" class="input-glass"
+                            placeholder="LinkedIn URL (Optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-social-youtube"><i class="ph ph-youtube-logo"
+                                style="vertical-align: middle; margin-right: 4px;"></i> YouTube</label>
+                        <input type="text" id="input-social-youtube" class="input-glass"
+                            placeholder="YouTube URL (Optional)">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Action Buttons -->
+            <div class="actions-bar">
+                <button class="btn-action cancel" onclick="cancelEdits()">Cancel</button>
+                <button class="btn-action save" onclick="saveEdits()">Save Changes</button>
+            </div>
+        </div>
+
+        <!-- Right Column: Sticky Public Preview -->
+        <aside class="preview-column">
+            <div class="ngo-profile-card card sticky-card">
+                <span class="preview-badge">Live Preview</span>
+                <div class="ngo-header">
+                    <div class="ngo-avatar" id="preview-avatar">PH</div>
+                    <div class="ngo-title">
+                        <h3 id="preview-name">Paws Haven NGO</h3>
+                        <span id="preview-verification-status-badge" class="verified-badge"><i class="ph-fill ph-seal-check"></i> Verified Partner</span>
+                    </div>
+                </div>
+
+                <div class="ngo-stats">
+                    <div class="n-stat">
+                        <strong>4.8</strong>
+                        <span><i class="ph-fill ph-star"></i> Rating</span>
+                    </div>
+                    <div class="n-stat">
+                        <strong>1.2k</strong>
+                        <span>Adoptions</span>
+                    </div>
+                    <div class="n-stat">
+                        <strong>15</strong>
+                        <span>Active Pets</span>
+                    </div>
+                </div>
+
+                <p class="ngo-desc" id="preview-desc">Rescuing, rehabilitating, and rehoming stray animals since 2018.
+                </p>
+
+                <div class="ngo-contact-info">
+                    <p id="preview-address"><i class="ph ph-map-pin"></i> 124 Rescue Ave, North District, Tamil Nadu -
+                        627001</p>
+                    <p id="preview-hours"><i class="ph ph-clock"></i> Open Today: 9:00 AM - 6:00 PM</p>
+                    <p id="preview-email" style="display: none;"><i class="ph ph-envelope"></i> contact@pawshaven.org</p>
+                    <p id="preview-phone" style="display: none;"><i class="ph ph-phone"></i> +91 98765 43210</p>
+                    <p id="preview-website" style="display: none;"><i class="ph ph-globe"></i> www.pawshaven.org</p>
+                </div>
+
+                <!-- Live Social Links Preview -->
+                <div class="ngo-socials" id="preview-socials" style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: none; flex-direction: column; gap: 10px;">
+                    <!-- Social links will show here if not empty -->
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 40px 20px 100px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); position: relative; z-index: 1;">
+        <p>&copy; 2026 Voice of Stray NGO Workspace</p>
+    </div>
+
+    <!-- MOCK PHOTO SELECTOR MODAL DIALOG -->
+    <div class="photo-selector-overlay" id="photo-modal-overlay">
+        <div class="photo-modal-card">
+            <div class="modal-header-row">
+                <h3><i class="ph ph-images-square"></i> Select NGO Logo</h3>
+                <span class="modal-close-btn" onclick="closeLogoSelector()"><i class="ph ph-x"></i></span>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">Choose one of our premium, pre-configured shelter profile logos to simulate uploader assets immediately, or paste a custom image URL below:</p>
+
+                <div class="image-options-grid">
+                    <div class="image-option-item"
+                        onclick="selectMockLogo('https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200"
+                            alt="Logo 1">
+                    </div>
+                    <div class="image-option-item"
+                        onclick="selectMockLogo('https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=200"
+                            alt="Logo 2">
+                    </div>
+                    <div class="image-option-item"
+                        onclick="selectMockLogo('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=200"
+                            alt="Logo 3">
+                    </div>
+                    <div class="image-option-item"
+                        onclick="selectMockLogo('https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=200"
+                            alt="Logo 4">
+                    </div>
+                    <div class="image-option-item"
+                        onclick="selectMockLogo('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=200"
+                            alt="Logo 5">
+                    </div>
+                    <div class="image-option-item"
+                        onclick="selectMockLogo('https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&q=80&w=200', this)">
+                        <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&q=80&w=200"
+                            alt="Logo 6">
+                    </div>
+                </div>
+
+                <div class="url-input-wrap">
+                    <label for="custom-logo-url" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Or Paste Custom Logo URL</label>
+                    <div class="url-input-row">
+                        <input type="text" id="custom-logo-url" class="input-glass" style="flex: 1;"
+                            placeholder="https://example.com/logo.jpg">
+                        <button class="btn-action save" style="border-radius: var(--radius-sm); padding: 8px 16px; font-size: 0.9rem;"
+                            onclick="applyCustomLogoUrl()">Apply</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions-row">
+                <button class="btn-action cancel" style="padding: 8px 18px; font-size: 0.9rem;"
+                    onclick="closeLogoSelector()">Cancel</button>
+                <button class="btn-action save" style="padding: 8px 20px; font-size: 0.9rem;"
+                    onclick="confirmLogoSelection()">Select Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="editor-notification" id="save-notification">
+        <i class="ph ph-check-circle"></i>
+        <span>Organization profile updated successfully!</span>
+    </div>
+
+    <!-- Client-Side controller logic -->
+    <script>
+        // Default time intervals for selection
+        const timeOptions = [
+            "6:00 AM", "6:30 AM", "7:00 AM", "7:30 AM", "8:00 AM", "8:30 AM", "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+            "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
+            "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM"
+        ];
+
+        // Central State Model
+        let ngoProfile = {
+            name: "Paws Haven NGO",
+            description: "Rescuing, rehabilitating, and rehoming stray animals since 2018.",
+            foundedYear: "2018",
+            registrationNumber: "NGO-12345-IND",
+            email: "contact@pawshaven.org",
+            phone: "+91 98765 43210",
+            website: "www.pawshaven.org",
+            address: "124 Rescue Ave",
+            city: "North District",
+            state: "Tamil Nadu",
+            pincode: "627001",
+            logo: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200",
+            operatingHours: {
+                Monday: { open: true, start: "9:00 AM", end: "6:00 PM" },
+                Tuesday: { open: true, start: "9:00 AM", end: "6:00 PM" },
+                Wednesday: { open: true, start: "9:00 AM", end: "6:00 PM" },
+                Thursday: { open: true, start: "9:00 AM", end: "6:00 PM" },
+                Friday: { open: true, start: "9:00 AM", end: "6:00 PM" },
+                Saturday: { open: true, start: "9:00 AM", end: "6:00 PM" },
+                Sunday: { open: false, start: "9:00 AM", end: "6:00 PM" }
+            },
+            social: {
+                instagram: "",
+                facebook: "",
+                linkedin: "",
+                youtube: ""
+            }
+        };
+
+        let tempSelectedLogoUrl = null;
+
+        // Init page load
+        document.addEventListener("DOMContentLoaded", () => {
+            // Strict Auth Guard
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const role = localStorage.getItem("role") || "user";
+            if (!isLoggedIn || role !== "ngo") {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Update navbar profile pic
+            const orgLogo = localStorage.getItem("avatarUrl") || "https://ui-avatars.com/api/?name=NGO&background=f97316&color=fff";
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => img.src = orgLogo);
+
+            // Load from localStorage if exists
+            const stored = localStorage.getItem("voiceOfStrayNgoProfile");
+            if (stored) {
+                try {
+                    ngoProfile = { ...ngoProfile, ...JSON.parse(stored) };
+                } catch (e) {
+                    console.error("Error parsing stored NGO profile", e);
+                }
+            } else {
+                // If clean slate, pre-populate name/email/logo from login credentials if available
+                const loginName = localStorage.getItem("username");
+                const loginEmail = localStorage.getItem("email");
+                const loginLogo = localStorage.getItem("avatarUrl");
+                if (loginName) ngoProfile.name = loginName;
+                if (loginEmail) ngoProfile.email = loginEmail;
+                if (loginLogo) ngoProfile.logo = loginLogo;
+            }
+
+            // Render operating hours HTML rows
+            renderHoursEditor();
+
+            // Populate form controls
+            populateForm();
+
+            // Sync visual preview card
+            updatePreview();
+
+            // Bind input listeners for real-time preview sync
+            bindFormListeners();
+        });
+
+        // Generate Operating Hours inputs dynamically
+        function renderHoursEditor() {
+            const container = document.querySelector(".hours-grid");
+            container.innerHTML = "";
+
+            Object.keys(ngoProfile.operatingHours).forEach(day => {
+                const dayConfig = ngoProfile.operatingHours[day];
+                const row = document.createElement("div");
+                row.className = "hour-row";
+                row.id = `hour-row-${day}`;
+
+                // Day Label
+                const dayLabel = document.createElement("span");
+                dayLabel.className = "day-name";
+                dayLabel.textContent = day;
+                row.appendChild(dayLabel);
+
+                // Start Time selector
+                const startWrap = document.createElement("div");
+                startWrap.className = "time-select-wrap";
+                startWrap.innerHTML = `<label>From</label>`;
+                const startSelect = document.createElement("select");
+                startSelect.className = "time-select";
+                startSelect.id = `start-select-${day}`;
+                startSelect.disabled = !dayConfig.open;
+                timeOptions.forEach(opt => {
+                    const option = document.createElement("option");
+                    option.value = opt;
+                    option.textContent = opt;
+                    if (opt === dayConfig.start) option.selected = true;
+                    startSelect.appendChild(option);
+                });
+                startSelect.addEventListener("change", (e) => {
+                    ngoProfile.operatingHours[day].start = e.target.value;
+                    updatePreview();
+                });
+                startWrap.appendChild(startSelect);
+                row.appendChild(startWrap);
+
+                // End Time selector
+                const endWrap = document.createElement("div");
+                endWrap.className = "time-select-wrap";
+                endWrap.innerHTML = `<label>To</label>`;
+                const endSelect = document.createElement("select");
+                endSelect.className = "time-select";
+                endSelect.id = `end-select-${day}`;
+                endSelect.disabled = !dayConfig.open;
+                timeOptions.forEach(opt => {
+                    const option = document.createElement("option");
+                    option.value = opt;
+                    option.textContent = opt;
+                    if (opt === dayConfig.end) option.selected = true;
+                    endSelect.appendChild(option);
+                });
+                endSelect.addEventListener("change", (e) => {
+                    ngoProfile.operatingHours[day].end = e.target.value;
+                    updatePreview();
+                });
+                endWrap.appendChild(endSelect);
+                row.appendChild(endWrap);
+
+                // Toggle Open/Closed
+                const toggleWrap = document.createElement("div");
+                toggleWrap.className = "toggle-container";
+                const closedLabel = document.createElement("span");
+                closedLabel.className = "closed-label";
+                closedLabel.id = `closed-label-${day}`;
+                closedLabel.textContent = dayConfig.open ? "Open" : "Closed";
+                closedLabel.style.color = dayConfig.open ? "var(--primary)" : "var(--text-muted)";
+
+                const switchLabel = document.createElement("label");
+                switchLabel.className = "switch";
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = dayConfig.open;
+                checkbox.addEventListener("change", (e) => {
+                    const isOpen = e.target.checked;
+                    ngoProfile.operatingHours[day].open = isOpen;
+                    startSelect.disabled = !isOpen;
+                    endSelect.disabled = !isOpen;
+                    closedLabel.textContent = isOpen ? "Open" : "Closed";
+                    closedLabel.style.color = isOpen ? "var(--primary)" : "var(--text-muted)";
+                    updatePreview();
+                });
+
+                const slider = document.createElement("span");
+                slider.className = "slider";
+
+                switchLabel.appendChild(checkbox);
+                switchLabel.appendChild(slider);
+                toggleWrap.appendChild(closedLabel);
+                toggleWrap.appendChild(switchLabel);
+                row.appendChild(toggleWrap);
+
+                container.appendChild(row);
+            });
+        }
+
+        // Populate HTML form values from state model
+        function populateForm() {
+            // Organization details
+            document.getElementById("input-ngo-name").value = ngoProfile.name;
+            document.getElementById("input-ngo-desc").value = ngoProfile.description;
+            document.getElementById("input-founded-year").value = ngoProfile.foundedYear;
+            document.getElementById("input-reg-number").value = ngoProfile.registrationNumber;
+
+            // Contact details
+            document.getElementById("input-ngo-email").value = ngoProfile.email;
+            document.getElementById("input-ngo-phone").value = ngoProfile.phone;
+            document.getElementById("input-ngo-website").value = ngoProfile.website;
+
+            // Location details
+            document.getElementById("input-ngo-address").value = ngoProfile.address;
+            document.getElementById("input-ngo-city").value = ngoProfile.city;
+            document.getElementById("input-ngo-state").value = ngoProfile.state;
+            document.getElementById("input-ngo-pincode").value = ngoProfile.pincode;
+
+
+
+            // Social links
+            document.getElementById("input-social-instagram").value = ngoProfile.social.instagram || "";
+            document.getElementById("input-social-facebook").value = ngoProfile.social.facebook || "";
+            document.getElementById("input-social-linkedin").value = ngoProfile.social.linkedin || "";
+            document.getElementById("input-social-youtube").value = ngoProfile.social.youtube || "";
+        }
+
+        // Get initials from NGO name to render inside preview avatar placeholder if logo URL isn't set
+        function getInitials(name) {
+            if (!name) return "NGO";
+            const parts = name.trim().split(/\s+/);
+            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+            return (parts[0][0] + (parts[1][0] || "")).toUpperCase();
+        }
+
+        // Render Live Preview Card
+        function updatePreview() {
+            // Hero Title and Preview Title
+            const heroName = document.getElementById("ngo-hero-name");
+            const heroLabel = document.getElementById("ngo-hero-status-label");
+            const previewBadge = document.getElementById("preview-verification-status-badge");
+            
+            const verificationStatus = localStorage.getItem("voiceOfStrayVerificationStatus") || "Not Verified";
+            const orgName = ngoProfile.name || "Unnamed NGO";
+
+            if (heroName) {
+                if (verificationStatus === "Verified NGO" || verificationStatus === "Verified Partner") {
+                    heroName.innerHTML = `${orgName} <span class="verified-badge" style="font-size: 1.1rem; color: #0ea5e9; display: inline-flex;"><i class="ph-fill ph-seal-check"></i></span>`;
+                } else if (verificationStatus === "Under Review") {
+                    heroName.innerHTML = `${orgName} <span class="verified-badge" style="font-size: 1.1rem; color: #c2410c; display: inline-flex;"><i class="ph ph-hourglass"></i></span>`;
+                } else {
+                    heroName.innerHTML = `${orgName}`;
+                }
+            }
+
+            if (heroLabel) {
+                if (verificationStatus === "Verified NGO" || verificationStatus === "Verified Partner") {
+                    heroLabel.textContent = "Verified Partner";
+                    heroLabel.style.color = "#0ea5e9";
+                } else if (verificationStatus === "Under Review") {
+                    heroLabel.textContent = "Under Review";
+                    heroLabel.style.color = "#c2410c";
+                } else {
+                    heroLabel.textContent = "Partner NGO";
+                    heroLabel.style.color = "var(--text-muted)";
+                }
+            }
+
+            if (previewBadge) {
+                if (verificationStatus === "Verified NGO" || verificationStatus === "Verified Partner") {
+                    previewBadge.style.display = "inline-flex";
+                    previewBadge.style.color = "#0ea5e9";
+                    previewBadge.innerHTML = `<i class="ph-fill ph-seal-check"></i> Verified Partner`;
+                } else if (verificationStatus === "Under Review") {
+                    previewBadge.style.display = "inline-flex";
+                    previewBadge.style.color = "#c2410c";
+                    previewBadge.innerHTML = `<i class="ph ph-hourglass"></i> Under Review`;
+                } else {
+                    previewBadge.style.display = "none";
+                }
+            }
+
+            document.getElementById("preview-name").textContent = orgName;
+
+            // Description
+            document.getElementById("preview-desc").textContent = ngoProfile.description || "No description provided yet.";
+
+            // Avatar Preview
+            const initials = getInitials(orgName);
+
+            // Hero Avatar Preview
+            const heroAvatarImg = document.getElementById("ngo-hero-avatar");
+            const heroAvatarFallback = document.getElementById("ngo-hero-avatar-fallback");
+            if (ngoProfile.logo) {
+                if (heroAvatarImg) {
+                    heroAvatarImg.src = ngoProfile.logo;
+                    heroAvatarImg.style.display = "block";
+                }
+                if (heroAvatarFallback) heroAvatarFallback.style.display = "none";
+            } else {
+                if (heroAvatarImg) heroAvatarImg.style.display = "none";
+                if (heroAvatarFallback) {
+                    heroAvatarFallback.textContent = initials;
+                    heroAvatarFallback.style.display = "block";
+                }
+            }
+
+            // Organization Logo Management Card Preview
+            const mgtPreviewImg = document.getElementById("logo-management-preview");
+            const mgtPreviewFallback = document.getElementById("logo-management-fallback");
+            if (ngoProfile.logo) {
+                if (mgtPreviewImg) {
+                    mgtPreviewImg.src = ngoProfile.logo;
+                    mgtPreviewImg.style.display = "block";
+                }
+                if (mgtPreviewFallback) mgtPreviewFallback.style.display = "none";
+            } else {
+                if (mgtPreviewImg) mgtPreviewImg.style.display = "none";
+                if (mgtPreviewFallback) {
+                    mgtPreviewFallback.textContent = initials;
+                    mgtPreviewFallback.style.display = "block";
+                }
+            }
+
+            // Public live preview card avatar
+            const previewAvatar = document.getElementById("preview-avatar");
+            if (previewAvatar) {
+                if (ngoProfile.logo) {
+                    previewAvatar.innerHTML = `<img src="${ngoProfile.logo}" alt="NGO Avatar">`;
+                } else {
+                    previewAvatar.innerHTML = initials;
+                }
+            }
+
+            // Contact Info
+            const emailPreview = document.getElementById("preview-email");
+            const phonePreview = document.getElementById("preview-phone");
+            const websitePreview = document.getElementById("preview-website");
+
+            if (ngoProfile.email) {
+                emailPreview.style.display = "flex";
+                emailPreview.innerHTML = `<i class="ph ph-envelope"></i> ${ngoProfile.email}`;
+            } else {
+                emailPreview.style.display = "none";
+            }
+
+            if (ngoProfile.phone) {
+                phonePreview.style.display = "flex";
+                phonePreview.innerHTML = `<i class="ph ph-phone"></i> ${ngoProfile.phone}`;
+            } else {
+                phonePreview.style.display = "none";
+            }
+
+            if (ngoProfile.website) {
+                websitePreview.style.display = "flex";
+                websitePreview.innerHTML = `<i class="ph ph-globe"></i> ${ngoProfile.website}`;
+            } else {
+                websitePreview.style.display = "none";
+            }
+
+            // Address Preview
+            const addressParts = [];
+            if (ngoProfile.address) addressParts.push(ngoProfile.address);
+            if (ngoProfile.city) addressParts.push(ngoProfile.city);
+            if (ngoProfile.state) addressParts.push(ngoProfile.state);
+            if (ngoProfile.pincode) addressParts.push(ngoProfile.pincode);
+
+            const addressPreview = document.getElementById("preview-address");
+            if (addressParts.length > 0) {
+                addressPreview.style.display = "flex";
+                addressPreview.innerHTML = `<i class="ph ph-map-pin"></i> ${addressParts.join(", ")}`;
+            } else {
+                addressPreview.style.display = "none";
+            }
+
+            // Dynamic Operating Hours "Open Today" indicator
+            updateTodayHours();
+
+            // Social Links Preview
+            const socialsContainer = document.getElementById("preview-socials");
+            if (socialsContainer) {
+                socialsContainer.innerHTML = "";
+                let hasSocials = false;
+                
+                const platforms = [
+                    { key: "instagram", name: "Instagram", icon: "📷" },
+                    { key: "facebook", name: "Facebook", icon: "📘" },
+                    { key: "linkedin", name: "LinkedIn", icon: "💼" },
+                    { key: "youtube", name: "YouTube", icon: "🎥" }
+                ];
+                
+                platforms.forEach(platform => {
+                    const val = ngoProfile.social[platform.key];
+                    if (val && val.trim() !== "") {
+                        hasSocials = true;
+                        
+                        let url = val;
+                        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                            url = "https://" + url;
+                        }
+                        
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.target = "_blank";
+                        link.style.display = "flex";
+                        link.style.alignItems = "center";
+                        link.style.gap = "8px";
+                        link.style.fontSize = "0.9rem";
+                        link.style.color = "var(--text-muted)";
+                        link.style.fontWeight = "600";
+                        link.style.transition = "color 0.2s";
+                        
+                        link.innerHTML = `<span>${platform.icon}</span> ${platform.name}`;
+                        
+                        link.addEventListener("mouseenter", () => link.style.color = "var(--primary)");
+                        link.addEventListener("mouseleave", () => link.style.color = "var(--text-muted)");
+                        
+                        socialsContainer.appendChild(link);
+                    }
+                });
+                
+                socialsContainer.style.display = hasSocials ? "flex" : "none";
+            }
+        }
+
+        // Helper to compute and show today's open/closed indicator
+        function updateTodayHours() {
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const todayName = days[new Date().getDay()];
+            const dayConfig = ngoProfile.operatingHours[todayName];
+            const previewHours = document.getElementById("preview-hours");
+
+            if (previewHours) {
+                if (dayConfig && dayConfig.open) {
+                    previewHours.innerHTML = `<i class="ph ph-clock"></i> Open Today: ${dayConfig.start} - ${dayConfig.end}`;
+                    previewHours.style.color = "var(--text-main)";
+                } else {
+                    previewHours.innerHTML = `<i class="ph ph-clock"></i> Closed Today`;
+                    previewHours.style.color = "var(--alert)";
+                }
+            }
+        }
+
+        // Bind all live editing change listeners
+        function bindFormListeners() {
+            // Organization name
+            document.getElementById("input-ngo-name").addEventListener("input", (e) => {
+                ngoProfile.name = e.target.value;
+                updatePreview();
+            });
+
+            // Description
+            document.getElementById("input-ngo-desc").addEventListener("input", (e) => {
+                ngoProfile.description = e.target.value;
+                updatePreview();
+            });
+
+            // Contact
+            document.getElementById("input-ngo-email").addEventListener("input", (e) => {
+                ngoProfile.email = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-ngo-phone").addEventListener("input", (e) => {
+                ngoProfile.phone = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-ngo-website").addEventListener("input", (e) => {
+                ngoProfile.website = e.target.value;
+                updatePreview();
+            });
+
+            // Location
+            document.getElementById("input-ngo-address").addEventListener("input", (e) => {
+                ngoProfile.address = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-ngo-city").addEventListener("input", (e) => {
+                ngoProfile.city = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-ngo-state").addEventListener("input", (e) => {
+                ngoProfile.state = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-ngo-pincode").addEventListener("input", (e) => {
+                ngoProfile.pincode = e.target.value;
+                updatePreview();
+            });
+
+            // Founded/Registration values mapping directly
+            document.getElementById("input-founded-year").addEventListener("input", (e) => {
+                ngoProfile.foundedYear = e.target.value;
+            });
+            document.getElementById("input-reg-number").addEventListener("input", (e) => {
+                ngoProfile.registrationNumber = e.target.value;
+            });
+
+            // Social inputs mapping directly
+            document.getElementById("input-social-instagram").addEventListener("input", (e) => {
+                ngoProfile.social.instagram = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-social-facebook").addEventListener("input", (e) => {
+                ngoProfile.social.facebook = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-social-linkedin").addEventListener("input", (e) => {
+                ngoProfile.social.linkedin = e.target.value;
+                updatePreview();
+            });
+            document.getElementById("input-social-youtube").addEventListener("input", (e) => {
+                ngoProfile.social.youtube = e.target.value;
+                updatePreview();
+            });
+        }
+
+        // Modal logo selector actions
+        function openLogoSelector() {
+            document.getElementById("photo-modal-overlay").style.display = "flex";
+            tempSelectedLogoUrl = ngoProfile.logo;
+            
+            // Pre-select mock logo if matching
+            const items = document.querySelectorAll(".image-option-item");
+            items.forEach(item => {
+                const img = item.querySelector("img");
+                if (img && img.src === ngoProfile.logo) {
+                    item.classList.add("selected");
+                } else {
+                    item.classList.remove("selected");
+                }
+            });
+            document.getElementById("custom-logo-url").value = "";
+        }
+
+        function closeLogoSelector() {
+            document.getElementById("photo-modal-overlay").style.display = "none";
+        }
+
+        function selectMockLogo(url, element) {
+            tempSelectedLogoUrl = url;
+            document.querySelectorAll(".image-option-item").forEach(item => {
+                item.classList.remove("selected");
+            });
+            if (element) {
+                element.classList.add("selected");
+            }
+            document.getElementById("custom-logo-url").value = "";
+        }
+
+        function applyCustomLogoUrl() {
+            const url = document.getElementById("custom-logo-url").value.trim();
+            if (url) {
+                tempSelectedLogoUrl = url;
+                document.querySelectorAll(".image-option-item").forEach(item => {
+                    item.classList.remove("selected");
+                });
+                alert("Custom logo URL applied! Click 'Select Image' to confirm.");
+            } else {
+                alert("Please enter a valid image URL first.");
+            }
+        }
+
+        function confirmLogoSelection() {
+            if (tempSelectedLogoUrl) {
+                ngoProfile.logo = tempSelectedLogoUrl;
+                updatePreview();
+                showToast("Logo updated (save to persist changes)!");
+            }
+            closeLogoSelector();
+        }
+
+        // Handle local image file upload
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file format (PNG, JPG, JPEG)
+            const fileType = file.type;
+            const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+            if (!validTypes.includes(fileType)) {
+                alert("Supported formats: PNG, JPG, JPEG. Please select a valid image file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Url = e.target.result;
+                ngoProfile.logo = base64Url;
+                updatePreview();
+                showToast("Logo uploaded (save to persist changes)!");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Remove organization logo
+        function removeLogo() {
+            if (ngoProfile.logo) {
+                if (confirm("Are you sure you want to remove your organization logo?")) {
+                    ngoProfile.logo = "";
+                    updatePreview();
+                    showToast("Logo removed (save to persist changes)!");
+                }
+            } else {
+                alert("No logo currently set.");
+            }
+        }
+
+        // Reusable toast helper
+        function showToast(msg) {
+            const toast = document.getElementById("save-notification");
+            if (toast) {
+                const textSpan = toast.querySelector("span");
+                if (textSpan) textSpan.textContent = msg;
+                toast.classList.add("show");
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2500);
+            }
+        }
+
+        // Cancel edits button
+        function cancelEdits() {
+            if (confirm("Are you sure you want to discard your changes?")) {
+                window.location.href = "ngo-dashboard.html";
+            }
+        }
+
+        // Save edits button
+        function saveEdits() {
+            if (!ngoProfile.name.trim()) {
+                alert("Organization Name is required.");
+                document.getElementById("input-ngo-name").focus();
+                return;
+            }
+
+            // Save main details back to profile object
+            localStorage.setItem("voiceOfStrayNgoProfile", JSON.stringify(ngoProfile));
+
+            // Sync with global auth state variables to populate dashboard and navbars immediately
+            localStorage.setItem("username", ngoProfile.name);
+            localStorage.setItem("avatarUrl", ngoProfile.logo);
+            localStorage.setItem("email", ngoProfile.email);
+
+            // Toast slide-in
+            showToast("Organization profile updated successfully!");
+
+            // Redirect back to dashboard after 1.5s
+            setTimeout(() => {
+                window.location.href = "ngo-dashboard.html";
+            }, 1500);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adopt - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="adopt.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html" class="active">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+            <!-- Guest State (Default) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join Now</button>
+            </div>
+
+            <!-- Logged-in State (Initially Hidden) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=Arjun&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Urgent Banner -->
+    <div class="urgent-banner">
+        <div class="urgent-banner-content">
+            <i class="ph-fill ph-warning-circle"></i>
+            <span><strong>Urgent:</strong> The city shelter is at max capacity. Temporary fosters are desperately needed
+                this weekend!</span>
+            <button class="btn-text alert-text">View Urgent Cases</button>
+        </div>
+    </div>
+
+    <!-- Main Content for Adopt Page -->
+    <main class="adopt-main">
+        <!-- Hero Section -->
+        <section class="adopt-hero">
+            <h1>Give Them a Forever Home</h1>
+            <p>Connect with hundreds of rescued animals waiting for their perfect match. From playful pups to senior
+                companions, your new best friend is just a click away.</p>
+        </section>
+
+        <!-- Featured Categories -->
+        <section class="featured-categories">
+            <div class="category-grid">
+                <a href="#" class="category-card">
+                    <div class="cat-icon"><i class="ph ph-dog"></i></div>
+                    <span>Puppies</span>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="cat-icon"><i class="ph ph-heartbeat"></i></div>
+                    <span>Senior Pets</span>
+                </a>
+                <a href="#" class="category-card emergency-cat">
+                    <div class="cat-icon"><i class="ph ph-house-line"></i></div>
+                    <span>Emergency Foster</span>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="cat-icon"><i class="ph ph-cat"></i></div>
+                    <span>Cats</span>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="cat-icon"><i class="ph ph-users-three"></i></div>
+                    <span>Bonded Pairs</span>
+                </a>
+                <a href="#" class="category-card">
+                    <div class="cat-icon"><i class="ph ph-first-aid-kit"></i></div>
+                    <span>Special Needs</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Newly Ready for Adoption Carousel -->
+        <section class="recently-rescued">
+            <div class="section-header">
+                <h2>Newly Ready for Adoption</h2>
+                <div class="carousel-controls">
+                    <a href="#" class="see-all-link">See All <i class="ph ph-arrow-right"></i></a>
+                    <button class="carousel-btn"><i class="ph ph-caret-left"></i></button>
+                    <button class="carousel-btn"><i class="ph ph-caret-right"></i></button>
+                </div>
+            </div>
+            <div class="carousel-container snap-x">
+                <!-- Card 1 -->
+                <div class="rescue-card card snap-start">
+                    <div class="rescue-img-container">
+                        <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=300"
+                            alt="Beagle">
+                        <span class="badge new-arrival-badge">New Arrival</span>
+                    </div>
+                    <div class="rescue-info">
+                        <div class="carousel-pet-header">
+                            <h3>Charlie</h3>
+                            <span class="carousel-species">Dog</span>
+                        </div>
+                        <p class="rescue-reason">Found wandering near central park, scared but recovering fast...</p>
+                        <button class="btn-text carousel-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Charlie', breed: 'Golden Retriever Mix', age: '2 Years Old', gender: 'Male', ngoName: 'City Rescue NGO', ngoInitials: 'CR', images: {main: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="rescue-card card snap-start">
+                    <div class="rescue-img-container">
+                        <img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?auto=format&fit=crop&q=80&w=300"
+                            alt="Black Cat">
+                        <span class="badge new-arrival-badge">New Arrival</span>
+                    </div>
+                    <div class="rescue-info">
+                        <div class="carousel-pet-header">
+                            <h3>Luna</h3>
+                            <span class="carousel-species">Cat</span>
+                        </div>
+                        <p class="rescue-reason">Found in an abandoned warehouse. She's now a purr machine...</p>
+                        <button class="btn-text carousel-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Luna', breed: 'Tabby Cat', age: '1 year', gender: 'Female', ngoName: 'Paws & Claws', ngoInitials: 'PC', images: {main: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?auto=format&fit=crop&q=80&w=600'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="rescue-card card snap-start">
+                    <div class="rescue-img-container">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300"
+                            alt="Golden Retriever Puppy">
+                        <span class="badge new-arrival-badge">New Arrival</span>
+                    </div>
+                    <div class="rescue-info">
+                        <div class="carousel-pet-header">
+                            <h3>Cooper</h3>
+                            <span class="carousel-species">Dog</span>
+                        </div>
+                        <p class="rescue-reason">Saved from a high-traffic area, full of energy and ready...</p>
+                        <button class="btn-text carousel-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Cooper', breed: 'Golden Retriever Puppy', age: '3 months', gender: 'Male', ngoName: 'City Rescue NGO', ngoInitials: 'CR', images: {main: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="rescue-card card snap-start">
+                    <div class="rescue-img-container">
+                        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=300"
+                            alt="White Dog">
+                        <span class="badge new-arrival-badge">New Arrival</span>
+                    </div>
+                    <div class="rescue-info">
+                        <div class="carousel-pet-header">
+                            <h3>Snowy</h3>
+                            <span class="carousel-species">Dog</span>
+                        </div>
+                        <p class="rescue-reason">Abandoned during the winter, he is a survivor with a heart...</p>
+                        <button class="btn-text carousel-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Snowy', breed: 'Terrier Mix', age: '1 year', gender: 'Male', ngoName: 'City Rescue NGO', ngoInitials: 'CR', images: {main: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=300'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Adopt Area -->
+        <div class="adopt-content-layout">
+            <!-- Sidebar Filters -->
+            <aside class="filters-sidebar card">
+                <div class="filter-header">
+                    <h3><i class="ph ph-funnel"></i> Filters</h3>
+                </div>
+
+                <div class="filter-group">
+                    <label class="group-label">Species</label>
+                    <select class="filter-select">
+                        <option>All Species</option>
+                        <option>Dogs</option>
+                        <option>Cats</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="group-label">Age Range</label>
+                    <select class="filter-select">
+                        <option>Any Age</option>
+                        <option>Baby</option>
+                        <option>Young</option>
+                        <option>Adult</option>
+                        <option>Senior</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="group-label">Gender</label>
+                    <select class="filter-select">
+                        <option>Any Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="group-label">Size</label>
+                    <div class="size-toggles">
+                        <button class="size-btn">Small</button>
+                        <button class="size-btn active">Med</button>
+                        <button class="size-btn">Large</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="group-label">Special Categories</label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked>
+                        <span>Show only vaccinated</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span>Foster needed</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span>Special needs</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span>Senior pets</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span style="color: var(--alert); font-weight: 500;">Emergency</span>
+                    </label>
+                </div>
+
+                <div class="filter-group">
+                    <label class="group-label">Distance (km)</label>
+                    <input type="range" min="1" max="50" value="50" class="distance-slider">
+                    <div class="distance-labels">
+                        <span>1km</span>
+                        <span>50km</span>
+                    </div>
+                </div>
+
+                <button class="clear-filters-btn">Clear All Filters</button>
+            </aside>
+
+            <!-- Pet Grid Area -->
+            <div class="pet-grid-container">
+                <!-- Sort Header -->
+                <div class="sort-header">
+                    <span class="results-count">Showing <strong>42</strong> pets ready for adoption</span>
+                    <div class="sort-controls">
+                        <label>Sort By:</label>
+                        <select class="sort-select">
+                            <option>Nearest Location</option>
+                            <option>Newest Arrivals</option>
+                            <option>Most Urgent</option>
+                            <option>Age: Young to Old</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Pet Grid -->
+                <div class="pet-grid">
+                    <!-- Pet Card 1 -->
+                    <div class="pet-card card">
+                        <div class="pet-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1589965716319-4a041b58fa8a?auto=format&fit=crop&q=80&w=600"
+                                alt="Max">
+                            <button class="heart-btn active"><i class="ph-fill ph-heart"></i></button>
+                            <div class="pet-badges">
+                                <span class="badge badge-healthy">Healthy</span>
+                                <span class="badge badge-blue">Vaccinated</span>
+                            </div>
+                        </div>
+                        <div class="pet-info">
+                            <div class="pet-title-row">
+                                <h3>Max</h3>
+                                <div class="pet-distance">
+                                    <span class="dist-label">Distance</span>
+                                    <strong>5.2 km away</strong>
+                                </div>
+                            </div>
+                            <p class="pet-meta">German Shepherd • 3 years • Male</p>
+
+                            <div class="pet-medical-summary">
+                                <span><i class="ph-fill ph-first-aid"></i> Neutered, Vaccinated, Microchipped</span>
+                            </div>
+
+                            <p class="pet-desc">Max is a brilliant and loyal companion who loves long hikes and playing
+                                fetch. He was rescued from a construction site and has since blossomed into a...</p>
+
+                            <div class="pet-extra-tags">
+                                <span class="tag"><i class="ph ph-baby"></i> Good with kids</span>
+                                <span class="tag"><i class="ph ph-buildings"></i> Apartment friendly</span>
+                                <span class="tag"><i class="ph ph-lightning"></i> Energetic</span>
+                            </div>
+
+                            <div class="pet-footer-details">
+                                <p class="pet-ngo"><i class="ph-fill ph-seal-check verified-badge"></i> <strong>City
+                                        Rescue NGO</strong></p>
+                                <span class="rescue-date">Rescued: Oct 12, 2025</span>
+                            </div>
+
+                            <div class="pet-actions">
+                                <button class="btn-adopt" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Max', breed: 'German Shepherd', age: '3 years', gender: 'Male', ngoName: 'City Rescue NGO', ngoInitials: 'CR', images: {main: 'https://images.unsplash.com/photo-1589965716319-4a041b58fa8a?auto=format&fit=crop&q=80&w=600'}})); window.location.href='adopt-apply.html'">Adopt Max</button>
+                                <button class="btn-foster">Foster</button>
+                            </div>
+                            <button class="btn-text view-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Max', breed: 'German Shepherd', age: '3 years', gender: 'Male', ngoName: 'City Rescue NGO', ngoInitials: 'CR', images: {main: 'https://images.unsplash.com/photo-1589965716319-4a041b58fa8a?auto=format&fit=crop&q=80&w=600'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                        </div>
+                    </div>
+
+                    <!-- Pet Card 2 -->
+                    <div class="pet-card card">
+                        <div class="pet-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=600"
+                                alt="Ginger">
+                            <button class="heart-btn"><i class="ph ph-heart"></i></button>
+                            <div class="pet-badges">
+                                <span class="badge badge-blue">Vet Checked</span>
+                            </div>
+                        </div>
+                        <div class="pet-info">
+                            <div class="urgency-banner urgent">
+                                <i class="ph-fill ph-warning"></i> Urgent: Foster Needed Immediately
+                            </div>
+
+                            <div class="pet-title-row mt-12">
+                                <h3>Ginger</h3>
+                                <div class="pet-distance">
+                                    <span class="dist-label">Distance</span>
+                                    <strong>2.8 km away</strong>
+                                </div>
+                            </div>
+                            <p class="pet-meta">Tabby Cat • 1 year • Female</p>
+
+                            <div class="pet-medical-summary">
+                                <span><i class="ph-fill ph-first-aid"></i> Spayed, Needs dental check</span>
+                            </div>
+
+                            <p class="pet-desc">Ginger is a quiet soul looking for a peaceful home. She enjoys
+                                sunbathing by the window and is very gentle with children. She needs a forever family
+                                to...</p>
+
+                            <div class="pet-extra-tags">
+                                <span class="tag"><i class="ph ph-baby"></i> Good with kids</span>
+                                <span class="tag"><i class="ph ph-coffee"></i> Calm</span>
+                            </div>
+
+                            <div class="pet-footer-details">
+                                <p class="pet-ngo"><i class="ph-fill ph-seal-check verified-badge"></i> <strong>Paws &
+                                        Claws</strong></p>
+                                <span class="rescue-date">Rescued: Nov 05, 2025</span>
+                            </div>
+
+                            <div class="pet-actions">
+                                <button class="btn-adopt" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Ginger', breed: 'Tabby Cat', age: '1 year', gender: 'Female', ngoName: 'Paws & Claws', ngoInitials: 'PC', images: {main: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=600'}})); window.location.href='adopt-apply.html'">Adopt Ginger</button>
+                                <button class="btn-foster">Foster</button>
+                            </div>
+                            <button class="btn-text view-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Ginger', breed: 'Tabby Cat', age: '1 year', gender: 'Female', ngoName: 'Paws & Claws', ngoInitials: 'PC', images: {main: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=600'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                        </div>
+                    </div>
+
+                    <!-- Pet Card 3 -->
+                    <div class="pet-card card">
+                        <div class="pet-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1546238232-20216dec9f72?auto=format&fit=crop&q=80&w=600"
+                                alt="Pip & Squeak">
+                            <button class="heart-btn"><i class="ph ph-heart"></i></button>
+                            <div class="pet-badges">
+                                <span class="badge badge-orange">Bonded Pair</span>
+                            </div>
+                        </div>
+                        <div class="pet-info">
+                            <div class="pet-title-row">
+                                <h3>Pip & Squeak</h3>
+                                <div class="pet-distance">
+                                    <span class="dist-label">Distance</span>
+                                    <strong>12.0 km away</strong>
+                                </div>
+                            </div>
+                            <p class="pet-meta">Mix Terriers • 4 months • M/F</p>
+
+                            <div class="pet-medical-summary">
+                                <span><i class="ph-fill ph-first-aid"></i> 1st Vaccines complete</span>
+                            </div>
+
+                            <p class="pet-desc">These inseparable siblings were found together in a cardboard box. They
+                                rely on each other for comfort and must be adopted as a pair. They are high energy</p>
+
+                            <div class="pet-extra-tags">
+                                <span class="tag"><i class="ph ph-cat"></i> Good with pets</span>
+                                <span class="tag"><i class="ph ph-lightning"></i> Energetic</span>
+                            </div>
+
+                            <div class="pet-footer-details">
+                                <p class="pet-ngo"><i class="ph-fill ph-seal-check verified-badge"></i> <strong>Happy
+                                        Tails Rescue</strong></p>
+                                <span class="rescue-date">Rescued: Jan 20, 2026</span>
+                            </div>
+
+                            <div class="pet-actions">
+                                <button class="btn-adopt" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Pip & Squeak', breed: 'Mix Terriers', age: '4 months', gender: 'Male/Female', ngoName: 'Happy Tails Rescue', ngoInitials: 'HT', images: {main: 'https://images.unsplash.com/photo-1546238232-20216dec9f72?auto=format&fit=crop&q=80&w=600'}})); window.location.href='adopt-apply.html'">Adopt Both</button>
+                                <button class="btn-foster">Foster</button>
+                            </div>
+                            <button class="btn-text view-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Pip & Squeak', breed: 'Mix Terriers', age: '4 months', gender: 'Male/Female', ngoName: 'Happy Tails Rescue', ngoInitials: 'HT', images: {main: 'https://images.unsplash.com/photo-1546238232-20216dec9f72?auto=format&fit=crop&q=80&w=600'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                        </div>
+                    </div>
+
+                    <!-- Pet Card 4 -->
+                    <div class="pet-card card">
+                        <div class="pet-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80&w=600"
+                                alt="Buddy">
+                            <button class="heart-btn"><i class="ph ph-heart"></i></button>
+                            <div class="pet-badges">
+                                <span class="badge badge-healthy">Senior</span>
+                                <span class="badge badge-blue">House Trained</span>
+                                <span class="badge badge-blue">Vet Checked</span>
+                            </div>
+                        </div>
+                        <div class="pet-info">
+                            <div class="pet-title-row">
+                                <h3>Buddy</h3>
+                                <div class="pet-distance">
+                                    <span class="dist-label">Distance</span>
+                                    <strong>1.5 km away</strong>
+                                </div>
+                            </div>
+                            <p class="pet-meta">Labrador Mix • 9 years • Male</p>
+
+                            <div class="pet-medical-summary">
+                                <span><i class="ph-fill ph-first-aid"></i> Neutered, Takes joint supplements</span>
+                            </div>
+
+                            <p class="pet-desc">Buddy is the definition of a "good boy." He knows all basic commands and
+                                just wants a warm spot on a rug to nap near his humans. Perfect for a first-time owner
+                            </p>
+
+                            <div class="pet-extra-tags">
+                                <span class="tag"><i class="ph ph-baby"></i> Good with kids</span>
+                                <span class="tag"><i class="ph ph-cat"></i> Good with pets</span>
+                                <span class="tag"><i class="ph ph-coffee"></i> Calm</span>
+                            </div>
+
+                            <div class="pet-footer-details">
+                                <p class="pet-ngo"><i class="ph-fill ph-seal-check verified-badge"></i> <strong>City
+                                        Rescue NGO</strong></p>
+                                <span class="rescue-date">Rescued: Aug 02, 2025</span>
+                            </div>
+
+                            <div class="pet-actions">
+                                <button class="btn-adopt" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Buddy', breed: 'Labrador Mix', age: '9 years', gender: 'Male', ngoName: 'City Rescue NGO', ngoInitials: 'CR', images: {main: 'https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80&w=600'}})); window.location.href='adopt-apply.html'">Adopt Buddy</button>
+                                <button class="btn-foster">Foster</button>
+                            </div>
+                            <button class="btn-text view-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify({name: 'Buddy', breed: 'Labrador Mix', age: '9 years', gender: 'Male', ngoName: 'City Rescue NGO', ngoInitials: 'CR', images: {main: 'https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80&w=600'}})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" style="margin-top: 40px;">
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn next"><i class="ph ph-caret-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adoption Process Section -->
+        <section class="adoption-process">
+            <div class="section-header centered">
+                <h2>Our Premium Adoption Journey</h2>
+                <p>We've streamlined the process to help you find and bring home your new best friend safely and
+                    joyfully.</p>
+            </div>
+
+            <div class="process-timeline-container">
+                <div class="timeline-line"></div>
+                <div class="process-card-grid">
+                    <div class="process-step-card card">
+                        <div class="step-icon-wrapper"><i class="ph ph-magnifying-glass"></i></div>
+                        <div class="step-number">1</div>
+                        <h4>Browse</h4>
+                        <p>Find a pet that perfectly matches your lifestyle.</p>
+                    </div>
+
+                    <div class="process-step-card card">
+                        <div class="step-icon-wrapper"><i class="ph ph-file-text"></i></div>
+                        <div class="step-number">2</div>
+                        <h4>Apply</h4>
+                        <p>Submit a short, simple adoption application.</p>
+                    </div>
+
+                    <div class="process-step-card card">
+                        <div class="step-icon-wrapper"><i class="ph ph-clipboard-text"></i></div>
+                        <div class="step-number">3</div>
+                        <h4>NGO Review</h4>
+                        <p>The rescue reviews your application quickly.</p>
+                    </div>
+
+                    <div class="process-step-card card">
+                        <div class="step-icon-wrapper"><i class="ph ph-handshake"></i></div>
+                        <div class="step-number">4</div>
+                        <h4>Meet</h4>
+                        <p>Meet the pet to ensure a joyful, perfect fit.</p>
+                    </div>
+
+                    <div class="process-step-card card">
+                        <div class="step-icon-wrapper"><i class="ph ph-house"></i></div>
+                        <div class="step-number">5</div>
+                        <h4>Home Check</h4>
+                        <p>A quick virtual or physical home check for safety.</p>
+                    </div>
+
+                    <div class="process-step-card card final-step">
+                        <div class="step-icon-wrapper"><i class="ph-fill ph-heart"></i></div>
+                        <div class="step-number">6</div>
+                        <h4>Forever Home</h4>
+                        <p>Welcome your new family member!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Impact Section -->
+        <section class="impact-section">
+            <div class="impact-grid">
+                <div class="impact-card card">
+                    <i class="ph-fill ph-paw-print"></i>
+                    <h3>2,400+</h3>
+                    <p>Successful Adoptions</p>
+                </div>
+                <div class="impact-card card">
+                    <i class="ph-fill ph-buildings"></i>
+                    <h3>180+</h3>
+                    <p>NGO Partners</p>
+                </div>
+                <div class="impact-card card">
+                    <i class="ph-fill ph-first-aid"></i>
+                    <h3>12,000+</h3>
+                    <p>Rescues Helped</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="section-header centered">
+                <h2>Adoption FAQ</h2>
+                <p>Everything you need to know about welcoming a new pet.</p>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-card card">
+                    <div class="faq-question">
+                        <strong>What are the standard adoption fees?</strong>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Adoption fees vary by NGO and the animal's medical history. Generally, fees cover
+                            vaccinations, spay/neuter surgery, and microchipping. They typically range from $50 to $200.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-card card">
+                    <div class="faq-question">
+                        <strong>Can I foster a pet before fully adopting?</strong>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We highly encourage our "Foster-to-Adopt" program. It allows you to take a pet home for
+                            1-2 weeks to ensure they are the right fit for your family and lifestyle before making a
+                            final commitment.</p>
+                    </div>
+                </div>
+                <div class="faq-card card">
+                    <div class="faq-question">
+                        <strong>What is the return policy if things don't work out?</strong>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We understand that sometimes things don't work out. All of our NGO partners require that the
+                            pet be returned directly to them. We offer support and behavioral resources first to help
+                            resolve any issues.</p>
+                    </div>
+                </div>
+                <div class="faq-card card">
+                    <div class="faq-question">
+                        <strong>How long does the approval timeline take?</strong>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Most applications are reviewed within 48-72 hours. The entire process from application to
+                            bringing your pet home usually takes about 1 to 2 weeks, depending on the required home
+                            checks and meet-and-greets.</p>
+                    </div>
+                </div>
+                <div class="faq-card card">
+                    <div class="faq-question">
+                        <strong>Will I receive the pet's full medical history?</strong>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely. Transparency is our priority. You will receive a complete packet of the pet's
+                            known medical history, vaccination records, spay/neuter certificates, and any ongoing
+                            medical needs upon adoption.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA Banner -->
+        <section class="final-cta card">
+            <div class="cta-content">
+                <h2>Can't adopt right now?</h2>
+                <p>There are many other crucial ways to support our mission and help animals in need.</p>
+                <div class="cta-buttons">
+                    <button class="btn-primary">Foster a Pet</button>
+                    <button class="btn-secondary">Volunteer</button>
+                    <button class="btn-secondary outline">Donate</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Links (Simplified for standalone page) -->
+    <div
+        style="text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border);">
+        <p>&copy; 2026 Voice of Stray</p>
+    </div>
+
+    <script>
+        // Smooth Carousel scroll snap
+        document.addEventListener('DOMContentLoaded', () => {
+            const carousel = document.querySelector('.carousel-container');
+            const leftBtn = document.querySelector('.carousel-btn:first-child');
+            const rightBtn = document.querySelector('.carousel-btn:last-child');
+
+            if (carousel && leftBtn && rightBtn) {
+                leftBtn.addEventListener('click', () => {
+                    carousel.scrollBy({ left: -300, behavior: 'smooth' });
+                });
+
+                rightBtn.addEventListener('click', () => {
+                    carousel.scrollBy({ left: 300, behavior: 'smooth' });
+                });
+            }
+
+            // FAQ Toggle
+            const faqs = document.querySelectorAll('.faq-question');
+            faqs.forEach(faq => {
+                faq.addEventListener('click', () => {
+                    const answer = faq.nextElementSibling;
+                    const icon = faq.querySelector('i');
+                    if (answer) {
+                        const isOpen = answer.style.display === 'block';
+                        answer.style.display = isOpen ? 'none' : 'block';
+                        icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                        faq.parentElement.style.borderColor = isOpen ? 'var(--border)' : 'var(--primary)';
+                    }
+                });
+            });
+
+            // Dynamic Published Pet Loader
+            const customPetsRaw = localStorage.getItem('voiceOfStrayCustomPets');
+            if (customPetsRaw) {
+                try {
+                    const customPets = JSON.parse(customPetsRaw);
+                    const grid = document.querySelector('.pet-grid');
+                    if (grid && customPets.length > 0) {
+                        customPets.forEach(pet => {
+                            const card = document.createElement('div');
+                            card.className = 'pet-card card';
+                            
+                            // Badges list
+                            let badgeHTML = '';
+                            if (pet.attributes.vaccinated) badgeHTML += '<span class="badge badge-blue">Vaccinated</span> ';
+                            if (pet.attributes.neutered) badgeHTML += '<span class="badge badge-healthy">Neutered</span> ';
+                            if (pet.attributes.housetrained) badgeHTML += '<span class="badge badge-orange">House Trained</span> ';
+
+                            // Extra tags
+                            let extraTagsHTML = '';
+                            if (pet.attributes.goodkids) extraTagsHTML += '<span class="tag"><i class="ph ph-baby"></i> Good with kids</span> ';
+                            if (pet.attributes.goodpets) extraTagsHTML += '<span class="tag"><i class="ph ph-paw-print"></i> Good with pets</span> ';
+                            if (pet.personality.energy > 66) extraTagsHTML += '<span class="tag"><i class="ph ph-lightning"></i> High Energy</span> ';
+
+                            // Story snippet
+                            let snippet = pet.shortDesc;
+                            if (!snippet && pet.story) {
+                                snippet = pet.story.slice(0, 120) + '...';
+                            }
+                            if (!snippet) {
+                                snippet = "Ready for adoption! Rescue story details inside.";
+                            }
+
+                            card.innerHTML = `
+                                <div class="pet-img-wrapper">
+                                    <img src="${pet.images.main || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600'}" alt="${pet.name}">
+                                    <button class="heart-btn"><i class="ph ph-heart"></i></button>
+                                    <div class="pet-badges">
+                                        ${badgeHTML || '<span class="badge badge-blue">Healthy</span>'}
+                                    </div>
+                                </div>
+                                <div class="pet-info">
+                                    ${pet.fosterBadge ? `<div class="urgency-banner urgent"><i class="ph-fill ph-warning"></i> ${pet.fosterBadge}</div>` : ''}
+                                    <div class="pet-title-row ${pet.fosterBadge ? 'mt-12' : ''}">
+                                        <h3>${pet.name}</h3>
+                                        <div class="pet-distance">
+                                            <span class="dist-label">Location</span>
+                                            <strong>${pet.location || pet.distance || '5.2 km away'}</strong>
+                                        </div>
+                                    </div>
+                                    <p class="pet-meta">${pet.breed || 'Dog'} • ${pet.age || 'Young'} • ${pet.gender || 'Unknown'}</p>
+
+                                    <div class="pet-medical-summary">
+                                        <span><i class="ph-fill ph-first-aid"></i> ${pet.attributes.vaccinated ? 'Fully Vaccinated' : 'Medical Checked'} • ${pet.attributes.neutered ? 'Neutered' : 'Treatment Logged'}</span>
+                                    </div>
+
+                                    <p class="pet-desc">${snippet}</p>
+
+                                    <div class="pet-extra-tags">
+                                        ${extraTagsHTML || '<span class="tag"><i class="ph ph-sparkles"></i> Friendly</span>'}
+                                    </div>
+
+                                    <div class="pet-footer-details">
+                                        <p class="pet-ngo"><i class="ph-fill ph-seal-check verified-badge"></i> <strong>${pet.ngoName || 'City Rescue NGO'}</strong></p>
+                                        <span class="rescue-date">Rescued: ${pet.rescueDate || 'Oct 12, 2025'}</span>
+                                    </div>
+
+                                    <div class="pet-actions">
+                                        <button class="btn-adopt" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify(${JSON.stringify(pet).replace(/"/g, '&quot;')})); window.location.href='adopt-apply.html'">Adopt ${pet.name}</button>
+                                        <button class="btn-foster">Foster</button>
+                                    </div>
+                                    <button class="btn-text view-story-btn" onclick="localStorage.setItem('voiceOfStrayCurrentPet', JSON.stringify(${JSON.stringify(pet).replace(/"/g, '&quot;')})); window.location.href='pet-details.html?preview=true'">View Full Story</button>
+                                </div>
+                            `;
+                            // Prepend at the beginning of the grid!
+                            grid.prepend(card);
+                        });
+                        
+                        // Update results count dynamically
+                        const resultsCount = document.querySelector('.results-count strong');
+                        if (resultsCount) {
+                            const prevVal = parseInt(resultsCount.innerText);
+                            resultsCount.innerText = prevVal + customPets.length;
+                        }
+                    }
+                } catch(e) {
+                    console.error("Error loading custom published pets in adopt.html", e);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

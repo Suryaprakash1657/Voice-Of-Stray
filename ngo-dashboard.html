@@ -1,0 +1,3103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Operations Dashboard - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        body {
+            background-color: #fff9f5;
+            background-image:
+                radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Replicated Layered Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.04;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.12;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.3));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.08;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        /* Nav Home button */
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Operations Layout structure */
+        .ops-container {
+            max-width: 1300px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 1. Left Sidebar Styling */
+        .ops-sidebar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            box-shadow: 0 10px 25px -10px rgba(249, 115, 22, 0.04);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-brand-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .sidebar-brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-brand-section h3 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-item-left i {
+            font-size: 1.25rem;
+            transition: color 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(249, 115, 22, 0.05);
+            color: var(--primary);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, var(--primary), #ea580c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        .sidebar-item.active i {
+            color: white;
+        }
+
+        .sidebar-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .sidebar-badge.pulse-red {
+            background: #fee2e2;
+            color: #ef4444;
+            animation: pulseText 1.5s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .sidebar-badge.count-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        /* 2. Main Content Grid Layout */
+        .ops-main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Glassmorphic Cards Styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px -12px rgba(249, 115, 22, 0.08);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        /* Compassionate welcome hero */
+        .ops-hero {
+            background: linear-gradient(135deg, #fff2e8 0%, #ffe3d1 100%);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 36px 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 15px 35px -10px rgba(249, 115, 22, 0.1);
+            position: relative;
+        }
+
+        .ops-hero-info {
+            max-width: 60%;
+            z-index: 2;
+        }
+
+        .ops-hero-info h1 {
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .ops-hero-info h1 span {
+            color: var(--primary);
+        }
+
+        .ops-hero-info p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .ops-hero-badge-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .ops-hero-illustration {
+            position: absolute;
+            right: 40px;
+            bottom: 0;
+            height: 105%;
+            width: auto;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.95;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .ops-hero-illustration img {
+            height: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        /* General Section Headers */
+        .ops-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .ops-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ops-section-title i {
+            color: var(--primary);
+        }
+
+        /* Stat Grid Layout */
+        .hero-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .hero-stat-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: 0 4px 15px -3px rgba(249, 115, 22, 0.02);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .hero-stat-card:hover {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .hero-stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .hero-stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.06);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+        }
+
+        .hero-stat-card h3 {
+            font-size: 1.85rem;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-stat-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        /* 3. Highest Priority Incoming Rescue Reports Card styling */
+        .priority-incident-panel {
+            border: 1.5px solid rgba(239, 68, 68, 0.2) !important;
+            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.05) !important;
+            background: rgba(255, 253, 253, 0.85);
+        }
+
+        .priority-incident-panel:hover {
+            border-color: rgba(239, 68, 68, 0.35);
+            box-shadow: 0 15px 35px -10px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .incident-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .incident-card {
+            background: white;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .incident-card:hover {
+            border-color: rgba(239, 68, 68, 0.25);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .incident-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .incident-id {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #ef4444;
+            background: #fee2e2;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .incident-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .incident-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .incident-loc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .incident-loc i {
+            color: var(--primary);
+        }
+
+        .incident-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-inc-primary {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            text-align: center;
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-inc-primary:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-inc-sec {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            text-align: center;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .btn-inc-sec:hover {
+            background: var(--bg-main);
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        /* 4. Active Rescue Operations Section styling */
+        .ops-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.3fr;
+            gap: 24px;
+        }
+
+        .ops-col-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .ops-item-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .ops-item-card:hover {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.15);
+            transform: translateX(3px);
+        }
+
+        /* status pills styling */
+        .status-pill {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-pill.busy {
+            background: #fff7ed;
+            color: var(--primary);
+        }
+
+        .status-pill.clinic {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .status-pill.available {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-pill.offline {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-status-update {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(249, 115, 22, 0.06);
+            border: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .btn-status-update:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* 5. Rescue Workflow Card styling */
+        .workflow-card-body {
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .workflow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            text-align: center;
+        }
+
+        .workflow-step-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-full);
+            background: white;
+            border: 1.5px solid rgba(249, 115, 22, 0.2);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-step.active .workflow-step-icon {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 12px rgba(249, 115, 22, 0.25);
+        }
+
+        .workflow-step h5 {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .workflow-step.active h5 {
+            color: var(--primary);
+        }
+
+        /* Connecting bars in workflow */
+        .workflow-card-body::before {
+            content: '';
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            top: 43px;
+            height: 2px;
+            background: rgba(249, 115, 22, 0.1);
+            z-index: 1;
+        }
+
+        /* 6. Available Volunteers styling */
+        .vol-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px;
+        }
+
+        .vol-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(0, 0, 0, 0.01);
+        }
+
+        .vol-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vol-info img {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 1.5px solid white;
+        }
+
+        .vol-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* 7. Pending Adoption Requests styling */
+        .adopt-req-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .adopt-req-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .adopt-req-item:hover {
+            background: white;
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .adopt-req-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .adopt-req-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .adopt-req-info h5 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .adopt-req-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .adopt-req-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-adopt-act {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-adopt-act.approve {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .btn-adopt-act.approve:hover {
+            background: #15803d;
+            color: white;
+        }
+
+        .btn-adopt-act.reject {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-adopt-act.reject:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-adopt-act.review {
+            background: var(--bg-main);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-adopt-act.review:hover {
+            background: var(--border);
+            color: var(--text-main);
+        }
+
+        /* 8. Donation Overview cards styling */
+        .donation-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* 9. Quick Actions Shortcut cards styling */
+        .quick-shortcut-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .shortcut-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: white;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .shortcut-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.08);
+        }
+
+        .shortcut-btn i {
+            font-size: 1.15rem;
+            color: var(--primary);
+        }
+
+        /* Premium Empty State Layout */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 28px 20px;
+            flex: 1;
+        }
+
+        .empty-state-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            opacity: 0.55;
+            background: rgba(249, 115, 22, 0.06);
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+        }
+
+        .empty-state h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .empty-state p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            max-width: 260px;
+            line-height: 1.4;
+        }
+
+        /* Mobile Viewport adaptations */
+        @media (max-width: 1024px) {
+            .ops-container {
+                grid-template-columns: 1fr;
+            }
+
+            .ops-sidebar {
+                position: relative;
+                top: 0;
+                width: 100%;
+            }
+
+            .sidebar-menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .sidebar-item {
+                flex: 1;
+                min-width: 130px;
+                justify-content: center;
+            }
+
+            .sidebar-brand-section {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .incident-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .ops-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .donation-overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-shortcut-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .workflow-card-body {
+                flex-direction: column;
+                gap: 24px;
+                padding: 32px 16px;
+            }
+
+            .workflow-card-body::before {
+                left: 50%;
+                top: 8%;
+                bottom: 8%;
+                width: 2px;
+                height: 80%;
+            }
+
+            .ops-hero-illustration {
+                display: none;
+            }
+
+            .ops-hero-info {
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .ops-hero {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-shortcut-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-menu {
+                flex-direction: column;
+            }
+        }
+
+        /* Premium Modal Styling */
+        .ops-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .ops-modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .ops-modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid rgba(249, 115, 22, 0.2) !important;
+            padding: 24px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ops-modal-overlay.show .ops-modal-content {
+            transform: scale(1);
+        }
+
+        .ops-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .ops-modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .ops-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ops-modal-close:hover {
+            color: var(--primary);
+        }
+
+        .ops-modal-body {
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        /* Modal List Items */
+        .modal-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: rgba(249, 115, 22, 0.03);
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+        }
+
+        .modal-list-item:hover {
+            background: rgba(249, 115, 22, 0.06);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        /* View Details Button */
+        .btn-view-details {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            background: white;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            line-height: 1.2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-view-details:hover {
+            background: var(--bg-main);
+            color: var(--text-main);
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background decorations -->
+    <div class="bg-decorations">
+        <!-- Paws -->
+        <svg class="decor-item" style="top: 15%; left: 4%; width: 110px; transform: rotate(-10deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <svg class="decor-item" style="bottom: 12%; right: 5%; width: 130px; transform: rotate(18deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <!-- Sparkles -->
+        <svg class="decor-item sparkle" style="top: 25%; left: 35%; width: 24px;" viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="bottom: 28%; left: 20%; width: 28px; animation-delay: 1s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+    </div>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <!-- Home button styled in standard navigation layout -->
+            <div class="nav-links">
+                <a href="index.html" class="nav-home-link">
+                    <i class="ph ph-house"></i>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <!-- Guest State (Hidden in auth session) -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State (Automatically populated by navbar.js) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <!-- Profile avatar with dynamic dropdown attached in navbar.js -->
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main operations panel grid wrapper -->
+    <div class="ops-container">
+
+        <!-- 1. Permanent Left Sidebar -->
+        <aside class="ops-sidebar">
+            <div class="sidebar-brand-section">
+                <div class="sidebar-brand-icon">
+                    <i class="ph-fill ph-shield-heart"></i>
+                </div>
+                <div>
+                    <h3>Rescue Center</h3>
+                    <span
+                        style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Ops
+                        Command</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="sidebar-item active">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Dashboard</span>
+                    </span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-reports-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-bell-ringing"></i>
+                        <span>Incoming Reports</span>
+                    </span>
+                    <span class="sidebar-badge pulse-red" id="sidebar-reports-badge">2 New</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='#active-cases-section'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-ambulance"></i>
+                        <span>Active Cases</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-cases-badge">2</span>
+                </div>
+                <div class="sidebar-item" id="sidebar-vol-apps"
+                    onclick="window.location.href='ngo-volunteer-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-hand-heart"></i>
+                        <span>Volunteer Management</span>
+                    </span>
+                    <span id="vol-apps-badge" class="sidebar-badge count-green"
+                        style="background: #e0f2fe; color: #0284c7;">0</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-adopt-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-house-line"></i>
+                        <span>Adoption Requests</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-adoption-count"
+                        style="background: #fce7f3; color: #db2777;">1</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-pet-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-note-pencil"></i>
+                        <span>Manage Pets (Builder)</span>
+                    </span>
+                    <span class="sidebar-badge"
+                        style="background: rgba(249, 115, 22, 0.1); color: var(--primary); font-weight: 800;">Builder</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-donation-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-coins"></i>
+                        <span>Donations</span>
+                    </span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-settings.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-gear"></i>
+                        <span>Settings</span>
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. Main Dashboard panel -->
+        <main class="ops-main-panel">
+
+            <!-- Dynamic Welcome Hero Section -->
+            <div class="ops-hero">
+                <div class="ops-hero-info">
+                    <h1 id="ngo-welcome-title">Welcome Back, <span>Paws Haven NGO</span> 🐾</h1>
+                    <p style="font-size: 0.92rem; color: var(--text-muted); font-weight: 500;" id="ngo-welcome-email">
+                        contact@pawshaven.org</p>
+                    <div class="ops-hero-badge-wrap">
+                        <span class="dropdown-role-badge ngo" id="ngo-role-badge">NGO Shelter Partner</span>
+                        <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Active Rescue Hub
+                            Command</span>
+                    </div>
+                </div>
+
+                <!-- Illustrative decoration -->
+                <div class="ops-hero-illustration">
+                    <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=300"
+                        alt="Rescue Animals"
+                        style="border-radius: var(--radius-md) 0 var(--radius-md) 0; border: 4px solid white; box-shadow: var(--shadow-lg);">
+                </div>
+            </div>
+
+            <!-- Operations Hero summary counters (Dynamic) -->
+            <div class="hero-stats-grid">
+                <!-- Stat 1: Active Rescue Cases -->
+                <div class="hero-stat-card" onclick="scrollToSection('active-cases-section')">
+                    <div class="hero-stat-header">
+                        <div class="hero-stat-icon">
+                            <i class="ph-fill ph-ambulance"></i>
+                        </div>
+                    </div>
+                    <h3 id="active-cases-count-card">2</h3>
+                    <p>Active Rescue Cases</p>
+                </div>
+                <!-- Stat 2: Available Volunteers -->
+                <div class="hero-stat-card" onclick="window.location.href='ngo-volunteer-manage.html'">
+                    <div class="hero-stat-header">
+                        <div class="hero-stat-icon" style="background: #e0f2fe; color: #0284c7;">
+                            <i class="ph-fill ph-users-three"></i>
+                        </div>
+                    </div>
+                    <h3 id="vol-manage-count-card">0</h3>
+                    <p>Available Volunteers</p>
+                </div>
+                <!-- Stat 3: Animals Under Care -->
+                <div class="hero-stat-card" onclick="showAnimalsUnderCareModal()">
+                    <div class="hero-stat-header">
+                        <div class="hero-stat-icon" style="background: #fce7f3; color: #db2777;">
+                            <i class="ph-fill ph-house-line"></i>
+                        </div>
+                    </div>
+                    <h3>18</h3>
+                    <p>Animals Under Care</p>
+                </div>
+                <!-- Stat 4: Successful Rescues This Month -->
+                <div class="hero-stat-card" onclick="showSuccessfulRescuesModal()">
+                    <div class="hero-stat-header">
+                        <div class="hero-stat-icon" style="background: #dcfce7; color: #15803d;">
+                            <i class="ph-fill ph-check-circle"></i>
+                        </div>
+                    </div>
+                    <h3 id="resolved-cases-count-card">15</h3>
+                    <p>Rescues This Month</p>
+                </div>
+            </div>
+
+            <!-- Incoming Rescue Reports Panel (Highest Priority) -->
+            <section class="glass-card priority-incident-panel">
+                <div style="padding: 20px 20px 0 20px;">
+                    <div class="ops-section-header" style="border-bottom-color: rgba(239, 68, 68, 0.15);">
+                        <span class="ops-section-title" style="color: #ef4444;">
+                            <i class="ph-fill ph-siren"
+                                style="color: #ef4444; animation: pulseGlow 1.5s infinite alternate ease-in-out;"></i>
+                            <span>Incoming Rescue Reports (Highest Priority)</span>
+                        </span>
+                        <span class="status-pill"
+                            style="background: #fee2e2; color: #ef4444; font-weight: 800; animation: pulseGlow 1.5s infinite alternate;">Live
+                            Alerts Active</span>
+                    </div>
+                </div>
+
+                <div class="incident-grid" id="incoming-reports-grid">
+                    <!-- Report 1 -->
+                    <div class="incident-card" id="report-card-4902">
+                        <div class="incident-header">
+                            <span class="incident-id">#RSC-4902</span>
+                            <span class="incident-time"><i class="ph ph-clock"></i> 5 mins ago</span>
+                        </div>
+                        <div>
+                            <h4 class="incident-title"><i class="ph-fill ph-paw-print"
+                                    style="color: var(--primary);"></i> Injured Puppy</h4>
+                            <div class="incident-loc" style="margin-top: 6px;"><i class="ph-fill ph-map-pin"></i> Anna
+                                Nagar Area</div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; font-weight: 500;">
+                            Reported with severe leg fracture. Stranded near the street corner. Needs immediate
+                            emergency pickup.
+                        </div>
+                        <div class="incident-actions">
+                            <button class="btn-inc-primary"
+                                onclick="acceptCase('4902', 'Injured Puppy', 'Anna Nagar Area')">Accept Case</button>
+                            <button class="btn-inc-sec"
+                                onclick="window.location.href='ngo-rescue-manage.html?case=4902'">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Report 2 -->
+                    <div class="incident-card" id="report-card-4903">
+                        <div class="incident-header">
+                            <span class="incident-id">#RSC-4903</span>
+                            <span class="incident-time"><i class="ph ph-clock"></i> 12 mins ago</span>
+                        </div>
+                        <div>
+                            <h4 class="incident-title"><i class="ph-fill ph-paw-print"
+                                    style="color: var(--primary);"></i> Dehydrated Cat</h4>
+                            <div class="incident-loc" style="margin-top: 6px;"><i class="ph-fill ph-map-pin"></i> T
+                                Nagar Market</div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; font-weight: 500;">
+                            Stray cat collapsed in high heat. Volunteers have provided initial water, needs shelter
+                            transportation.
+                        </div>
+                        <div class="incident-actions">
+                            <button class="btn-inc-primary"
+                                onclick="acceptCase('4903', 'Dehydrated Cat', 'T Nagar Market')">Accept Case</button>
+                            <button class="btn-inc-sec"
+                                onclick="window.location.href='ngo-rescue-manage.html?case=4903'">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Active Rescues & Operations Grid -->
+            <div class="ops-grid">
+
+                <!-- Column: Active Rescues -->
+                <section class="glass-card ops-col-card" id="active-cases-section">
+                    <div class="ops-section-header">
+                        <span class="ops-section-title">
+                            <i class="ph-fill ph-ambulance"></i>
+                            <span>Active Rescue Operations</span>
+                        </span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">2 Real-Time
+                            Runs</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;" id="active-cases-list">
+                        <!-- Case 1 -->
+                        <div class="ops-item-card" id="active-case-4888">
+                            <div class="active-item-left">
+                                <div class="active-item-icon rescue"
+                                    style="background: rgba(249, 115, 22, 0.08); color: var(--primary);">
+                                    <i class="ph-fill ph-user-check"></i>
+                                </div>
+                                <div class="active-item-info">
+                                    <h5 style="font-size: 0.88rem;">#RSC-4888 - Bleeding Dog Pickup</h5>
+                                    <p>Assigned: <strong>Priya</strong> • ETA: 10 mins</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="status-pill busy">Assigned</span>
+                                <button class="btn-view-details"
+                                    onclick="window.location.href='ngo-rescue-manage.html?case=4888'">View
+                                    Details</button>
+                                <button class="btn-status-update"
+                                    onclick="updateCaseStatus('4888', 'Assigned', 'reached_clinic')">Update
+                                    Status</button>
+                            </div>
+                        </div>
+
+                        <!-- Case 2 -->
+                        <div class="ops-item-card" id="active-case-4871">
+                            <div class="active-item-left">
+                                <div class="active-item-icon rescue" style="background: #e0f2fe; color: #0284c7;">
+                                    <i class="ph-fill ph-first-aid-kit"></i>
+                                </div>
+                                <div class="active-item-info">
+                                    <h5 style="font-size: 0.88rem;">#RSC-4871 - Cat with Fracture</h5>
+                                    <p>Clinic: <strong>Metro Vet Center</strong> • Reached</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="status-pill clinic">In Treatment</span>
+                                <button class="btn-view-details"
+                                    onclick="window.location.href='ngo-rescue-manage.html?case=4871'">View
+                                    Details</button>
+                                <button class="btn-status-update"
+                                    onclick="updateCaseStatus('4871', 'In Treatment', 'completed')">Update
+                                    Status</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Column: Volunteer Management -->
+                <section class="glass-card ops-col-card" style="padding-bottom: 12px;" id="volunteers-section">
+                    <div class="ops-section-header">
+                        <span class="ops-section-title">
+                            <i class="ph-fill ph-users-three"></i>
+                            <span>Volunteer Management</span>
+                        </span>
+                        <a href="ngo-volunteer-manage.html" class="section-arrow-btn"
+                            style="text-decoration: none; display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: var(--primary); font-weight: 700;">
+                            <span>Manage</span>
+                            <i class="ph ph-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="vol-list" id="volunteers-list-container">
+                        <!-- Populated dynamically -->
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Rescue Workflow Section Card -->
+            <section class="glass-card" style="padding: 24px 24px 8px 24px;">
+                <div class="ops-section-header">
+                    <span class="ops-section-title">
+                        <i class="ph-fill ph-clock-counter-clockwise"></i>
+                        <span>Visual Rescue Operations Lifecycle Workflow</span>
+                    </span>
+                </div>
+                <div class="workflow-body-container" style="padding: 16px 0;">
+                    <div class="workflow-card-body">
+                        <!-- Step 1 -->
+                        <div class="workflow-step active">
+                            <div class="workflow-step-icon">
+                                <i class="ph-fill ph-camera"></i>
+                            </div>
+                            <h5>Reported</h5>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="workflow-step active">
+                            <div class="workflow-step-icon">
+                                <i class="ph-fill ph-warning-circle"></i>
+                            </div>
+                            <h5>Accepted</h5>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="workflow-step active">
+                            <div class="workflow-step-icon">
+                                <i class="ph-fill ph-user-check"></i>
+                            </div>
+                            <h5>Team Assigned</h5>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">
+                                <i class="ph-fill ph-ambulance"></i>
+                            </div>
+                            <h5>Rescued</h5>
+                        </div>
+                        <!-- Step 5 -->
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">
+                                <i class="ph-fill ph-first-aid-kit"></i>
+                            </div>
+                            <h5>Treatment</h5>
+                        </div>
+                        <!-- Step 6 -->
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">
+                                <i class="ph-fill ph-heart"></i>
+                            </div>
+                            <h5>Recovery</h5>
+                        </div>
+                        <!-- Step 7 -->
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">
+                                <i class="ph-fill ph-check-circle"></i>
+                            </div>
+                            <h5>Completed</h5>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pending Adoptions Request section -->
+            <section class="glass-card">
+                <div style="padding: 24px 24px 0 24px;">
+                    <div class="ops-section-header">
+                        <span class="ops-section-title">
+                            <i class="ph-fill ph-house-line"></i>
+                            <span>Pending Adoption Requests</span>
+                        </span>
+                        <a href="ngo-adopt-manage.html" class="section-arrow-btn">
+                            <span>Manage requests</span>
+                            <i class="ph ph-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="adopt-req-list" id="adoption-requests-list">
+                    <!-- Request 1 -->
+                    <div class="adopt-req-item" id="adopt-req-charlie">
+                        <div class="adopt-req-left">
+                            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=100"
+                                class="adopt-req-avatar" alt="Charlie">
+                            <div class="adopt-req-info">
+                                <h5>Charlie (Golden Retriever Mix)</h5>
+                                <p>Applicant: <strong>Arjun</strong> • Submitted 1 day ago</p>
+                            </div>
+                        </div>
+                        <div class="adopt-req-actions">
+                            <button class="btn-adopt-act approve"
+                                onclick="approveAdoption('Charlie', 'Arjun')">Approve</button>
+                            <button class="btn-adopt-act reject"
+                                onclick="rejectAdoption('Charlie', 'Arjun')">Reject</button>
+                            <button class="btn-adopt-act review"
+                                onclick="alert('Opening application review panel...')">Review</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Volunteer Management Section -->
+            <section class="glass-card" id="volunteer-applications-section">
+                <div style="padding: 24px 24px 0 24px;">
+                    <div class="ops-section-header">
+                        <span class="ops-section-title">
+                            <i class="ph-fill ph-hand-heart"></i>
+                            <span>Volunteer Management</span>
+                        </span>
+                        <a href="ngo-volunteer-manage.html" class="section-arrow-btn"
+                            style="text-decoration: none; display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: var(--primary); font-weight: 700;">
+                            <span>Go to Page</span>
+                            <i class="ph ph-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="adopt-req-list" id="volunteer-applications-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- Donation Operations Section (Matches user card compliant stats style) -->
+            <section class="glass-card" style="padding-bottom: 12px;">
+                <div style="padding: 24px 24px 0 24px;">
+                    <div class="ops-section-header">
+                        <span class="ops-section-title">
+                            <i class="ph-fill ph-coins"></i>
+                            <span>Donation Operations Overview</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="donation-overview-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <!-- today -->
+                    <div class="hero-stat-card" style="background: rgba(249, 115, 22, 0.03); min-height: 120px;">
+                        <p style="margin-top: 0; margin-bottom: 8px; font-size: 0.8rem;">Today's Contributions</p>
+                        <h3 id="dashboard-today-donations" style="font-size: 1.45rem;">₹0</h3>
+                        <span id="dashboard-today-subtext"
+                            style="font-size: 0.7rem; color: #15803d; font-weight: 700;"><i class="ph ph-trend-up"></i>
+                            + 0% vs yesterday</span>
+                    </div>
+                    <!-- month -->
+                    <div class="hero-stat-card" style="background: rgba(249, 115, 22, 0.03); min-height: 120px;">
+                        <p style="margin-top: 0; margin-bottom: 8px; font-size: 0.8rem;">This Month Total</p>
+                        <h3 id="dashboard-monthly-donations" style="font-size: 1.45rem;">₹0</h3>
+                        <span id="dashboard-monthly-subtext"
+                            style="font-size: 0.7rem; color: #15803d; font-weight: 700;"><i class="ph ph-trend-up"></i>
+                            Target ₹100,000 (0%)</span>
+                    </div>
+                    <!-- total donations -->
+                    <div class="hero-stat-card" style="background: rgba(249, 115, 22, 0.03); min-height: 120px;">
+                        <p style="margin-top: 0; margin-bottom: 8px; font-size: 0.8rem;">Total Donations</p>
+                        <h3 id="dashboard-total-donations" style="font-size: 1.45rem;">₹0</h3>
+                        <span style="font-size: 0.7rem; color: var(--primary); font-weight: 700;">All-time total</span>
+                    </div>
+                    <!-- active donors -->
+                    <div class="hero-stat-card" style="background: rgba(249, 115, 22, 0.03); min-height: 120px;">
+                        <p style="margin-top: 0; margin-bottom: 8px; font-size: 0.8rem;">Active Donors</p>
+                        <h3 id="dashboard-active-donors" style="font-size: 1.45rem;">0</h3>
+                        <span style="font-size: 0.7rem; color: var(--primary); font-weight: 700;">Unique profiles</span>
+                    </div>
+                </div>
+
+                <!-- Recent Donations list -->
+                <div style="border-top: 1px solid rgba(249, 115, 22, 0.08); padding: 20px 24px 8px 24px;">
+                    <h4
+                        style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                        <i class="ph-fill ph-clock-counter-clockwise" style="color: var(--primary);"></i> Recent
+                        Donations
+                    </h4>
+                    <div id="dashboard-recent-donations-list" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Action Shortcut Cards -->
+            <section class="glass-card" style="padding-bottom: 12px;">
+                <div style="padding: 24px 24px 0 24px;">
+                    <div class="ops-section-header">
+                        <span class="ops-section-title">
+                            <i class="ph-fill ph-sparkles"></i>
+                            <span>Operations Quick Actions</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="quick-shortcut-grid">
+                    <div class="shortcut-btn" onclick="alert('Creating rescue update log entry...')">
+                        <i class="ph ph-pencil-simple"></i>
+                        <span>Create Update</span>
+                    </div>
+                    <div class="shortcut-btn" onclick="window.location.href='ngo-volunteer-manage.html'">
+                        <i class="ph ph-hand-heart"></i>
+                        <span>Volunteer Management</span>
+                    </div>
+                    <div class="shortcut-btn" onclick="alert('Redirecting to adoption applications list...')">
+                        <i class="ph ph-house-line"></i>
+                        <span>Review Adoptions</span>
+                    </div>
+                    <div class="shortcut-btn" onclick="window.location.href='ngo-donation-manage.html'">
+                        <i class="ph ph-coins"></i>
+                        <span>View Donations</span>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Operations Footer -->
+    <footer class="premium-footer"
+        style="background-color: #fcf6f0; padding: 64px 24px 32px; border-top: 1px solid rgba(249, 115, 22, 0.15);">
+        <div class="footer-bottom"
+            style="max-width: 1200px; margin: 0 auto; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">Made with <i class="ph-fill ph-heart" style="color: var(--alert);"></i> for
+                stray rescue welfare NGOs</p>
+            <p>&copy; 2026 Voice of Stray NGO Operations. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- NGO Operations Logic Controller -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Strict Authentication and Role Guards
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            if (!isLoggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const role = localStorage.getItem("role");
+            if (role !== "ngo") {
+                // If standard volunteer tries to access NGO panel, redirect them back to standard dashboard
+                window.location.href = "user-dashboard.html";
+                return;
+            }
+
+            // 2. Resolve Dynamic NGO Information
+            const orgName = localStorage.getItem("username") || "Paws Haven NGO";
+            const orgEmail = localStorage.getItem("email") || "contact@pawshaven.org";
+            const orgLogo = localStorage.getItem("avatarUrl") || "https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff";
+
+            // Set dynamic welcome greetings
+            document.querySelector("#ngo-welcome-title span").textContent = orgName;
+            document.getElementById("ngo-welcome-email").textContent = orgEmail;
+
+            // Sync dynamic profile picture
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => img.src = orgLogo);
+
+            // 3. Dynamic Case and Incoming Report Synchronization from localStorage
+            initializeReports();
+            renderIncomingReports();
+            renderActiveCases();
+
+            // Sync other sidebar badges
+            const storedAdoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+            const activeAdoptionsCount = storedAdoptions.filter(app => !app.archived && app.status !== "Approved" && app.status !== "Rejected" && app.status !== "Adopted").length;
+            const sidebarAdoptionCountEl = document.getElementById("sidebar-adoption-count");
+            if (sidebarAdoptionCountEl) {
+                sidebarAdoptionCountEl.textContent = activeAdoptionsCount;
+            }
+            initializeDefaultAdoption();
+            loadAdoptionRequests();
+            loadVolunteerApplications();
+            syncDonationsOverview();
+
+            // Listen to storage events to sync dashboard data dynamically without manual reload
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'voiceOfStrayDonations' || e.key === 'voiceOfStrayNotifications' || e.key === 'voiceOfStrayReports' || e.key === 'voiceOfStrayCases') {
+                    renderIncomingReports();
+                    renderActiveCases();
+                    syncDonationsOverview();
+                }
+            });
+        });
+
+        function initializeDefaultAdoption() {
+            let adoptions = [];
+            const stored = localStorage.getItem("voiceOfStrayAdoptions");
+            if (stored) {
+                try {
+                    adoptions = JSON.parse(stored);
+                } catch (e) {
+                    adoptions = [];
+                }
+            }
+
+            const hasCharlie = adoptions.some(a => a.petName === "Charlie" && a.applicantName === "Arjun");
+            if (!hasCharlie) {
+                const charlieStatus = localStorage.getItem("voiceOfStrayCharlieStatus") || "Pending Review";
+                const charlieArchived = localStorage.getItem("voiceOfStrayCharlieArchived") === "true";
+
+                if (!charlieArchived) {
+                    const charlieApp = {
+                        id: "charlie",
+                        petName: "Charlie",
+                        breed: "Golden Retriever Mix",
+                        ngoName: "City Rescue NGO",
+                        ngoInitials: "CR",
+                        applicantName: "Arjun",
+                        applicantEmail: "arjun@example.com",
+                        applicantPhone: "+91 98765 43210",
+                        city: "Mumbai",
+                        occupation: "Software Engineer",
+                        age: "28",
+                        ownRent: "own",
+                        hasYard: "yes",
+                        hasPets: "no",
+                        hasKids: "no",
+                        whyAdopt: "I fell in love with Charlie's gentle eyes. We have a spacious home with a fenced yard and plenty of time to spend with him.",
+                        aloneHours: "1-2 hours (work from home)",
+                        ownedBefore: "Grew up with dogs, raised a Labrador for 12 years.",
+                        emergencies: "Dedicated pet emergency savings fund, local 24/7 clinic is 10 mins away.",
+                        adjustPlan: "Taking 2 weeks off to help him adjust. Slow introductions and a calm, quiet routine.",
+                        status: charlieStatus,
+                        date: "6/3/2026"
+                    };
+
+                    if (charlieStatus === "Approved") {
+                        charlieApp.approvalDate = new Date().toLocaleDateString();
+                    } else if (charlieStatus === "Rejected") {
+                        charlieApp.rejectionDate = new Date().toLocaleDateString();
+                    }
+
+                    adoptions.unshift(charlieApp);
+                    localStorage.setItem("voiceOfStrayAdoptions", JSON.stringify(adoptions));
+                }
+            }
+        }
+
+        // Load custom adoption requests from localStorage
+        function loadAdoptionRequests() {
+            const listContainer = document.getElementById("adoption-requests-list");
+            if (!listContainer) return;
+
+            const storedAdoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+
+            // Filter active/pending ones (not Approved, Rejected, Adopted, and not archived)
+            const activeAdoptions = storedAdoptions.filter(app =>
+                !app.archived &&
+                app.status !== "Approved" &&
+                app.status !== "Rejected" &&
+                app.status !== "Adopted"
+            );
+
+            // Update sidebar count badge
+            const sidebarBadge = document.getElementById("sidebar-adoption-count");
+            if (sidebarBadge) {
+                sidebarBadge.textContent = activeAdoptions.length;
+            }
+
+            if (activeAdoptions.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="ph ph-check-circle"></i>
+                        </div>
+                        <h4>All caught up!</h4>
+                        <p>No pending adoption requests at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Build the HTML for active adoptions
+            let html = "";
+            activeAdoptions.forEach(app => {
+                let actionHtml = `
+                    <button class="btn-adopt-act approve" onclick="approveAdoption('${app.petName}', '${app.applicantName}')">Approve</button>
+                    <button class="btn-adopt-act reject" onclick="rejectAdoption('${app.petName}', '${app.applicantName}')">Reject</button>
+                    <button class="btn-adopt-act review" onclick="viewAdoptionDetails('${app.id}')">Review</button>
+                `;
+
+                html += `
+                    <div class="adopt-req-item" id="adopt-req-${app.id}">
+                        <div class="adopt-req-left">
+                            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=100"
+                                class="adopt-req-avatar" alt="${app.petName}">
+                            <div class="adopt-req-info">
+                                <h5>${app.petName} (${app.breed})</h5>
+                                <p>Applicant: <strong>${app.applicantName}</strong> • Submitted ${app.date}</p>
+                            </div>
+                        </div>
+                        <div class="adopt-req-actions">
+                            ${actionHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+        }
+
+        // Date Formatting Helper
+        function formatDate(dateObj) {
+            const day = dateObj.getDate();
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const month = months[dateObj.getMonth()];
+            const year = dateObj.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
+
+        // Load custom volunteer applications from localStorage
+        function loadVolunteerApplications() {
+            const listContainer = document.getElementById("volunteer-applications-list");
+            const badge = document.getElementById("vol-apps-badge");
+            if (!listContainer) return;
+
+            const storedApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+
+            // If empty, insert a default mock application to demonstrate review
+            if (storedApps.length === 0) {
+                const defaultApps = [
+                    {
+                        id: "VOL-APP-MOCK",
+                        volunteerId: "VOL-APP-MOCK",
+                        name: "Jane Doe",
+                        email: "jane@example.com",
+                        phone: "+91 98765 43211",
+                        role: "Emergency Rescue Support",
+                        type: "volunteer",
+                        status: "Pending Review",
+                        date: "1 day ago",
+                        availability: "Weekends",
+                        skills: ["First Aid", "Animal Handling"],
+                        housing: "",
+                        pets: ""
+                    },
+                    {
+                        id: "VOL-APP-RAVI",
+                        volunteerId: "VOL-APP-RAVI",
+                        name: "Ravi",
+                        email: "ravi@example.com",
+                        phone: "+91 98765 43212",
+                        role: "Feeding Drives",
+                        type: "volunteer",
+                        status: "Active",
+                        date: "3 days ago",
+                        availability: "Weekends",
+                        skills: ["Community Outreach"],
+                        approvalDate: "15 Jun 2026"
+                    },
+                    {
+                        id: "VOL-APP-PRIYA",
+                        volunteerId: "VOL-APP-PRIYA",
+                        name: "Priya",
+                        email: "priya@example.com",
+                        phone: "+91 98765 43213",
+                        role: "Emergency Rescue",
+                        type: "volunteer",
+                        status: "Unavailable",
+                        date: "4 days ago",
+                        availability: "Weekdays",
+                        skills: ["First Aid", "Animal Handling"],
+                        approvalDate: "14 Jun 2026"
+                    },
+                    {
+                        id: "VOL-APP-AKASH",
+                        volunteerId: "VOL-APP-AKASH",
+                        name: "Akash",
+                        email: "akash@example.com",
+                        phone: "+91 98765 43214",
+                        role: "Transport Assistance",
+                        type: "volunteer",
+                        status: "Inactive",
+                        date: "5 days ago",
+                        availability: "Weekends",
+                        skills: ["Driving"],
+                        approvalDate: "13 Jun 2026"
+                    }
+                ];
+                storedApps.push(...defaultApps);
+                localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(storedApps));
+            }
+
+            let pendingCount = 0;
+            let approvedCount = 0;
+            let html = "";
+
+            storedApps.forEach(app => {
+                const isApproved = app.status === "Approved" || app.status === "Active" || app.status === "Inactive" || app.status === "Unavailable";
+                if (isApproved) {
+                    approvedCount++;
+                } else if (app.status === "Pending Review" || app.status === "Pending") {
+                    pendingCount++;
+                }
+
+                let actionHtml = "";
+                if (isApproved) {
+                    const activityStatus = (app.status === "Approved") ? "Active" : app.status;
+                    actionHtml = `<span class="status-pill approved" style="padding: 6px 12px;"><i class="ph-bold ph-check"></i> Approved | ${activityStatus}</span>`;
+                } else if (app.status === "Rejected") {
+                    actionHtml = `<span class="status-pill emergency" style="padding: 6px 12px; background: #fee2e2; color: #ef4444;"><i class="ph-bold ph-x"></i> Rejected</span>`;
+                } else {
+                    actionHtml = `
+                        <button class="btn-adopt-act approve" onclick="approveVolunteerApplication('${app.id}')">Approve</button>
+                        <button class="btn-adopt-act reject" onclick="rejectVolunteerApplication('${app.id}')">Reject</button>
+                        <button class="btn-adopt-act review" onclick="viewVolunteerApplication('${app.id}')">View Details</button>
+                    `;
+                }
+
+                html += `
+                    <div class="adopt-req-item" id="vol-app-${app.id}">
+                        <div class="adopt-req-left">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(249, 115, 22, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                                <i class="ph-fill ph-user"></i>
+                            </div>
+                            <div class="adopt-req-info" style="margin-left: 12px;">
+                                <h5>${app.name} (${app.role})</h5>
+                                <p>Email: <strong>${app.email}</strong> • Availability: <strong>${app.availability || 'Weekends'}</strong> • Skills: <strong>${(app.skills && app.skills.length > 0) ? app.skills.join(', ') : 'None'}</strong> • Status: <strong>${app.status}</strong> • Submitted ${app.date}</p>
+                            </div>
+                        </div>
+                        <div class="adopt-req-actions">
+                            ${actionHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+            if (badge) {
+                badge.textContent = storedApps.length;
+                badge.style.display = storedApps.length > 0 ? "inline-block" : "none";
+            }
+
+            // Sync card counter
+            const cardCount = document.getElementById("vol-manage-count-card");
+            if (cardCount) {
+                cardCount.textContent = approvedCount;
+            }
+
+            // Populate approved volunteers list dynamically in the sidebar/card columns
+            const volListContainer = document.getElementById("volunteers-list-container");
+            if (volListContainer) {
+                let volListHtml = "";
+                const approvedVolunteers = storedApps.filter(app => app.status === "Approved" || app.status === "Active" || app.status === "Inactive" || app.status === "Unavailable");
+                if (approvedVolunteers.length === 0) {
+                    volListHtml = `
+                        <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">
+                            No approved volunteers yet.
+                        </div>
+                    `;
+                } else {
+                    approvedVolunteers.forEach(vol => {
+                        let activityStatus = vol.status || "Active";
+                        if (activityStatus === "Approved") activityStatus = "Active";
+
+                        let statusText = "Available";
+                        let statusClass = "available";
+                        if (activityStatus === "Unavailable") {
+                            statusText = "On Rescue";
+                            statusClass = "busy";
+                        } else if (activityStatus === "Inactive") {
+                            statusText = "Offline";
+                            statusClass = "offline";
+                        }
+
+                        const initials = vol.name ? vol.name[0].toUpperCase() : "V";
+                        let colorTheme = "f97316";
+                        if (vol.name === "Priya") colorTheme = "14b8a6";
+                        else if (vol.name === "Akash") colorTheme = "64748b";
+
+                        volListHtml += `
+                            <div class="vol-item">
+                                <div class="vol-info">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(vol.name)}&background=${colorTheme}&color=fff&bold=true"
+                                        alt="${initials}">
+                                    <span class="vol-name">${vol.name}</span>
+                                </div>
+                                <span class="status-pill ${statusClass}">${statusText}</span>
+                            </div>
+                        `;
+                    });
+                }
+                volListContainer.innerHTML = volListHtml;
+            }
+        }
+
+        // Approve volunteer application
+        function approveVolunteerApplication(appId) {
+            let apps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            let app = apps.find(a => a.id === appId);
+            if (!app) return;
+
+            // Sync with voiceOfStrayUsers database and currentUser
+            const users = JSON.parse(localStorage.getItem("voiceOfStrayUsers") || "[]");
+            const userToApprove = users.find(u => u.email.toLowerCase() === app.email.toLowerCase() || (app.name === "Arjun" && u.email === "user@voiceofstray.com"));
+
+            app.status = "Active";
+            app.volunteerId = userToApprove ? userToApprove.id : app.id;
+            app.approvalDate = formatDate(new Date());
+            localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(apps));
+
+            // Sync user profile in localStorage if this is the active user
+            const currentEmail = localStorage.getItem("email");
+            const currentName = localStorage.getItem("username");
+
+            // Check if the application email matches current logged-in user or name matches
+            if (app.email === currentEmail || app.name === currentName || (currentName === "Arjun" && app.id === "VOL-APP-MOCK")) {
+                let userProfile = {};
+                const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+                if (storedProfile) {
+                    try { userProfile = JSON.parse(storedProfile); } catch (e) { }
+                }
+                userProfile.accountType = app.type === 'foster' ? 'Volunteer' : (app.role.includes('Rescue') ? 'Rescuer' : 'Volunteer');
+                localStorage.setItem("voiceOfStrayUserProfile", JSON.stringify(userProfile));
+
+                let volMeta = {};
+                const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+                if (storedVolMeta) {
+                    try { volMeta = JSON.parse(storedVolMeta); } catch (e) { }
+                }
+                volMeta.status = "Approved Volunteer";
+                volMeta.role = app.role;
+                localStorage.setItem("voiceOfStrayVolunteer", JSON.stringify(volMeta));
+            }
+
+            if (userToApprove) {
+                userToApprove.volunteer.approved = true;
+                userToApprove.volunteer.status = "Approved";
+                localStorage.setItem("voiceOfStrayUsers", JSON.stringify(users));
+
+                const currentUserRaw = localStorage.getItem("currentUser");
+                if (currentUserRaw) {
+                    try {
+                        const currentUser = JSON.parse(currentUserRaw);
+                        if (currentUser.email.toLowerCase() === userToApprove.email.toLowerCase()) {
+                            currentUser.volunteer.approved = true;
+                            currentUser.volunteer.status = "Approved";
+                            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                        }
+                    } catch(e){}
+                }
+            }
+
+            // Create notification in user notifications storage
+            let notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-check-circle",
+                message: `Congratulations ${app.name}! Your volunteer application has been approved.`,
+                time: "Just now",
+                unread: true
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            alert(`Volunteer application for ${app.name} approved successfully!`);
+            loadVolunteerApplications();
+        }
+
+        // Reject volunteer application
+        function rejectVolunteerApplication(appId) {
+            let apps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            let app = apps.find(a => a.id === appId);
+            if (!app) return;
+
+            app.status = "Rejected";
+            app.rejectionDate = formatDate(new Date());
+            localStorage.setItem("voiceOfStrayVolunteerApplications", JSON.stringify(apps));
+
+            // Sync user profile in localStorage if this is the active user
+            const currentEmail = localStorage.getItem("email");
+            const currentName = localStorage.getItem("username");
+
+            if (app.email === currentEmail || app.name === currentName || (currentName === "Arjun" && app.id === "VOL-APP-MOCK")) {
+                let volMeta = {};
+                const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+                if (storedVolMeta) {
+                    try { volMeta = JSON.parse(storedVolMeta); } catch (e) { }
+                }
+                volMeta.status = "Rejected";
+                localStorage.setItem("voiceOfStrayVolunteer", JSON.stringify(volMeta));
+            }
+
+            // Sync with voiceOfStrayUsers database and currentUser
+            const users = JSON.parse(localStorage.getItem("voiceOfStrayUsers") || "[]");
+            const userToReject = users.find(u => u.email.toLowerCase() === app.email.toLowerCase() || (app.name === "Arjun" && u.email === "user@voiceofstray.com"));
+            if (userToReject) {
+                userToReject.volunteer.approved = false;
+                userToReject.volunteer.status = "Rejected";
+                localStorage.setItem("voiceOfStrayUsers", JSON.stringify(users));
+
+                const currentUserRaw = localStorage.getItem("currentUser");
+                if (currentUserRaw) {
+                    try {
+                        const currentUser = JSON.parse(currentUserRaw);
+                        if (currentUser.email.toLowerCase() === userToReject.email.toLowerCase()) {
+                            currentUser.volunteer.approved = false;
+                            currentUser.volunteer.status = "Rejected";
+                            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                        }
+                    } catch(e){}
+                }
+            }
+
+            // Create notification in user notifications storage
+            let notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-x-circle",
+                message: `Hello ${app.name}, your volunteer application was not approved at this time.`,
+                time: "Just now",
+                unread: true
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            alert(`Volunteer application for ${app.name} has been rejected.`);
+            loadVolunteerApplications();
+        }
+
+        // View volunteer application details in modal
+        function viewVolunteerApplication(appId) {
+            const apps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            const app = apps.find(a => a.id === appId);
+            if (!app) return;
+
+            let detailsHtml = `
+                <div style="font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; gap: 16px; color: #334155;">
+                    <div style="background: rgba(249, 115, 22, 0.05); padding: 16px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2);">
+                        <h4 style="margin: 0 0 8px 0; color: #0f172a; font-weight: 700; font-size: 1rem;">Volunteer Details</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
+                            <span><strong>Name:</strong> ${app.name}</span>
+                            <span><strong>Email:</strong> ${app.email}</span>
+                            <span><strong>Phone:</strong> ${app.phone || 'N/A'}</span>
+                            <span><strong>Applied Role:</strong> ${app.role}</span>
+                            <span><strong>Availability:</strong> ${app.availability || 'Weekends'}</span>
+                            <span><strong>Skills:</strong> ${(app.skills && app.skills.length > 0) ? app.skills.join(', ') : 'None'}</span>
+                            <span><strong>Application Type:</strong> ${app.type.toUpperCase()}</span>
+                            <span><strong>Submitted:</strong> ${app.date}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px;">
+                        <button class="btn-adopt-act reject" style="padding: 10px 20px;" onclick="rejectVolunteerApplication('${app.id}'); closeOpsModal();">Reject Application</button>
+                        <button class="btn-adopt-act approve" style="padding: 10px 20px;" onclick="approveVolunteerApplication('${app.id}'); closeOpsModal();">Approve Application</button>
+                    </div>
+                </div>
+            `;
+
+            showOpsModal(`<i class="ph-fill ph-hand-heart" style="color: var(--primary);"></i> Volunteer Application for ${app.name}`, detailsHtml);
+        }
+
+        // Approve pending adoption request
+        function approveAdoption(petName, applicantName) {
+            let adoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+            let app = adoptions.find(a => a.petName === petName && a.applicantName === applicantName);
+            if (app) {
+                app.status = "Approved";
+                app.approvalDate = new Date().toLocaleDateString();
+            } else {
+                app = {
+                    id: "APPL-CHARLIE",
+                    petName: petName,
+                    breed: "Golden Retriever Mix",
+                    ngoName: "City Rescue NGO",
+                    applicantName: applicantName,
+                    applicantEmail: "arjun@example.com",
+                    status: "Approved",
+                    date: "1 day ago",
+                    approvalDate: new Date().toLocaleDateString()
+                };
+                adoptions.push(app);
+            }
+            localStorage.setItem("voiceOfStrayAdoptions", JSON.stringify(adoptions));
+
+            // Add user notification
+            let notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-check-circle",
+                message: `Congratulations! Your adoption application for **${petName}** has been **Approved** by the shelter.`,
+                time: "Just now",
+                unread: true
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            alert(`Simulating application approval: adoption for pet '${petName}' by applicant '${applicantName}' Approved successfully!`);
+
+            loadAdoptionRequests();
+        }
+
+        // Reject adoption request
+        function rejectAdoption(petName, applicantName) {
+            let adoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+            let app = adoptions.find(a => a.petName === petName && a.applicantName === applicantName);
+            if (app) {
+                app.status = "Rejected";
+                app.rejectionDate = new Date().toLocaleDateString();
+            } else {
+                app = {
+                    id: "APPL-CHARLIE",
+                    petName: petName,
+                    breed: "Golden Retriever Mix",
+                    ngoName: "City Rescue NGO",
+                    applicantName: applicantName,
+                    applicantEmail: "arjun@example.com",
+                    status: "Rejected",
+                    date: "1 day ago",
+                    rejectionDate: new Date().toLocaleDateString()
+                };
+                adoptions.push(app);
+            }
+            localStorage.setItem("voiceOfStrayAdoptions", JSON.stringify(adoptions));
+
+            // Add user notification
+            let notifications = JSON.parse(localStorage.getItem("voiceOfStrayNotifications") || "[]");
+            notifications.unshift({
+                id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                icon: "ph-fill ph-x-circle",
+                message: `We regret to inform you that your application for **${petName}** was **Declined** after review.`,
+                time: "Just now",
+                unread: true
+            });
+            localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+            alert(`Simulating application dismissal: adoption for pet '${petName}' by applicant '${applicantName}' Rejected.`);
+
+            loadAdoptionRequests();
+        }
+
+        // View Adoption Details in modal
+        function viewAdoptionDetails(appId) {
+            let app;
+            if (appId === 'charlie') {
+                app = {
+                    petName: "Charlie",
+                    breed: "Golden Retriever Mix",
+                    applicantName: "Arjun",
+                    applicantEmail: "arjun@example.com",
+                    applicantPhone: "+91 98765 43210",
+                    city: "Mumbai",
+                    occupation: "Software Engineer",
+                    age: "28",
+                    ownRent: "own",
+                    hasYard: "yes",
+                    hasPets: "no",
+                    hasKids: "no",
+                    whyAdopt: "I fell in love with Charlie's gentle eyes. We have a spacious home with a fenced yard and plenty of time to spend with him.",
+                    aloneHours: "1-2 hours (work from home)",
+                    ownedBefore: "Grew up with dogs, raised a Labrador for 12 years.",
+                    emergencies: "Dedicated pet emergency savings fund, local 24/7 clinic is 10 mins away.",
+                    adjustPlan: "Taking 2 weeks off to help him adjust. Slow introductions and a calm, quiet routine.",
+                    status: "Pending Review",
+                    date: "1 day ago"
+                };
+            } else {
+                const adoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+                app = adoptions.find(a => a.id === appId);
+            }
+
+            if (app) {
+                let petsDescText = app.hasPets === 'yes' ? `<p style="margin: 4px 0 0 0;"><strong>Pet Description:</strong> ${app.petsDesc}</p>` : '';
+
+                let modalContent = `
+                    <div style="font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; gap: 16px; color: #334155;">
+                        <div style="background: rgba(249, 115, 22, 0.05); padding: 16px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2);">
+                            <h4 style="margin: 0 0 8px 0; color: #0f172a; font-weight: 700; font-size: 1rem;">Applicant Details</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
+                                <span><strong>Name:</strong> ${app.applicantName}</span>
+                                <span><strong>Age:</strong> ${app.age}</span>
+                                <span><strong>Phone:</strong> ${app.applicantPhone}</span>
+                                <span><strong>Email:</strong> ${app.applicantEmail}</span>
+                                <span><strong>City:</strong> ${app.city}</span>
+                                <span><strong>Occupation:</strong> ${app.occupation}</span>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(249, 115, 22, 0.05); padding: 16px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2);">
+                            <h4 style="margin: 0 0 8px 0; color: #0f172a; font-weight: 700; font-size: 1rem;">Living Environment</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
+                                <span><strong>Ownership:</strong> ${app.ownRent === 'own' ? 'Owns Home' : 'Rents Home'}</span>
+                                <span><strong>Yard:</strong> ${app.hasYard === 'yes' ? 'Has Yard' : 'No Yard'}</span>
+                                <span><strong>Other Pets:</strong> ${app.hasPets === 'yes' ? 'Yes' : 'No'}</span>
+                                <span><strong>Kids:</strong> ${app.hasKids === 'yes' ? 'Yes' : 'No'}</span>
+                            </div>
+                            ${petsDescText}
+                        </div>
+
+                        <div style="background: rgba(249, 115, 22, 0.05); padding: 16px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2);">
+                            <h4 style="margin: 0 0 8px 0; color: #0f172a; font-weight: 700; font-size: 1rem;">Questionnaire</h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                                <div>
+                                    <strong>Why adopt ${app.petName}?</strong>
+                                    <p style="margin: 4px 0 0 0; font-style: italic; color: #475569;">"${app.whyAdopt}"</p>
+                                </div>
+                                <div>
+                                    <strong>Alone hours per day:</strong>
+                                    <p style="margin: 4px 0 0 0; color: #475569;">${app.aloneHours}</p>
+                                </div>
+                                <div>
+                                    <strong>Previous pet raising experience:</strong>
+                                    <p style="margin: 4px 0 0 0; font-style: italic; color: #475569;">"${app.ownedBefore}"</p>
+                                </div>
+                                <div>
+                                    <strong>Handling medical emergencies:</strong>
+                                    <p style="margin: 4px 0 0 0; font-style: italic; color: #475569;">"${app.emergencies}"</p>
+                                </div>
+                                <div>
+                                    <strong>Transition & adaptation plan:</strong>
+                                    <p style="margin: 4px 0 0 0; font-style: italic; color: #475569;">"${app.adjustPlan}"</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px;">
+                            <button class="btn-adopt-act reject" style="padding: 10px 20px;" onclick="rejectAdoption('${app.petName}', '${app.applicantName}'); closeOpsModal();">Reject Application</button>
+                            <button class="btn-adopt-act approve" style="padding: 10px 20px;" onclick="approveAdoption('${app.petName}', '${app.applicantName}'); closeOpsModal();">Approve Application</button>
+                        </div>
+                    </div>
+                `;
+
+                showOpsModal(`<i class="ph-fill ph-notepad" style="color: var(--primary);"></i> Review Adoption Application for ${app.petName}`, modalContent);
+            }
+        }
+
+        // Smooth scrolling helper
+        function scrollToSection(sectionId) {
+            const el = document.getElementById(sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Subtle attention pulsing border highlight
+                el.style.transition = 'border-color 0.3s ease, box-shadow 0.3s ease';
+                el.style.borderColor = 'var(--primary)';
+                el.style.boxShadow = '0 0 15px rgba(249, 115, 22, 0.25)';
+                setTimeout(() => {
+                    el.style.borderColor = '';
+                    el.style.boxShadow = '';
+                }, 1500);
+            }
+        }
+
+        // Reusable Modal Actions
+        function showOpsModal(title, contentHtml) {
+            document.getElementById("ops-modal-title").innerHTML = title;
+            document.getElementById("ops-modal-body").innerHTML = contentHtml;
+            document.getElementById("ops-modal").classList.add("show");
+        }
+
+        function closeOpsModal() {
+            document.getElementById("ops-modal").classList.remove("show");
+        }
+
+        // Animals Under Care Modal Content Loader
+        function showAnimalsUnderCareModal() {
+            const animals = [
+                { name: "Daisy", breed: "Beagle Mix", age: "2 years", status: "Post-surgery recovery", icon: "ph-first-aid" },
+                { name: "Rocky", breed: "Indie Stray", age: "1 year", status: "Physical therapy", icon: "ph-activity" },
+                { name: "Mittens", breed: "Tabby Cat", age: "6 months", status: "Vaccinated, ready for foster", icon: "ph-check-circle" },
+                { name: "Leo", breed: "Labrador", age: "4 years", status: "Skin treatment ongoing", icon: "ph-pill" },
+                { name: "Bella", breed: "Spitz Mix", age: "3 years", status: "Malnutrition rehabilitation", icon: "ph-heart" },
+                { name: "Simba", breed: "Persian Cat", age: "2 years", status: "Behavioral assessment", icon: "ph-eye" }
+            ];
+
+            let html = `
+                <p style="margin-top: 0; margin-bottom: 16px; color: var(--text-muted); font-weight: 500;">Currently housing 18 rescues across your partner shelters. Here are active listings:</p>
+                <div class="modal-list">
+            `;
+
+            animals.forEach(a => {
+                html += `
+                    <div class="modal-list-item">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(249,115,22,0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                <i class="ph ${a.icon}"></i>
+                            </div>
+                            <div>
+                                <h5 style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 0 0 2px 0;">${a.name} (${a.breed})</h5>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Age: ${a.age}</span>
+                            </div>
+                        </div>
+                        <span class="status-pill busy" style="background: rgba(249,115,22,0.06); color: var(--primary); font-size: 0.7rem; font-weight: 700;">${a.status}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn-premium primary" style="padding: 8px 16px; font-size: 0.8rem;" onclick="closeOpsModal()">Close View</button>
+                </div>
+            `;
+
+            showOpsModal(`<i class="ph-fill ph-house-line" style="color: var(--primary);"></i> Animals Under Care Listing`, html);
+        }
+
+        // Rescues This Month Modal Content Loader
+        function showSuccessfulRescuesModal() {
+            const cases = [
+                { id: "RSC-4821", type: "Injured Cat", loc: "Anna Nagar Area", date: "May 28", vol: "Ravi" },
+                { id: "RSC-4805", type: "Dehydrated Dog", loc: "Vadapalani", date: "May 24", vol: "Priya" },
+                { id: "RSC-4789", type: "Fractured Calf", loc: "Guindy Highway", date: "May 19", vol: "Akash" },
+                { id: "RSC-4762", type: "Abandoned Pups", loc: "Besant Nagar", date: "May 12", vol: "Ravi" },
+                { id: "RSC-4712", type: "Trapped Kitten", loc: "Velachery", date: "May 05", vol: "Priya" }
+            ];
+
+            let html = `
+                <p style="margin-top: 0; margin-bottom: 16px; color: var(--text-muted); font-weight: 500;">15 emergency cases successfully resolved and rehomed/sheltered this month:</p>
+                <div class="modal-list">
+            `;
+
+            cases.forEach(c => {
+                html += `
+                    <div class="modal-list-item">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 38px; height: 38px; border-radius: 50%; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                <i class="ph ph-check-square"></i>
+                            </div>
+                            <div>
+                                <h5 style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 0 0 2px 0;">#${c.id} - ${c.type}</h5>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Location: ${c.loc} • Rescued by ${c.vol}</span>
+                            </div>
+                        </div>
+                        <span class="status-pill available" style="font-size: 0.7rem; font-weight: 800;">${c.date}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn-premium primary" style="padding: 8px 16px; font-size: 0.8rem;" onclick="closeOpsModal()">Close View</button>
+                </div>
+            `;
+
+            showOpsModal(`<i class="ph-fill ph-check-circle" style="color: #15803d;"></i> Successful Rescues This Month`, html);
+        }
+
+        function initializeDonations() {
+            let donations = localStorage.getItem("voiceOfStrayDonations");
+            let needsReset = false;
+            if (donations) {
+                try {
+                    const parsed = JSON.parse(donations);
+                    // Check if it is the old set of 7 template donations
+                    if (parsed.length === 7 && parsed[0].id === "DON-001" && parsed[0].donor === "John Doe" && parsed[0].date === "2026-06-15") {
+                        needsReset = true;
+                    }
+                } catch (e) {
+                    needsReset = true;
+                }
+            }
+            if (!donations || needsReset) {
+                const defaultDonations = [
+                    // June 2026 donations (15 donations, total 81,000, 15 unique donors)
+                    { id: "DON-001", donor: "John Doe", amount: 5000, date: "2026-06-18", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-002", donor: "Sarah Smith", amount: 2500, date: "2026-06-17", purpose: "General Fund" },
+                    { id: "DON-003", donor: "Mike Johnson", amount: 10000, date: "2026-06-16", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-004", donor: "Arjun Mehta", amount: 1500, date: "2026-06-15", purpose: "Medical Supplies" },
+                    { id: "DON-005", donor: "Priya Sharma", amount: 3500, date: "2026-06-14", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-006", donor: "Vikram Malhotra", amount: 20000, date: "2026-06-12", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-007", donor: "Rajesh Kumar", amount: 15000, date: "2026-06-10", purpose: "General Fund" },
+                    { id: "DON-008", donor: "Amit Patel", amount: 8000, date: "2026-06-08", purpose: "Medical Supplies" },
+                    { id: "DON-009", donor: "Sneha Reddy", amount: 4500, date: "2026-06-05", purpose: "General Fund" },
+                    { id: "DON-010", donor: "Ananya Sen", amount: 3000, date: "2026-06-04", purpose: "Medical Supplies" },
+                    { id: "DON-011", donor: "Karan Johar", amount: 2000, date: "2026-06-03", purpose: "General Fund" },
+                    { id: "DON-012", donor: "Rohan Das", amount: 1000, date: "2026-06-02", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-013", donor: "Neha Gupta", amount: 2500, date: "2026-06-02", purpose: "General Fund" },
+                    { id: "DON-014", donor: "Deepak Singh", amount: 1500, date: "2026-06-01", purpose: "Medical Supplies" },
+                    { id: "DON-015", donor: "Sanjay Dutt", amount: 1000, date: "2026-06-01", purpose: "General Fund" },
+
+                    // May 2026 donations (18 donations, total 1,60,000, 18 unique donors)
+                    { id: "DON-016", donor: "David Lee", amount: 5000, date: "2026-05-28", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-017", donor: "Emma Watson", amount: 12000, date: "2026-05-26", purpose: "General Fund" },
+                    { id: "DON-018", donor: "Kavita Rao", amount: 25000, date: "2026-05-24", purpose: "General Fund" },
+                    { id: "DON-019", donor: "Aditya Roy", amount: 18000, date: "2026-05-22", purpose: "General Fund" },
+                    { id: "DON-020", donor: "Pooja Hegde", amount: 6000, date: "2026-05-20", purpose: "Medical Supplies" },
+                    { id: "DON-021", donor: "Abhishek Bachchan", amount: 14000, date: "2026-05-18", purpose: "General Fund" },
+                    { id: "DON-022", donor: "Aishwarya Rai", amount: 9500, date: "2026-05-16", purpose: "General Fund" },
+                    { id: "DON-023", donor: "Salman Khan", amount: 30000, date: "2026-05-14", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-024", donor: "Katrina Kaif", amount: 4000, date: "2026-05-12", purpose: "Medical Supplies" },
+                    { id: "DON-025", donor: "Ranbir Kapoor", amount: 7500, date: "2026-05-10", purpose: "General Fund" },
+                    { id: "DON-026", donor: "Alia Bhatt", amount: 11000, date: "2026-05-08", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-027", donor: "Varun Dhawan", amount: 3000, date: "2026-05-06", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-028", donor: "Shraddha Kapoor", amount: 5000, date: "2026-05-05", purpose: "General Fund" },
+                    { id: "DON-029", donor: "Sidharth Malhotra", amount: 2000, date: "2026-05-04", purpose: "General Fund" },
+                    { id: "DON-030", donor: "Kiara Advani", amount: 4500, date: "2026-05-03", purpose: "General Fund" },
+                    { id: "DON-031", donor: "Kartik Aaryan", amount: 1500, date: "2026-05-02", purpose: "Medical Supplies" },
+                    { id: "DON-032", donor: "Kriti Sanon", amount: 2000, date: "2026-05-01", purpose: "General Fund" },
+                    { id: "DON-033", donor: "Sara Ali Khan", amount: 1000, date: "2026-05-01", purpose: "General Fund" },
+
+                    // Older donations (April 2026 & earlier, 16 donations, total 1,80,000, 16 unique donors)
+                    { id: "DON-034", donor: "Sachin Tendulkar", amount: 50000, date: "2026-04-28", purpose: "General Fund" },
+                    { id: "DON-035", donor: "Virat Kohli", amount: 40000, date: "2026-04-25", purpose: "General Fund" },
+                    { id: "DON-036", donor: "MS Dhoni", amount: 25000, date: "2026-04-20", purpose: "Emergency Rescue Fund" },
+                    { id: "DON-037", donor: "Rohit Sharma", amount: 15000, date: "2026-04-15", purpose: "Medical Supplies" },
+                    { id: "DON-038", donor: "Hardik Pandya", amount: 8000, date: "2026-04-10", purpose: "General Fund" },
+                    { id: "DON-039", donor: "KL Rahul", amount: 5000, date: "2026-04-05", purpose: "Medical Supplies" },
+                    { id: "DON-040", donor: "Jasprit Bumrah", amount: 12000, date: "2026-04-02", purpose: "General Fund" },
+                    { id: "DON-041", donor: "Rishabh Pant", amount: 6000, date: "2026-03-28", purpose: "General Fund" },
+                    { id: "DON-042", donor: "Ravindra Jadeja", amount: 4000, date: "2026-03-24", purpose: "Medical Supplies" },
+                    { id: "DON-043", stroke: "currentColor", donor: "Shikhar Dhawan", amount: 3000, date: "2026-03-20", purpose: "General Fund" },
+                    { id: "DON-044", donor: "Yuvraj Singh", amount: 5000, date: "2026-03-15", purpose: "General Fund" },
+                    { id: "DON-045", donor: "Suresh Raina", amount: 2000, date: "2026-03-10", purpose: "Medical Supplies" },
+                    { id: "DON-046", donor: "Gautam Gambhir", amount: 1000, date: "2026-03-05", purpose: "General Fund" },
+                    { id: "DON-047", donor: "Zaheer Khan", amount: 1500, date: "2026-02-28", purpose: "Medical Supplies" },
+                    { id: "DON-048", donor: "Harbhajan Singh", amount: 1500, date: "2026-02-20", purpose: "General Fund" },
+                    { id: "DON-049", donor: "Anil Kumble", amount: 1000, date: "2026-02-15", purpose: "General Fund" }
+                ];
+                localStorage.setItem("voiceOfStrayDonations", JSON.stringify(defaultDonations));
+            }
+        }
+
+        function syncDonationsOverview() {
+            initializeDonations();
+            let donations = JSON.parse(localStorage.getItem("voiceOfStrayDonations") || "[]");
+            if (donations.length === 0) return;
+
+            // 1. Calculate today's contributions (date is "2026-06-18")
+            const todayDonations = donations.filter(d => d.date === "2026-06-18");
+            const todayTotal = todayDonations.reduce((sum, d) => sum + Number(d.amount || d.donationAmount || 0), 0);
+
+            // 2. Calculate this month total (June 2026)
+            const juneDonations = donations.filter(d => d.date.startsWith("2026-06"));
+            const monthlyTotal = juneDonations.reduce((sum, d) => sum + Number(d.amount || d.donationAmount || 0), 0);
+
+            // Update DOM elements
+            const todayEl = document.getElementById("dashboard-today-donations");
+            if (todayEl) {
+                todayEl.textContent = `₹${todayTotal.toLocaleString("en-IN")}`;
+            }
+
+            const monthEl = document.getElementById("dashboard-monthly-donations");
+            if (monthEl) {
+                monthEl.textContent = `₹${monthlyTotal.toLocaleString("en-IN")}`;
+            }
+
+            // Update Month subtext: Target 1,00,000 progress
+            const target = 100000;
+            const progress = Math.min(100, Math.round((monthlyTotal / target) * 100));
+            const monthSubtextEl = document.getElementById("dashboard-monthly-subtext");
+            if (monthSubtextEl) {
+                monthSubtextEl.innerHTML = `<i class="ph ph-trend-up"></i> Target ₹1,00,000 (${progress}%)`;
+            }
+
+            // Calculate yesterday's contributions to calculate dynamic comparison for today
+            const yesterdayDonations = donations.filter(d => d.date === "2026-06-17");
+            const yesterdayTotal = yesterdayDonations.reduce((sum, d) => sum + Number(d.amount || d.donationAmount || 0), 0);
+
+            const todaySubtextEl = document.getElementById("dashboard-today-subtext");
+            if (todaySubtextEl) {
+                if (yesterdayTotal > 0) {
+                    const diffPercent = Math.round(((todayTotal - yesterdayTotal) / yesterdayTotal) * 100);
+                    if (diffPercent >= 0) {
+                        todaySubtextEl.innerHTML = `<i class="ph ph-trend-up"></i> +${diffPercent}% vs yesterday`;
+                        todaySubtextEl.style.color = "#15803d";
+                    } else {
+                        todaySubtextEl.innerHTML = `<i class="ph ph-trend-down"></i> ${diffPercent}% vs yesterday`;
+                        todaySubtextEl.style.color = "#ef4444";
+                    }
+                } else {
+                    todaySubtextEl.innerHTML = `<i class="ph ph-trend-up"></i> New donations active`;
+                    todaySubtextEl.style.color = "#15803d";
+                }
+            }
+
+            // 3. Calculate dynamic total donations count
+            const grandTotal = donations.reduce((sum, d) => sum + Number(d.amount || d.donationAmount || 0), 0);
+            const totalEl = document.getElementById("dashboard-total-donations");
+            if (totalEl) {
+                totalEl.textContent = `₹${grandTotal.toLocaleString("en-IN")}`;
+            }
+
+            // 4. Calculate dynamic unique active donors count
+            const uniqueDonors = new Set(donations.map(d => (d.donorEmail || (d.donorName || d.donor || '')).trim().toLowerCase()));
+            const activeDonorsEl = document.getElementById("dashboard-active-donors");
+            if (activeDonorsEl) {
+                activeDonorsEl.textContent = uniqueDonors.size;
+            }
+
+            // 5. Populate Recent Donations List
+            const recentListEl = document.getElementById("dashboard-recent-donations-list");
+            if (recentListEl) {
+                const sortedDonations = [...donations].sort((a, b) => {
+                    const dateDiff = b.date.localeCompare(a.date);
+                    if (dateDiff !== 0) return dateDiff;
+                    return donations.indexOf(a) - donations.indexOf(b);
+                });
+                const topDonations = sortedDonations.slice(0, 4);
+
+                let recentHtml = "";
+                topDonations.forEach(d => {
+                    const donorName = d.anonymous ? "Anonymous" : (d.donorName || d.donor || "Anonymous");
+                    const initials = donorName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+                    const campaignVal = d.campaign || d.purpose || "General Fund";
+                    const amountVal = d.amount || d.donationAmount || 0;
+
+                    let relativeTime = "Today";
+                    if (d.date === "2026-06-17") relativeTime = "Yesterday";
+                    else if (d.date !== "2026-06-18") {
+                        const tDate = new Date("2026-06-18T00:00:00");
+                        const dDate = new Date(d.date + "T00:00:00");
+                        const diff = Math.round((tDate - dDate) / (1000 * 60 * 60 * 24));
+                        relativeTime = diff > 0 ? `${diff} days ago` : d.date;
+                    }
+
+                    recentHtml += `
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(249, 115, 22, 0.04); border-radius: 8px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(249, 115, 22, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700;">
+                                    ${initials}
+                                </div>
+                                <div>
+                                    <h5 style="font-size: 0.88rem; font-weight: 700; color: #0f172a; margin: 0 0 2px 0;">${donorName}</h5>
+                                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">${relativeTime} &bull; ${campaignVal}</span>
+                                </div>
+                            </div>
+                            <span style="font-size: 0.9rem; font-weight: 800; color: #15803d;">+₹${Number(amountVal).toLocaleString("en-IN")}</span>
+                        </div>
+                    `;
+                });
+                recentListEl.innerHTML = recentHtml || `<div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); padding: 10px 0;">No donations recorded yet.</div>`;
+            }
+        }
+
+        function initializeReports() {
+            let reports = localStorage.getItem("voiceOfStrayReports");
+            if (!reports) {
+                const defaultReports = [
+                    {
+                        id: "4902",
+                        animalType: "Dog",
+                        breed: "Golden Retriever Mix",
+                        breedDesc: "Golden Retriever Mix",
+                        estimatedAge: "Puppy / Kitten",
+                        issueCategory: "Injury",
+                        title: "Dog (Golden Retriever Mix) near Anna Nagar",
+                        location: "Anna Nagar Area",
+                        reporterName: "Anjali Sharma",
+                        reporterPhone: "+91 98200 12345",
+                        reporterEmail: "anjali@example.com",
+                        dateSubmitted: "2026-06-18",
+                        timeSubmitted: "10:25 AM",
+                        priority: "Emergency",
+                        observedCondition: "Reported with severe leg fracture. Stranded near the street corner. Needs immediate emergency pickup.",
+                        description: "Reported with severe leg fracture. Stranded near the street corner. Needs immediate emergency pickup.",
+                        photo: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=500"
+                    },
+                    {
+                        id: "4903",
+                        animalType: "Cat",
+                        breed: "Indian Street Cat",
+                        breedDesc: "Indian Street Cat",
+                        estimatedAge: "Adult",
+                        issueCategory: "Illness",
+                        title: "Cat (Indian Street Cat) in T Nagar",
+                        location: "T Nagar Market",
+                        reporterName: "Rohan Sharma",
+                        reporterPhone: "+91 98765 43210",
+                        reporterEmail: "rohan@example.com",
+                        dateSubmitted: "2026-06-18",
+                        timeSubmitted: "10:12 AM",
+                        priority: "High Priority",
+                        observedCondition: "Stray cat collapsed in high heat. Volunteers have provided initial water, needs shelter transportation.",
+                        description: "Stray cat collapsed in high heat. Volunteers have provided initial water, needs shelter transportation.",
+                        photo: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=500"
+                    }
+                ];
+
+                let casesDb = {};
+                try {
+                    casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+                } catch (e) { }
+
+                const filteredReports = defaultReports.filter(rep => {
+                    const activeCase = casesDb[rep.id];
+                    return !(activeCase && activeCase.statusStep > 0);
+                });
+
+                localStorage.setItem("voiceOfStrayReports", JSON.stringify(filteredReports));
+            }
+        }
+
+        function renderIncomingReports() {
+            const reports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const reportsGrid = document.getElementById("incoming-reports-grid");
+            if (!reportsGrid) return;
+
+            // Update sidebar reports count badge
+            const reportsBadge = document.getElementById("sidebar-reports-badge");
+            if (reportsBadge) {
+                reportsBadge.textContent = `${reports.length} New`;
+                reportsBadge.style.display = reports.length > 0 ? "inline-block" : "none";
+            }
+
+            if (reports.length === 0) {
+                reportsGrid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon" style="background: rgba(16, 185, 129, 0.06); color: #10b981;">
+                            <i class="ph ph-shield-check"></i>
+                        </div>
+                        <h4>All caught up!</h4>
+                        <p>No incoming rescue reports at the moment. Active operations are en route safely.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = "";
+            reports.forEach(r => {
+                const breedVal = r.breed || r.breedDesc || 'Other / Unknown';
+                const ageVal = r.estimatedAge || 'Unknown';
+                const categoryVal = r.issueCategory || 'Other';
+                const conditionVal = r.observedCondition || r.description || '';
+                html += `
+                    <div class="incident-card" id="report-card-${r.id}">
+                        <div class="incident-header">
+                            <span class="incident-id">#RSC-${r.id}</span>
+                            <span class="incident-time"><i class="ph ph-clock"></i> ${r.timeSubmitted || 'Just now'}</span>
+                        </div>
+                        <div>
+                            <h4 class="incident-title"><i class="ph-fill ph-paw-print" style="color: var(--primary);"></i> ${r.animalType} (${breedVal})</h4>
+                            <div class="incident-loc" style="margin-top: 6px;"><i class="ph-fill ph-map-pin"></i> ${r.location}</div>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; font-weight: 500;">
+                            <strong>Age:</strong> ${ageVal} | <strong>Category:</strong> ${categoryVal}<br>
+                            <strong>Condition:</strong> ${conditionVal}
+                        </div>
+                        <div class="incident-actions">
+                            <button class="btn-inc-primary" style="flex: 1; width: 100%;" onclick="window.location.href='ngo-report-review.html?id=${r.id}'">View Details</button>
+                        </div>
+                    </div>
+                `;
+            });
+            reportsGrid.innerHTML = html;
+        }
+
+        function renderActiveCases() {
+            const activeList = document.getElementById("active-cases-list");
+            if (!activeList) return;
+
+            // Initialize DB in localStorage if empty
+            if (!localStorage.getItem("voiceOfStrayCases")) {
+                const defaultCases = {
+                    "4902": {
+                        id: "4902",
+                        animal: "Dog (Golden Retriever Mix)",
+                        animalType: "Dog",
+                        breed: "Golden Retriever Mix",
+                        breedDesc: "Golden Retriever Mix",
+                        estimatedAge: "Puppy / Kitten",
+                        issueCategory: "Injury",
+                        location: "Linking Road, Bandra West",
+                        reportedTime: "10:25 AM",
+                        condition: "Fractured Leg, Dehydrated",
+                        observedCondition: "Fractured Leg, Dehydrated",
+                        severity: "Emergency",
+                        status: "Reported",
+                        statusStep: 0,
+                        reporter: { name: "Anjali Sharma", phone: "+91 98200 12345", notes: "Puppy unable to walk. Seen near roadside." },
+                        team: { ngo: "Paws Haven NGO", lead: null, volunteers: [] },
+                        timeline: [{ time: "10:25 AM", text: "Rescue report received." }],
+                        notes: "Possible fracture. Requires X-ray evaluation.",
+                        photos: { before: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+                    },
+                    "4888": {
+                        id: "4888",
+                        animal: "Dog (Other / Unknown)",
+                        animalType: "Dog",
+                        breed: "Other / Unknown",
+                        breedDesc: "Other / Unknown",
+                        estimatedAge: "Adult",
+                        issueCategory: "Injury",
+                        location: "Anna Nagar Area",
+                        reportedTime: "09:15 AM",
+                        condition: "Bleeding near paw, whimpering",
+                        observedCondition: "Bleeding near paw, whimpering",
+                        severity: "Emergency",
+                        status: "Volunteer Assigned",
+                        statusStep: 2,
+                        reporter: { name: "Rohan Sharma", phone: "+91 98765 43210", notes: "Dog is sitting under the green dustbin. Limping and whimpering." },
+                        team: {
+                            ngo: "Paws Haven NGO",
+                            lead: {
+                                username: "Priya",
+                                email: "priya@example.com",
+                                role: "Emergency Rescue",
+                                assignedDate: "14 Jun 2026",
+                                status: "Assigned"
+                            },
+                            volunteers: []
+                        },
+                        timeline: [{ time: "09:20 AM", text: "Case accepted by Paws Haven NGO." }, { time: "09:15 AM", text: "Rescue report received." }],
+                        notes: "Volunteer Priya en-route with ambulance.",
+                        photos: { before: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+                    },
+                    "4871": {
+                        id: "4871",
+                        animal: "Cat (Other / Unknown)",
+                        animalType: "Cat",
+                        breed: "Other / Unknown",
+                        breedDesc: "Other / Unknown",
+                        estimatedAge: "Young",
+                        issueCategory: "Injury",
+                        location: "Metro Vet Center",
+                        reportedTime: "08:30 AM",
+                        condition: "Fractured hind leg, skin scabs",
+                        observedCondition: "Fractured hind leg, skin scabs",
+                        severity: "High Priority",
+                        status: "Treatment",
+                        statusStep: 5,
+                        reporter: { name: "Meera Nair", phone: "+91 87654 32109", notes: "Found limping near Andheri subway under a parked car." },
+                        team: {
+                            ngo: "Paws Haven NGO",
+                            lead: {
+                                username: "Akash",
+                                email: "akash@example.com",
+                                role: "Transport Assistance",
+                                assignedDate: "13 Jun 2026",
+                                status: "Assigned"
+                            },
+                            volunteers: []
+                        },
+                        timeline: [{ time: "09:00 AM", text: "Treatment started at Metro Vet Center." }, { time: "08:50 AM", text: "Animal safely reached Metro Vet clinic." }, { time: "08:45 AM", text: "Cat successfully rescued and placed in carrier." }, { time: "08:30 AM", text: "Rescue report received." }],
+                        notes: "Hind leg splinted. Antibiotics started.",
+                        photos: { before: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300", during: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&q=80&w=300", treatment: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=300", recovery: "" }
+                    }
+                };
+                localStorage.setItem("voiceOfStrayCases", JSON.stringify(defaultCases));
+            }
+
+            const casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases"));
+            let activeHtml = "";
+            let activeCount = 0;
+            let resolvedCount = 15; // baseline fallback
+
+            Object.keys(casesDb).forEach(id => {
+                const c = casesDb[id];
+                if (c) {
+                    if (c.statusStep >= 1 && c.statusStep < 8) {
+                        activeCount++;
+
+                        let pillClass = "busy";
+                        if (c.statusStep >= 5) pillClass = "clinic";
+
+                        let iconClass = "ph-fill ph-ambulance";
+                        if (c.statusStep === 2) iconClass = "ph-fill ph-user-check";
+                        else if (c.statusStep === 5) iconClass = "ph-fill ph-first-aid-kit";
+
+                        let lead = c.assignedVolunteerName || ((c.team.lead && typeof c.team.lead === 'object') ? (c.team.lead.username || "Not Assigned Yet") : (c.team.lead || "Not Assigned Yet"));
+
+                        activeHtml += `
+                            <div class="ops-item-card" id="active-case-${c.id}">
+                                <div class="active-item-left">
+                                    <div class="active-item-icon rescue" style="background: rgba(249, 115, 22, 0.08); color: var(--primary);">
+                                        <i class="${iconClass}"></i>
+                                    </div>
+                                    <div class="active-item-info">
+                                        <h5 style="font-size: 0.88rem;">#RSC-${c.id} - ${c.animal}</h5>
+                                        <p>Assigned: <strong>${lead}</strong></p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="status-pill ${pillClass}">${c.status}</span>
+                                    <button class="btn-view-details" onclick="window.location.href='ngo-rescue-manage.html?case=${c.id}'">View Details</button>
+                                    <button class="btn-status-update" onclick="updateCaseStatus('${c.id}', '${c.status}')">Update Status</button>
+                                </div>
+                            </div>
+                        `;
+                    } else if (c.statusStep >= 8 || c.status === "Completed") {
+                        resolvedCount++;
+                    }
+                }
+            });
+
+            if (activeCount === 0) {
+                activeList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="ph ph-check-circle"></i>
+                        </div>
+                        <h4>No active operations</h4>
+                        <p>All rescue operations have been successfully resolved. Good job team!</p>
+                    </div>
+                `;
+            } else {
+                activeList.innerHTML = activeHtml;
+            }
+
+            // Update counts
+            const statCard = document.getElementById("active-cases-count-card");
+            if (statCard) {
+                statCard.textContent = activeCount;
+            }
+
+            const sidebarBadge = document.getElementById("sidebar-cases-badge");
+            if (sidebarBadge) {
+                sidebarBadge.textContent = activeCount;
+            }
+
+            const resolvedCard = document.getElementById("resolved-cases-count-card");
+            if (resolvedCard) {
+                resolvedCard.textContent = resolvedCount;
+            }
+        }
+
+        function acceptCase(reportId) {
+            let reports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const reportIndex = reports.findIndex(r => r.id === reportId);
+            if (reportIndex === -1) return;
+
+            const report = reports[reportIndex];
+
+            let casesDb = {};
+            try {
+                casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            } catch (e) { }
+
+            const breedVal = report.breed || report.breedDesc || "Other / Unknown";
+            const displayTitle = `${report.animalType} (${breedVal})`;
+            casesDb[reportId] = {
+                id: reportId,
+                animal: displayTitle,
+                animalType: report.animalType,
+                breed: breedVal,
+                breedDesc: breedVal, // for compatibility
+                estimatedAge: report.estimatedAge || "Unknown",
+                issueCategory: report.issueCategory || "Other",
+                location: report.location,
+                reportedTime: report.timeSubmitted || "10:00 AM",
+                condition: report.observedCondition || report.description,
+                observedCondition: report.observedCondition || report.description, // for compatibility
+                severity: report.priority,
+                status: "Waiting for Volunteer",
+                statusStep: 1, // Step 1: NGO Accepted / Waiting for Volunteer
+                reporter: {
+                    name: report.reporterName,
+                    phone: report.reporterPhone,
+                    notes: report.observedCondition || report.description
+                },
+                team: {
+                    ngo: localStorage.getItem("username") || "Paws Haven NGO",
+                    lead: "",
+                    volunteers: []
+                },
+                timeline: [
+                    { time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: "Case accepted by NGO." }
+                ],
+                notes: "",
+                photos: {
+                    before: report.photo || (reportId === "4902" ? "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300"),
+                    during: "",
+                    treatment: "",
+                    recovery: ""
+                }
+            };
+
+            localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+
+            // Remove from reports
+            reports.splice(reportIndex, 1);
+            localStorage.setItem("voiceOfStrayReports", JSON.stringify(reports));
+
+            alert(`Report #${reportId} (${report.animalType}) has been accepted and moved to Active Cases!`);
+
+            // Rerender dashboard sections
+            renderIncomingReports();
+            renderActiveCases();
+        }
+
+        function updateCaseStatus(caseId, currentStatus, targetStep) {
+            let casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            if (!casesDb[caseId]) return;
+
+            const caseObj = casesDb[caseId];
+
+            if (targetStep === 'reached_clinic') {
+                caseObj.status = "Treatment";
+                caseObj.statusStep = 5;
+                caseObj.timeline.unshift({
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    text: "Animal safely reached vet clinic. Treatment started."
+                });
+            } else if (targetStep === 'completed') {
+                caseObj.status = "Completed";
+                caseObj.statusStep = 9;
+                caseObj.timeline.unshift({
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    text: "Rescue operation successfully completed."
+                });
+            } else {
+                // Cycle progression
+                if (caseObj.statusStep < 9) {
+                    caseObj.statusStep += 1;
+                    const stepLabels = [
+                        "Reported",
+                        "Waiting for Volunteer",
+                        "Volunteer Assigned",
+                        "Volunteer En Route",
+                        "Animal Rescued",
+                        "Treatment",
+                        "Recovery",
+                        "Ready for Adoption",
+                        "Adopted",
+                        "Completed"
+                    ];
+                    caseObj.status = stepLabels[caseObj.statusStep];
+                    caseObj.timeline.unshift({
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        text: `Status updated to ${caseObj.status}.`
+                    });
+                }
+            }
+
+            localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+            alert(`Status of Case #${caseId} updated successfully to: ${caseObj.status}!`);
+            renderActiveCases();
+        }
+    </script>
+
+    <!-- Reusable Premium Glassmorphic Modal -->
+    <div id="ops-modal" class="ops-modal-overlay" onclick="closeOpsModal()">
+        <div class="ops-modal-content glass-card" onclick="event.stopPropagation()">
+            <div class="ops-modal-header">
+                <h3 id="ops-modal-title">Modal Title</h3>
+                <button class="ops-modal-close" onclick="closeOpsModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="ops-modal-body" id="ops-modal-body">
+                <!-- Injected content -->
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

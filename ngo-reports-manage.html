@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incoming Reports Management - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+    <style>
+        body {
+            background-color: #fff9f5;
+            background-image:
+                radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Decorations */
+        .bg-decorations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .decor-item {
+            position: absolute;
+            opacity: 0.04;
+            color: #f97316;
+            fill: currentColor;
+        }
+
+        .decor-item.sparkle {
+            opacity: 0.12;
+            color: #fb923c;
+            filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.3));
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.08;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 0.2;
+            }
+        }
+
+        /* Nav Home button */
+        .nav-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.15);
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-home-link:hover {
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Layout structure */
+        .ops-container {
+            max-width: 1300px;
+            margin: 32px auto 64px;
+            padding: 0 24px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sidebar Styling */
+        .ops-sidebar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            box-shadow: 0 10px 25px -10px rgba(249, 115, 22, 0.04);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-brand-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .sidebar-brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-brand-section h3 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-item-left i {
+            font-size: 1.25rem;
+            transition: color 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(249, 115, 22, 0.05);
+            color: var(--primary);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, var(--primary), #ea580c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        .sidebar-item.active i {
+            color: white;
+        }
+
+        .sidebar-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .sidebar-badge.pulse-red {
+            background: #fee2e2;
+            color: #ef4444;
+            animation: pulseText 1.5s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .sidebar-badge.count-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        /* Main Panel styling */
+        .ops-main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Glassmorphic Card base */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px -12px rgba(249, 115, 22, 0.08);
+            border-color: rgba(249, 115, 22, 0.15);
+        }
+
+        /* Summary Metrics Grid styling */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .metric-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .metric-title {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-icon-bg {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .metric-value {
+            font-size: 1.85rem;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1;
+            letter-spacing: -0.5px;
+            margin: 6px 0 2px 0;
+        }
+
+        .metric-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 0;
+        }
+
+        /* Incident List layout */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .report-item-card {
+            background: white;
+            border: 1px solid rgba(249, 115, 22, 0.08);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .report-item-card:hover {
+            border-color: rgba(249, 115, 22, 0.2);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-id {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .report-id.emergency {
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .report-id.high-priority {
+            color: #d97706;
+            background: #fef3c7;
+        }
+
+        .report-id.normal {
+            color: #2563eb;
+            background: #dbeafe;
+        }
+
+        .report-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .report-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 2px 0;
+        }
+
+        .report-loc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .report-loc i {
+            color: var(--primary);
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .btn-report-accept {
+            flex: 1.2;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.2);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-report-accept:hover {
+            background: #ea580c;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-report-view {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            text-align: center;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-report-view:hover {
+            background: var(--bg-main);
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        .btn-report-reject {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            text-align: center;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #ef4444;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-report-reject:hover {
+            background: #fca5a5;
+            color: #b91c1c;
+        }
+
+        /* Rejected Table Section styling */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+        }
+
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .premium-table th {
+            padding: 14px 16px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(249, 115, 22, 0.03);
+            border-bottom: 2px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .premium-table td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            color: #1e293b;
+            border-bottom: 1px solid rgba(249, 115, 22, 0.05);
+            vertical-align: middle;
+        }
+
+        .premium-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .premium-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .premium-table tbody tr:hover {
+            background-color: rgba(249, 115, 22, 0.02);
+        }
+
+        .priority-badge {
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .priority-badge.emergency {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .priority-badge.high {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-badge.medium {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .priority-badge.low {
+            background: #f1f5f9;
+            color: #475569;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background decorations -->
+    <div class="bg-decorations">
+        <!-- Paws and sparkles -->
+        <svg class="decor-item" style="top: 15%; left: 4%; width: 110px; transform: rotate(-10deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <svg class="decor-item" style="bottom: 12%; right: 5%; width: 130px; transform: rotate(18deg);"
+            viewBox="0 0 100 100">
+            <ellipse cx="25" cy="40" rx="9" ry="12" />
+            <ellipse cx="42" cy="25" rx="9" ry="12" />
+            <ellipse cx="62" cy="25" rx="9" ry="12" />
+            <ellipse cx="78" cy="40" rx="9" ry="12" />
+            <path
+                d="M 28 65 C 28 50, 40 45, 52 45 C 64 45, 76 50, 76 65 C 76 80, 64 85, 52 85 C 40 85, 28 80, 28 65 Z" />
+        </svg>
+
+        <svg class="decor-item sparkle" style="top: 25%; left: 35%; width: 24px;" viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+        <svg class="decor-item sparkle" style="bottom: 28%; left: 20%; width: 28px; animation-delay: 1s;"
+            viewBox="0 0 24 24">
+            <path d="M12,2 L14.5,9.5 L22,12 L14.5,14.5 L12,22 L9.5,14.5 L2,12 L9.5,9.5 Z" />
+        </svg>
+    </div>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-home-link">
+                    <i class="ph ph-house"></i>
+                    <span>Home</span>
+                </a>
+            </div>
+
+            <!-- Guest State -->
+            <div class="nav-actions guest-actions">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">3</span>
+                </button>
+
+                <button class="icon-btn">
+                    <i class="ph ph-bell"></i>
+                </button>
+
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace Body -->
+    <div class="ops-container">
+
+        <!-- 1. Permanent Left Sidebar -->
+        <aside class="ops-sidebar">
+            <div class="sidebar-brand-section">
+                <div class="sidebar-brand-icon">
+                    <i class="ph-fill ph-shield-heart"></i>
+                </div>
+                <div>
+                    <h3>Rescue Center</h3>
+                    <span
+                        style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Ops
+                        Command</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="sidebar-item" onclick="window.location.href='ngo-dashboard.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Dashboard</span>
+                    </span>
+                </div>
+                <div class="sidebar-item active">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-bell-ringing"></i>
+                        <span>Incoming Reports</span>
+                    </span>
+                    <span class="sidebar-badge pulse-red" id="sidebar-reports-badge">0 New</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-dashboard.html#active-cases-section'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-ambulance"></i>
+                        <span>Active Cases</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-cases-badge">0</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-volunteer-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-hand-heart"></i>
+                        <span>Volunteer Management</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-vol-badge"
+                        style="background: #e0f2fe; color: #0284c7;">0</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-adopt-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-house-line"></i>
+                        <span>Adoption Requests</span>
+                    </span>
+                    <span class="sidebar-badge count-green" id="sidebar-adoption-badge"
+                        style="background: #fce7f3; color: #db2777;">0</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-pet-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-note-pencil"></i>
+                        <span>Manage Pets (Builder)</span>
+                    </span>
+                    <span class="sidebar-badge"
+                        style="background: rgba(249, 115, 22, 0.1); color: var(--primary); font-weight: 800;">Builder</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-donation-manage.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-coins"></i>
+                        <span>Donations</span>
+                    </span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='ngo-settings.html'">
+                    <span class="sidebar-item-left">
+                        <i class="ph ph-gear"></i>
+                        <span>Settings</span>
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. Main content area -->
+        <main class="ops-main-panel">
+
+            <!-- Page Title Header -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <h1 style="font-size: 2.1rem; font-weight: 900; color: #0f172a; letter-spacing: -0.5px; margin: 0;">
+                    Incoming Reports Management</h1>
+                <p style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500; margin: 0;">Review newly
+                    submitted rescue reports, prioritize emergencies, and move valid reports into active rescue
+                    operations.</p>
+            </div>
+
+            <!-- Summary Metrics Cards -->
+            <section class="metrics-grid">
+                <!-- New Reports -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">New Reports</span>
+                        <div class="metric-icon-bg" style="background: rgba(239, 68, 68, 0.08); color: #ef4444;">
+                            <i class="ph-fill ph-bell-ringing"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-new-reports">0</h2>
+                    <p class="metric-subtext">Awaiting NGO Review</p>
+                </div>
+
+                <!-- High Priority Reports -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">High Priority</span>
+                        <div class="metric-icon-bg" style="background: rgba(245, 158, 11, 0.08); color: #f59e0b;">
+                            <i class="ph-fill ph-siren"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-priority-reports">0</h2>
+                    <p class="metric-subtext">Critical Rescue Alerts</p>
+                </div>
+
+                <!-- Assigned Reports -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Assigned Reports</span>
+                        <div class="metric-icon-bg" style="background: rgba(2, 132, 199, 0.08); color: #0284c7;">
+                            <i class="ph-fill ph-users-three"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-assigned-reports">2</h2>
+                    <p class="metric-subtext">Active Dispatches</p>
+                </div>
+
+                <!-- Resolved Reports -->
+                <div class="glass-card metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Resolved Reports</span>
+                        <div class="metric-icon-bg" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">
+                            <i class="ph-fill ph-check-circle"></i>
+                        </div>
+                    </div>
+                    <h2 class="metric-value" id="stat-resolved-reports">15</h2>
+                    <p class="metric-subtext">Completed This Month</p>
+                </div>
+            </section>
+
+            <!-- Pending Reports Section -->
+            <section class="glass-card" style="padding: 24px;">
+                <div class="ops-section-header" style="margin-bottom: 20px;">
+                    <span class="ops-section-title">
+                        <i class="ph-fill ph-warning-circle" style="color: var(--primary);"></i>
+                        <span>Pending Rescue Reports Awaiting Review</span>
+                    </span>
+                </div>
+                <div class="reports-grid" id="pending-reports-list">
+                    <!-- Reports will be dynamically loaded here -->
+                </div>
+            </section>
+
+            <!-- Rejected Reports Section -->
+            <section class="glass-card" style="padding: 24px;">
+                <div class="ops-section-header" style="margin-bottom: 20px;">
+                    <span class="ops-section-title">
+                        <i class="ph-fill ph-x-circle" style="color: #ef4444;"></i>
+                        <span>Rejected Reports</span>
+                    </span>
+                </div>
+                <div class="table-wrapper">
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Animal Type</th>
+                                <th>Rejection Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rejected-reports-tbody">
+                            <!-- Rejected reports will be dynamically loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Operations Footer -->
+    <footer class="premium-footer"
+        style="background-color: #fcf6f0; padding: 64px 24px 32px; border-top: 1px solid rgba(249, 115, 22, 0.15); margin-top: auto;">
+        <div class="footer-bottom"
+            style="max-width: 1200px; margin: 0 auto; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p style="margin-bottom: 8px;">Made with <i class="ph-fill ph-heart" style="color: var(--alert);"></i> for
+                stray rescue welfare NGOs</p>
+            <p>&copy; 2026 Voice of Stray NGO Operations. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modal for viewing details -->
+    <div id="ops-modal" class="ops-modal-overlay" onclick="closeOpsModal()">
+        <div class="ops-modal-content glass-card" onclick="event.stopPropagation()">
+            <div class="ops-modal-header">
+                <h3 id="ops-modal-title">Modal Title</h3>
+                <button class="ops-modal-close" onclick="closeOpsModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="ops-modal-body" id="ops-modal-body">
+                <!-- Injected content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripting for data sync, accept/reject, modal rendering -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Strict Auth checks
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            if (!isLoggedIn) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const role = localStorage.getItem("role");
+            if (role !== "ngo") {
+                window.location.href = "user-dashboard.html";
+                return;
+            }
+
+            // Sync dynamic profile picture
+            const orgLogo = localStorage.getItem("avatarUrl") || "https://ui-avatars.com/api/?name=NGO&background=14b8a6&color=fff";
+            const profileImgs = document.querySelectorAll(".profile-pic img");
+            profileImgs.forEach(img => img.src = orgLogo);
+
+            initializeReports();
+            renderPage();
+        });
+
+        // Initialize reports from localStorage if not present
+        function initializeReports() {
+            if (!localStorage.getItem("voiceOfStrayCases")) {
+                const defaultCases = {
+                    "4902": {
+                        id: "4902",
+                        animal: "Dog (Golden Retriever Mix)",
+                        animalType: "Dog",
+                        breed: "Golden Retriever Mix",
+                        breedDesc: "Golden Retriever Mix",
+                        estimatedAge: "Puppy / Kitten",
+                        issueCategory: "Injury",
+                        location: "Linking Road, Bandra West",
+                        reportedTime: "10:25 AM",
+                        condition: "Fractured Leg, Dehydrated",
+                        observedCondition: "Fractured Leg, Dehydrated",
+                        severity: "Emergency",
+                        status: "Reported",
+                        statusStep: 0,
+                        reporter: { name: "Anjali Sharma", phone: "+91 98200 12345", notes: "Puppy unable to walk. Seen near roadside." },
+                        team: { ngo: "Paws Haven NGO", lead: null, volunteers: [] },
+                        timeline: [{ time: "10:25 AM", text: "Rescue report received." }],
+                        notes: "Possible fracture. Requires X-ray evaluation.",
+                        photos: { before: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+                    },
+                    "4888": {
+                        id: "4888",
+                        animal: "Dog (Other / Unknown)",
+                        animalType: "Dog",
+                        breed: "Other / Unknown",
+                        breedDesc: "Other / Unknown",
+                        estimatedAge: "Adult",
+                        issueCategory: "Injury",
+                        location: "Anna Nagar Area",
+                        reportedTime: "09:15 AM",
+                        condition: "Bleeding near paw, whimpering",
+                        observedCondition: "Bleeding near paw, whimpering",
+                        severity: "Emergency",
+                        status: "Volunteer Assigned",
+                        statusStep: 2,
+                        reporter: { name: "Rohan Sharma", phone: "+91 98765 43210", notes: "Dog is sitting under the green dustbin. Limping and whimpering." },
+                        team: {
+                            ngo: "Paws Haven NGO",
+                            lead: {
+                                username: "Priya",
+                                email: "priya@example.com",
+                                role: "Emergency Rescue",
+                                assignedDate: "14 Jun 2026",
+                                status: "Assigned"
+                            },
+                            volunteers: []
+                        },
+                        timeline: [{ time: "09:20 AM", text: "Case accepted by Paws Haven NGO." }, { time: "09:15 AM", text: "Rescue report received." }],
+                        notes: "Volunteer Priya en-route with ambulance.",
+                        photos: { before: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+                    },
+                    "4871": {
+                        id: "4871",
+                        animal: "Cat (Other / Unknown)",
+                        animalType: "Cat",
+                        breed: "Other / Unknown",
+                        breedDesc: "Other / Unknown",
+                        estimatedAge: "Young",
+                        issueCategory: "Injury",
+                        location: "Metro Vet Center",
+                        reportedTime: "08:30 AM",
+                        condition: "Fractured hind leg, skin scabs",
+                        observedCondition: "Fractured hind leg, skin scabs",
+                        severity: "High Priority",
+                        status: "Treatment",
+                        statusStep: 5,
+                        reporter: { name: "Meera Nair", phone: "+91 87654 32109", notes: "Found limping near Andheri subway under a parked car." },
+                        team: {
+                            ngo: "Paws Haven NGO",
+                            lead: {
+                                username: "Akash",
+                                email: "akash@example.com",
+                                role: "Transport Assistance",
+                                assignedDate: "13 Jun 2026",
+                                status: "Assigned"
+                            },
+                            volunteers: []
+                        },
+                        timeline: [{ time: "09:00 AM", text: "Treatment started at Metro Vet Center." }, { time: "08:50 AM", text: "Animal safely reached Metro Vet clinic." }, { time: "08:45 AM", text: "Cat successfully rescued and placed in carrier." }, { time: "08:30 AM", text: "Rescue report received." }],
+                        notes: "Hind leg splinted. Antibiotics started.",
+                        photos: { before: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300", during: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&q=80&w=300", treatment: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=300", recovery: "" }
+                    }
+                };
+                localStorage.setItem("voiceOfStrayCases", JSON.stringify(defaultCases));
+            }
+
+            let reports = localStorage.getItem("voiceOfStrayReports");
+            if (!reports) {
+                const defaultReports = [
+                    {
+                        id: "4902",
+                        animalType: "Dog",
+                        breed: "Golden Retriever Mix",
+                        breedDesc: "Golden Retriever Mix",
+                        estimatedAge: "Puppy / Kitten",
+                        issueCategory: "Injury",
+                        title: "Dog (Golden Retriever Mix) near Anna Nagar",
+                        location: "Anna Nagar Area",
+                        reporterName: "Anjali Sharma",
+                        reporterPhone: "+91 98200 12345",
+                        reporterEmail: "anjali@example.com",
+                        dateSubmitted: "2026-06-18",
+                        timeSubmitted: "10:25 AM",
+                        priority: "Emergency",
+                        observedCondition: "Reported with severe leg fracture. Stranded near the street corner. Needs immediate emergency pickup.",
+                        description: "Reported with severe leg fracture. Stranded near the street corner. Needs immediate emergency pickup.",
+                        photo: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=500"
+                    },
+                    {
+                        id: "4903",
+                        animalType: "Cat",
+                        breed: "Indian Street Cat",
+                        breedDesc: "Indian Street Cat",
+                        estimatedAge: "Adult",
+                        issueCategory: "Illness",
+                        title: "Cat (Indian Street Cat) in T Nagar",
+                        location: "T Nagar Market",
+                        reporterName: "Rohan Sharma",
+                        reporterPhone: "+91 98765 43210",
+                        reporterEmail: "rohan@example.com",
+                        dateSubmitted: "2026-06-18",
+                        timeSubmitted: "10:12 AM",
+                        priority: "High Priority",
+                        observedCondition: "Stray cat collapsed in high heat. Volunteers have provided initial water, needs shelter transportation.",
+                        description: "Stray cat collapsed in high heat. Volunteers have provided initial water, needs shelter transportation.",
+                        photo: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=500"
+                    }
+                ];
+
+                // Filter out reports that have already been accepted/moved into active cases
+                let casesDb = {};
+                try {
+                    casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+                } catch (e) { }
+
+                const filteredReports = defaultReports.filter(rep => {
+                    const activeCase = casesDb[rep.id];
+                    return !(activeCase && activeCase.statusStep > 0);
+                });
+
+                localStorage.setItem("voiceOfStrayReports", JSON.stringify(filteredReports));
+            }
+        }
+
+        // Main rendering orchestrator
+        function renderPage() {
+            const reports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const rejected = JSON.parse(localStorage.getItem("voiceOfStrayRejectedReports") || "[]");
+            let casesDb = {};
+            try {
+                casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            } catch (e) { }
+
+            // 1. Render Summary Cards
+            const newReportsCount = reports.length;
+            const highPriorityCount = reports.filter(r => r.priority && (r.priority === "Emergency" || r.priority === "High Priority" || r.priority === "High")).length;
+
+            // Count active cases from casesDb (statusStep >= 1 and < 8)
+            let activeCasesCount = 0;
+            let resolvedCasesCount = 15; // baseline fallback
+            Object.keys(casesDb).forEach(id => {
+                if (casesDb[id]) {
+                    if (casesDb[id].statusStep >= 1 && casesDb[id].statusStep < 8) {
+                        activeCasesCount++;
+                    } else if (casesDb[id].statusStep >= 8 || casesDb[id].status === "Completed" || casesDb[id].status === "Adopted") {
+                        resolvedCasesCount++;
+                    }
+                }
+            });
+
+            document.getElementById("stat-new-reports").textContent = newReportsCount;
+            document.getElementById("stat-priority-reports").textContent = highPriorityCount;
+            document.getElementById("stat-assigned-reports").textContent = activeCasesCount;
+            document.getElementById("stat-resolved-reports").textContent = resolvedCasesCount;
+
+            // 2. Sync Sidebar Badges
+            document.getElementById("sidebar-reports-badge").textContent = `${newReportsCount} New`;
+            document.getElementById("sidebar-reports-badge").style.display = newReportsCount > 0 ? "inline-block" : "none";
+            document.getElementById("sidebar-cases-badge").textContent = activeCasesCount;
+
+            // Load Adoption Request badge count
+            const storedAdoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+            const activeAdoptionsCount = storedAdoptions.filter(app => !app.archived && app.status !== "Approved" && app.status !== "Rejected" && app.status !== "Adopted").length;
+            document.getElementById("sidebar-adoption-badge").textContent = activeAdoptionsCount;
+
+            // Load Volunteer Management badge count
+            const storedVolApps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
+            document.getElementById("sidebar-vol-badge").textContent = storedVolApps.length;
+
+            // 3. Render Pending Reports Cards Grid
+            const pendingList = document.getElementById("pending-reports-list");
+            if (newReportsCount === 0) {
+                pendingList.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+                        <div style="font-size: 2.5rem; margin-bottom: 12px; color: #10b981;">
+                            <i class="ph ph-shield-check"></i>
+                        </div>
+                        <h4>All caught up!</h4>
+                        <p>No new incoming rescue reports at the moment.</p>
+                    </div>
+                `;
+            } else {
+                let cardsHtml = "";
+                reports.forEach(r => {
+                    const priorityClass = r.priority === "Emergency" ? "emergency" : (r.priority === "High" || r.priority === "High Priority" ? "high-priority" : "normal");
+                    const p = r.priority ? r.priority.toLowerCase() : 'low';
+                    const badgeClass = p.includes('emergency') ? 'emergency' : (p.includes('high') ? 'high' : (p.includes('medium') ? 'medium' : 'low'));
+                    const breedVal = r.breed || r.breedDesc || 'Other / Unknown';
+                    const ageVal = r.estimatedAge || 'Unknown';
+                    const categoryVal = r.issueCategory || 'Other';
+                    const conditionVal = r.observedCondition || r.description || '';
+                    cardsHtml += `
+                        <div class="report-item-card" id="report-card-${r.id}">
+                            <div class="report-header">
+                                <span class="report-id ${priorityClass}">#RSC-${r.id}</span>
+                                <span class="report-time"><i class="ph ph-clock"></i> ${r.timeSubmitted || 'Just now'}</span>
+                            </div>
+                            <div>
+                                <h4 class="report-title">
+                                    <i class="ph-fill ph-paw-print" style="color: var(--primary);"></i>
+                                    <span>${r.animalType} (${breedVal})</span>
+                                </h4>
+                                <div class="report-loc" style="margin-top: 6px;">
+                                    <i class="ph-fill ph-map-pin"></i>
+                                    <span>${r.location}</span>
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; font-weight: 500;">
+                                    Reporter: <strong>${r.reporterName}</strong> • Submitted: <strong>${r.dateSubmitted}</strong>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; font-weight: 500;">
+                                <strong>Age:</strong> ${ageVal} | <strong>Category:</strong> ${categoryVal}<br>
+                                <strong>Condition:</strong> ${conditionVal}
+                            </div>
+                            <div style="margin-top: 4px;">
+                                <span class="priority-badge ${badgeClass}">${r.priority}</span>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn-report-accept" style="flex: 1;" onclick="window.location.href='ngo-report-review.html?id=${r.id}'">View Details</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                pendingList.innerHTML = cardsHtml;
+            }
+
+            // 4. Render Rejected Reports Table
+            const rejectedBody = document.getElementById("rejected-reports-tbody");
+            if (rejected.length === 0) {
+                rejectedBody.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 24px;">No rejected reports in history.</td>
+                    </tr>
+                `;
+            } else {
+                let rejectedHtml = "";
+                // Render newest first
+                [...rejected].reverse().forEach(rep => {
+                    rejectedHtml += `
+                        <tr>
+                            <td><strong>#RSC-${rep.id}</strong></td>
+                            <td>${rep.animalType}</td>
+                            <td><span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">${rep.rejectionDate}</span></td>
+                        </tr>
+                    `;
+                });
+                rejectedBody.innerHTML = rejectedHtml;
+            }
+        }
+
+        // Accept report workflow
+        function acceptReport(reportId) {
+            let reports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const reportIndex = reports.findIndex(r => r.id === reportId);
+            if (reportIndex === -1) return;
+
+            const report = reports[reportIndex];
+
+            // Add to voiceOfStrayCases
+            let casesDb = {};
+            try {
+                casesDb = JSON.parse(localStorage.getItem("voiceOfStrayCases") || "{}");
+            } catch (e) { }
+
+            const breedVal = report.breed || report.breedDesc || "Other / Unknown";
+            const displayTitle = `${report.animalType} (${breedVal})`;
+            casesDb[reportId] = {
+                id: reportId,
+                animal: displayTitle,
+                animalType: report.animalType,
+                breed: breedVal,
+                breedDesc: breedVal, // for compatibility
+                estimatedAge: report.estimatedAge || "Unknown",
+                issueCategory: report.issueCategory || "Other",
+                location: report.location,
+                reportedTime: report.timeSubmitted || "10:00 AM",
+                condition: report.observedCondition || report.description,
+                observedCondition: report.observedCondition || report.description, // for compatibility
+                severity: report.priority,
+                status: "Waiting for Volunteer",
+                statusStep: 1, // Step 1: Waiting for Volunteer
+                reporter: {
+                    name: report.reporterName,
+                    phone: report.reporterPhone,
+                    notes: report.observedCondition || report.description
+                },
+                team: {
+                    ngo: localStorage.getItem("username") || "Paws Haven NGO",
+                    lead: null,
+                    volunteers: []
+                },
+                timeline: [
+                    { time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: "Case accepted by NGO." }
+                ],
+                notes: "",
+                photos: {
+                    before: report.photo || (reportId === "4902" ? "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300"),
+                    during: "",
+                    treatment: "",
+                    recovery: ""
+                }
+            };
+
+            localStorage.setItem("voiceOfStrayCases", JSON.stringify(casesDb));
+
+            // Remove from reports
+            reports.splice(reportIndex, 1);
+            localStorage.setItem("voiceOfStrayReports", JSON.stringify(reports));
+
+            alert(`Report #${reportId} (${report.animalType}) has been accepted and moved to Active Cases!`);
+            renderPage();
+        }
+
+        // Reject report workflow
+        function rejectReport(reportId) {
+            let reports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const reportIndex = reports.findIndex(r => r.id === reportId);
+            if (reportIndex === -1) return;
+
+            const report = reports[reportIndex];
+
+            // Add to voiceOfStrayRejectedReports
+            let rejected = [];
+            try {
+                rejected = JSON.parse(localStorage.getItem("voiceOfStrayRejectedReports") || "[]");
+            } catch (e) { }
+
+            rejected.push({
+                id: reportId,
+                animalType: report.animalType,
+                rejectionDate: new Date().toLocaleDateString('en-IN')
+            });
+
+            localStorage.setItem("voiceOfStrayRejectedReports", JSON.stringify(rejected));
+
+            // Remove from reports
+            reports.splice(reportIndex, 1);
+            localStorage.setItem("voiceOfStrayReports", JSON.stringify(reports));
+
+            alert(`Report #${reportId} (${report.animalType}) has been rejected and added to Rejected Reports.`);
+            renderPage();
+        }
+
+        // View Report Details in Modal
+        function viewReportDetails(reportId) {
+            const reports = JSON.parse(localStorage.getItem("voiceOfStrayReports") || "[]");
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+
+            const p = report.priority ? report.priority.toLowerCase() : 'low';
+            const badgeClass = p.includes('emergency') ? 'emergency' : (p.includes('high') ? 'high' : (p.includes('medium') ? 'medium' : 'low'));
+
+            const breedVal = report.breed || report.breedDesc || "Other / Unknown";
+            const ageVal = report.estimatedAge || "Unknown";
+            const categoryVal = report.issueCategory || "Other";
+            const conditionVal = report.observedCondition || report.description || "";
+            const detailsHtml = `
+                <div style="font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; gap: 16px; color: #334155;">
+                    <!-- Prominent Photo Display -->
+                    <div style="width: 100%; max-height: 280px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(249, 115, 22, 0.15); display: flex; justify-content: center; align-items: center; background: #fffdfb;">
+                        <img src="${report.photo || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=500'}" alt="${report.animalType}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+
+                    <div style="background: rgba(249, 115, 22, 0.05); padding: 16px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2);">
+                        <h4 style="margin: 0 0 8px 0; color: #0f172a; font-weight: 700; font-size: 1rem;">Reporter Information</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
+                            <span><strong>Name:</strong> ${report.reporterName}</span>
+                            <span><strong>Email:</strong> ${report.reporterEmail || 'N/A'}</span>
+                            <span><strong>Phone:</strong> ${report.reporterPhone || 'N/A'}</span>
+                            <span><strong>Submitted Date:</strong> ${report.dateSubmitted}</span>
+                            <span><strong>Submitted Time:</strong> ${report.timeSubmitted || 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(249, 115, 22, 0.05); padding: 16px; border-radius: 8px; border: 1px dashed rgba(249, 115, 22, 0.2);">
+                        <h4 style="margin: 0 0 8px 0; color: #0f172a; font-weight: 700; font-size: 1rem;">Case Details</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem; margin-bottom: 8px;">
+                            <span><strong>Report ID:</strong> #RSC-${report.id}</span>
+                            <span><strong>Animal Type:</strong> ${report.animalType}</span>
+                            <span><strong>Breed:</strong> ${breedVal}</span>
+                            <span><strong>Estimated Age:</strong> ${ageVal}</span>
+                            <span><strong>Issue Category:</strong> ${categoryVal}</span>
+                            <span><strong>Location:</strong> ${report.location}</span>
+                            <span><strong>Priority Level:</strong> <span class="priority-badge ${badgeClass}">${report.priority}</span></span>
+                        </div>
+                        <div style="font-size: 0.85rem;">
+                            <span><strong>Observed Condition:</strong></span>
+                            <p style="margin: 4px 0 0 0; line-height: 1.4; color: #475569; font-style: italic;">"${conditionVal}"</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px;">
+                        <button class="btn-report-reject" style="padding: 10px 20px; font-size: 0.85rem; font-weight: 700; border-radius: 6px;" onclick="rejectReport('${report.id}'); closeOpsModal();">Reject Report</button>
+                        <button class="btn-report-accept" style="padding: 10px 20px; font-size: 0.85rem; font-weight: 700; border-radius: 6px;" onclick="acceptReport('${report.id}'); closeOpsModal();">Accept Case</button>
+                    </div>
+                </div>
+            `;
+
+            showOpsModal(`<i class="ph-fill ph-bell-ringing" style="color: var(--primary);"></i> Rescue Report Details - #RSC-${report.id}`, detailsHtml);
+        }
+
+        // Reusable Modal Actions
+        function showOpsModal(title, contentHtml) {
+            document.getElementById("ops-modal-title").innerHTML = title;
+            document.getElementById("ops-modal-body").innerHTML = contentHtml;
+            document.getElementById("ops-modal").classList.add("show");
+        }
+
+        function closeOpsModal() {
+            document.getElementById("ops-modal").classList.remove("show");
+        }
+    </script>
+</body>
+
+</html>

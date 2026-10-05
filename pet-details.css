@@ -1,0 +1,889 @@
+/* Pet Details Page Styles */
+.pet-details-main {
+    max-width: 1200px;
+    margin: 32px auto;
+    padding: 0 24px;
+}
+
+/* 1. HERO PROFILE */
+.hero-profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+.hero-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.main-image {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    height: 480px;
+    box-shadow: var(--shadow-sm);
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-save-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s;
+}
+
+.gallery-save-btn:hover {
+    color: var(--alert);
+    transform: scale(1.05);
+}
+
+.image-badge {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: #ef4444;
+    color: white;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-md);
+    letter-spacing: 0.5px;
+}
+
+.thumbnail-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    height: 100px;
+}
+
+.thumbnail-grid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.thumbnail-grid img.active,
+.thumbnail-grid img:hover {
+    opacity: 1;
+    border-color: var(--primary);
+}
+
+.more-photos {
+    background-color: #f1f5f9;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.more-photos:hover {
+    background-color: #e2e8f0;
+}
+
+.hero-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.breadcrumb {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.breadcrumb a {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.pet-title-area {
+    margin-bottom: 20px;
+}
+
+.pet-title-area h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+}
+
+.pet-vital-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.stat-pill {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-pill.distance {
+    background-color: #fffbeb;
+    color: #b45309;
+}
+
+.rescue-date-line {
+    font-size: 1rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.rescue-date-line i {
+    color: #b45309;
+    font-size: 1.2rem;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.feature-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.feature-badge.healthy {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.feature-badge.healthy i {
+    color: #22c55e;
+    font-size: 1.2rem;
+}
+
+.feature-badge.behavioral {
+    background-color: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.feature-badge.behavioral i {
+    color: #3b82f6;
+    font-size: 1.2rem;
+}
+
+.hero-short-desc {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: auto;
+}
+
+.btn-primary-large, .btn-secondary-large {
+    flex: 1;
+    padding: 18px 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.btn-primary-large {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.btn-primary-large:hover {
+    background-color: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+}
+
+.btn-secondary-large {
+    background-color: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-secondary-large:hover {
+    background-color: #fff7ed;
+    transform: translateY(-2px);
+}
+
+/* CONTENT SPLIT LAYOUT */
+.content-split-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    margin-bottom: 64px;
+}
+
+.details-column {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.detail-section {
+    padding: 40px;
+}
+
+.detail-section h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 16px;
+}
+
+/* 2. STORY & TIMELINE */
+.story-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.rescue-timeline {
+    position: relative;
+    padding-left: 24px;
+}
+
+.rescue-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 40px; /* center of icon */
+    width: 2px;
+    background-color: var(--border);
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.tl-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    margin-top: 4px; /* align with text */
+}
+
+.timeline-item.completed .tl-icon {
+    border-color: #22c55e;
+    background-color: #f0fdf4;
+    color: #166534;
+}
+
+.timeline-item.active .tl-icon {
+    border-color: var(--primary);
+    background-color: #fffbeb;
+    color: var(--primary);
+    box-shadow: 0 0 0 4px #ffedd5;
+}
+
+.tl-content h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.tl-content span {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* 3. PERSONALITY PROFILE */
+.personality-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.trait-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.trait-label {
+    width: 140px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.trait-label i {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.progress-track {
+    flex: 1;
+    height: 8px;
+    background-color: #f1f5f9;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.progress-fill.high { width: 90%; background-color: #ef4444; }
+.progress-fill.medium { width: 60%; background-color: #f59e0b; }
+.progress-fill.advanced { width: 85%; background-color: #3b82f6; }
+
+.trait-value {
+    width: 120px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.behavior-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.behavior-item {
+    display: flex;
+    gap: 16px;
+    background-color: #f8fafc;
+    padding: 20px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+
+.b-icon {
+    width: 48px;
+    height: 48px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #0ea5e9;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.b-text strong {
+    display: block;
+    font-size: 1.05rem;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.b-text p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* 4. MEDICAL & CARE */
+.medical-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.med-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    transition: border-color 0.2s;
+}
+
+.med-card:hover {
+    border-color: #cbd5e1;
+}
+
+.med-card i {
+    font-size: 2rem;
+    color: #10b981;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.med-card strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.med-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.med-card.special {
+    background-color: #fffbeb;
+    border-color: #fde68a;
+}
+.med-card.special i { color: #d97706; }
+
+/* 6. ADOPTION REQUIREMENTS */
+.req-intro {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.req-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.req-list li {
+    display: flex;
+    gap: 20px;
+}
+
+.req-list i {
+    font-size: 2rem;
+    color: var(--primary);
+    background-color: var(--primary-light);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.req-content strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.req-content span {
+    font-size: 1rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* 8. FAQ Section */
+.faq-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.faq-card {
+    border: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.faq-card:hover {
+    border-color: var(--primary-light);
+}
+
+.faq-question {
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.faq-question i {
+    color: var(--primary);
+    font-size: 1.25rem;
+    transition: transform 0.3s;
+}
+
+.faq-answer {
+    padding: 0 24px 24px;
+    display: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* 5. RIGHT COLUMN: NGO PROFILE */
+.sidebar-column {
+    position: relative;
+}
+
+.sticky-card {
+    position: sticky;
+    top: 88px;
+    padding: 32px 24px;
+    border-top: 4px solid var(--primary);
+}
+
+.ngo-header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.ngo-avatar {
+    width: 64px;
+    height: 64px;
+    background-color: var(--text-main);
+    color: white;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.ngo-title h3 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.verified-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #0ea5e9;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.ngo-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+}
+
+.n-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.n-stat strong {
+    font-size: 1.2rem;
+    color: var(--text-main);
+}
+
+.n-stat span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.n-stat i { color: #f59e0b; }
+
+.ngo-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.ngo-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.ngo-contact-info p {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.ngo-contact-info i {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.ngo-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.w-full {
+    width: 100%;
+    padding: 14px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* 7. SIMILAR PETS CAROUSEL */
+.similar-pets {
+    margin-bottom: 64px;
+}
+
+/* Reuse standard Carousel styling */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.section-header h2 { font-size: 1.6rem; font-weight: 700; color: var(--text-main); }
+.carousel-controls { display: flex; gap: 8px; align-items: center; }
+.carousel-btn { width: 36px; height: 36px; border-radius: var(--radius-full); border: 1px solid var(--border); background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s; cursor: pointer; }
+.carousel-btn:hover { border-color: var(--text-main); color: var(--text-main); background-color: var(--bg-main); }
+.carousel-container { display: flex; gap: 24px; overflow-x: auto; padding-bottom: 16px; scrollbar-width: none; }
+.carousel-container::-webkit-scrollbar { display: none; }
+.snap-x { scroll-snap-type: x mandatory; }
+.snap-start { scroll-snap-align: start; }
+.rescue-card { min-width: 300px; flex: 0 0 auto; padding: 0; overflow: hidden; margin-bottom: 0; border-radius: var(--radius-lg); transition: box-shadow 0.3s; }
+.rescue-card:hover { box-shadow: var(--shadow-md); }
+.rescue-img-container { position: relative; height: 200px; }
+.rescue-img-container img { width: 100%; height: 100%; object-fit: cover; }
+.rescue-info { padding: 20px; display: flex; flex-direction: column; }
+.carousel-pet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.carousel-pet-header h3 { color: var(--text-main); font-size: 1.25rem; font-weight: 700; }
+.carousel-species { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); background-color: var(--bg-main); padding: 2px 8px; border-radius: var(--radius-sm); text-transform: uppercase; }
+.rescue-reason { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+.carousel-story-btn { align-self: flex-start; color: #b45309; font-weight: 600; font-size: 0.95rem; padding: 0; }
+.carousel-story-btn:hover { text-decoration: underline; }
+
+/* 9. STICKY CTA BAR */
+.sticky-cta-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+    padding: 16px 24px;
+    z-index: 100;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 1px solid var(--border);
+}
+
+.sticky-cta-bar.visible {
+    transform: translateY(0);
+}
+
+.sticky-cta-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sticky-pet-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sticky-pet-info img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-light);
+}
+
+.sticky-text h4 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+
+.sticky-text span {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.sticky-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.sticky-actions button {
+    padding: 12px 24px;
+    font-size: 1rem;
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+    .content-split-layout {
+        grid-template-columns: 1fr;
+    }
+    .sidebar-column {
+        order: -1; /* Move NGO profile to top on smaller screens */
+    }
+    .sticky-card {
+        position: static;
+    }
+    .hero-profile {
+        gap: 32px;
+    }
+    .main-image {
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-profile {
+        grid-template-columns: 1fr;
+    }
+    .badges-grid {
+        grid-template-columns: 1fr;
+    }
+    .medical-grid {
+        grid-template-columns: 1fr;
+    }
+    .trait-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .trait-label {
+        width: 100%;
+    }
+    .progress-track {
+        width: 100%;
+    }
+    .trait-value {
+        width: 100%;
+        text-align: left;
+    }
+    .behavior-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-actions {
+        flex-direction: column;
+    }
+    .sticky-cta-bar {
+        padding: 12px;
+    }
+    .sticky-pet-info {
+        display: none; /* Hide pet info on mobile to save space */
+    }
+    .sticky-actions {
+        width: 100%;
+    }
+    .sticky-actions button {
+        flex: 1;
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    .sticky-actions .btn-secondary-large:first-child {
+        display: none; /* Hide donate on smallest screens */
+    }
+}

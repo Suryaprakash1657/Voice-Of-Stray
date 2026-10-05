@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Charlie - Voice of Stray</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="pet-details.css">
+    <!-- Navigation State Manager -->
+    <script src="navbar.js"></script>
+</head>
+
+<body>
+    <!-- Navbar (Shared) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="ph-fill ph-paw-print"></i>
+                <span>Voice of Stray</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="community.html">Community</a>
+                <a href="report.html">Report</a>
+                <a href="rescue.html">Rescue</a>
+                <a href="adopt.html" class="active">Adopt</a>
+                <a href="donate.html">Donate</a>
+                <a href="volunteer.html">Volunteer</a>
+            </div>
+
+            <!-- Guest State (Initially Hidden) -->
+            <div class="nav-actions guest-actions" style="display: none;">
+                <button class="btn-premium primary nav-join-btn" style="padding: 8px 24px; font-size: 0.95rem;">Join
+                    Now</button>
+            </div>
+
+            <!-- Logged-in State (Automatically populated by navbar.js) -->
+            <div class="nav-actions logged-in-actions" style="display: none;">
+                <button class="icon-btn saved-pets-btn" onclick="window.location.href='adopt.html'">
+                    <i class="ph ph-heart"></i>
+                    <span class="badge-counter">4</span>
+                </button>
+                <button class="icon-btn"><i class="ph ph-bell"></i></button>
+                <div class="profile-pic">
+                    <img src="https://ui-avatars.com/api/?name=User&background=f97316&color=fff" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="pet-details-main">
+
+        <!-- 1. HERO PROFILE -->
+        <section class="hero-profile">
+            <div class="hero-gallery">
+                <div class="main-image">
+                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800"
+                        alt="Charlie the Golden Retriever Mix">
+                    <button class="gallery-save-btn"><i class="ph ph-heart"></i></button>
+                    <div class="image-badge">Urgent Foster Needed</div>
+                </div>
+                <div class="thumbnail-grid">
+                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=200"
+                        class="active" alt="Thumb 1">
+                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=200"
+                        alt="Thumb 2">
+                    <img src="https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=200"
+                        alt="Thumb 3">
+                    <div class="more-photos">
+                        <span>+4 Photos</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-info">
+                <div class="breadcrumb">
+                    <a href="adopt.html">Adopt</a> <i class="ph ph-caret-right"></i> <span>Dogs</span> <i
+                        class="ph ph-caret-right"></i> <span>Charlie</span>
+                </div>
+
+                <div class="pet-title-area">
+                    <h1>Charlie</h1>
+                    <div class="pet-vital-stats">
+                        <span class="stat-pill">Golden Retriever Mix</span>
+                        <span class="stat-pill">2 Years Old</span>
+                        <span class="stat-pill"><i class="ph ph-gender-male"></i> Male</span>
+                        <span class="stat-pill distance"><i class="ph ph-map-pin"></i> 5.2 km away</span>
+                    </div>
+                </div>
+
+                <div class="rescue-date-line">
+                    <i class="ph ph-clock-counter-clockwise"></i> Rescued on October 12, 2025
+                </div>
+
+                <div class="badges-grid">
+                    <div class="feature-badge healthy"><i class="ph-fill ph-check-circle"></i> Vaccinated</div>
+                    <div class="feature-badge healthy"><i class="ph-fill ph-stethoscope"></i> Vet Checked</div>
+                    <div class="feature-badge healthy"><i class="ph-fill ph-scissors"></i> Neutered</div>
+                    <div class="feature-badge behavioral"><i class="ph-fill ph-baby"></i> Good with Kids</div>
+                    <div class="feature-badge behavioral"><i class="ph-fill ph-paw-print"></i> Good with Pets</div>
+                    <div class="feature-badge behavioral"><i class="ph-fill ph-house"></i> House Trained</div>
+                </div>
+
+                <p class="hero-short-desc">Charlie is a brilliant and loyal companion who loves long hikes and playing
+                    fetch. He was rescued from a construction site and has since blossomed into a deeply loving dog
+                    looking for a forever family.</p>
+
+                <div class="hero-actions">
+                    <button class="btn-primary-large">Adopt Charlie</button>
+                    <button class="btn-secondary-large">Foster First</button>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-split-layout">
+
+            <!-- LEFT COLUMN (Details) -->
+            <div class="details-column">
+
+                <!-- 2. FULL RESCUE STORY -->
+                <section class="detail-section card" id="story">
+                    <h2>Charlie's Rescue Story</h2>
+                    <p class="story-text">
+                        Charlie was found wandering near a busy highway interchange, scared and slightly malnourished. A
+                        kind commuter spotted him and used the Voice of Stray app to report his location. Our rescue
+                        team arrived within 30 minutes, using calm reassurance and treats to secure him.
+                        <br><br>
+                        Upon arrival at the shelter, Charlie was timid but showed no signs of aggression. He quickly
+                        warmed up to the staff, showing his true goofy and affectionate Golden Retriever nature. After
+                        two weeks in a loving temporary foster home, he has fully recovered, gained healthy weight, and
+                        learned basic commands like "sit" and "stay".
+                    </p>
+
+                    <div class="rescue-timeline">
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-warning-circle"></i></div>
+                            <div class="tl-content">
+                                <h5>Reported</h5>
+                                <span>Oct 12, 2025</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-ambulance"></i></div>
+                            <div class="tl-content">
+                                <h5>Rescued</h5>
+                                <span>Oct 12, 2025</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-first-aid"></i></div>
+                            <div class="tl-content">
+                                <h5>Treated</h5>
+                                <span>Oct 14, 2025</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="tl-icon"><i class="ph ph-house-line"></i></div>
+                            <div class="tl-content">
+                                <h5>Fostered</h5>
+                                <span>Oct 18, 2025</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item active">
+                            <div class="tl-icon"><i class="ph-fill ph-heart"></i></div>
+                            <div class="tl-content">
+                                <h5>Ready for Adoption</h5>
+                                <span>Current</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. PERSONALITY PROFILE -->
+                <section class="detail-section card" id="personality">
+                    <h2>Personality Profile</h2>
+
+                    <div class="personality-bars">
+                        <div class="trait-row">
+                            <div class="trait-label">
+                                <i class="ph ph-lightning"></i>
+                                <span>Energy Level</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill high"></div>
+                            </div>
+                            <span class="trait-value">High</span>
+                        </div>
+
+                        <div class="trait-row">
+                            <div class="trait-label">
+                                <i class="ph ph-coffee"></i>
+                                <span>Temperament</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill medium"></div>
+                            </div>
+                            <span class="trait-value">Friendly/Calm</span>
+                        </div>
+
+                        <div class="trait-row">
+                            <div class="trait-label">
+                                <i class="ph ph-graduation-cap"></i>
+                                <span>Training</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill advanced"></div>
+                            </div>
+                            <span class="trait-value">Knows Commands</span>
+                        </div>
+                    </div>
+
+                    <div class="behavior-grid">
+                        <div class="behavior-item">
+                            <div class="b-icon"><i class="ph ph-sneaker"></i></div>
+                            <div class="b-text">
+                                <strong>Daily Behavior</strong>
+                                <p>Loves morning walks, naps in the afternoon sun.</p>
+                            </div>
+                        </div>
+                        <div class="behavior-item">
+                            <div class="b-icon"><i class="ph ph-house"></i></div>
+                            <div class="b-text">
+                                <strong>Lifestyle Fit</strong>
+                                <p>Active family, hiking companion, house with yard.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. MEDICAL + CARE -->
+                <section class="detail-section card" id="medical">
+                    <h2>Medical & Care Needs</h2>
+                    <div class="medical-grid">
+                        <div class="med-card">
+                            <i class="ph ph-syringe"></i>
+                            <strong>Vaccines</strong>
+                            <p>Fully up to date (Rabies, DHPP)</p>
+                        </div>
+                        <div class="med-card">
+                            <i class="ph ph-bug-droid"></i>
+                            <strong>Treatments</strong>
+                            <p>Monthly flea/tick preventative needed</p>
+                        </div>
+                        <div class="med-card">
+                            <i class="ph ph-scissors"></i>
+                            <strong>Surgeries</strong>
+                            <p>Neutered (Oct 2025), healed perfectly</p>
+                        </div>
+                        <div class="med-card special">
+                            <i class="ph ph-bowl-food"></i>
+                            <strong>Dietary Notes</strong>
+                            <p>Grain-free diet required due to mild allergies.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. ADOPTION REQUIREMENTS -->
+                <section class="detail-section card" id="requirements">
+                    <h2>Adoption Requirements</h2>
+                    <p class="req-intro">To ensure Charlie finds his perfect forever home, the shelter has set the
+                        following requirements:</p>
+
+                    <ul class="req-list">
+                        <li>
+                            <i class="ph-fill ph-users-three"></i>
+                            <div class="req-content">
+                                <strong>Family Type</strong>
+                                <span>Great for active families, couples, or singles. Good with older children
+                                    (7+).</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="ph-fill ph-house-line"></i>
+                            <div class="req-content">
+                                <strong>Yard / Home</strong>
+                                <span>Fenced yard required. Not highly suitable for small apartments.</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="ph-fill ph-medal"></i>
+                            <div class="req-content">
+                                <strong>Experience</strong>
+                                <span>First-time owners welcome, but large-breed experience is a plus.</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="ph-fill ph-cat"></i>
+                            <div class="req-content">
+                                <strong>Other Pets</strong>
+                                <span>Gets along great with other dogs. Has not been tested with cats.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- 8. FAQ -->
+                <section class="detail-section" id="faq">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-grid">
+                        <div class="faq-card card">
+                            <div class="faq-question">
+                                <strong>What is Charlie's adoption fee?</strong>
+                                <i class="ph ph-caret-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Charlie's adoption fee is $150. This covers his previous medical treatments,
+                                    neutering, full vaccinations, and microchipping.</p>
+                            </div>
+                        </div>
+                        <div class="faq-card card">
+                            <div class="faq-question">
+                                <strong>Can I foster Charlie before committing?</strong>
+                                <i class="ph ph-caret-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes! City Rescue NGO offers a 2-week "Foster-to-Adopt" trial period to ensure Charlie
+                                    is the perfect fit for your lifestyle.</p>
+                            </div>
+                        </div>
+                        <div class="faq-card card">
+                            <div class="faq-question">
+                                <strong>What is the return policy?</strong>
+                                <i class="ph ph-caret-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>If things don't work out, Charlie MUST be returned directly to City Rescue NGO. We
+                                    provide behavioral support to help overcome any initial adjustment challenges.</p>
+                            </div>
+                        </div>
+                        <div class="faq-card card">
+                            <div class="faq-question">
+                                <strong>Will I get his medical records?</strong>
+                                <i class="ph ph-caret-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes, all verified medical history, vaccination certificates, and microchip transfer
+                                    paperwork will be provided during the adoption handover.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- RIGHT COLUMN (Sticky Sidebar) -->
+            <aside class="sidebar-column">
+                <!-- 5. NGO / SHELTER PROFILE -->
+                <div class="ngo-profile-card card sticky-card">
+                    <div class="ngo-header">
+                        <div class="ngo-avatar">CR</div>
+                        <div class="ngo-title">
+                            <h3>City Rescue NGO</h3>
+                            <span class="verified-badge"><i class="ph-fill ph-seal-check"></i> Verified Partner</span>
+                        </div>
+                    </div>
+
+                    <div class="ngo-stats">
+                        <div class="n-stat">
+                            <strong>4.8</strong>
+                            <span><i class="ph-fill ph-star"></i> Rating</span>
+                        </div>
+                        <div class="n-stat">
+                            <strong>1.2k</strong>
+                            <span>Adoptions</span>
+                        </div>
+                        <div class="n-stat">
+                            <strong>14</strong>
+                            <span>Available</span>
+                        </div>
+                    </div>
+
+                    <p class="ngo-desc">A registered non-profit dedicated to rescuing, rehabilitating, and rehoming
+                        street dogs across the metro area since 2018.</p>
+
+                    <div class="ngo-contact-info">
+                        <p><i class="ph ph-map-pin"></i> 124 Rescue Ave, North District</p>
+                        <p><i class="ph ph-clock"></i> Open Today: 10AM - 6PM</p>
+                    </div>
+
+                    <div class="ngo-actions">
+                        <button class="btn-primary w-full"><i class="ph ph-chat-circle-text"></i> Chat with NGO</button>
+                        <button class="btn-secondary outline w-full" id="btn-schedule-visit"><i
+                                class="ph ph-calendar-plus"></i> Schedule Visit</button>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- 7. SIMILAR PETS -->
+        <section class="similar-pets">
+            <div class="section-header">
+                <h2>Similar Pets Nearby</h2>
+                <div class="carousel-controls">
+                    <button class="carousel-btn"><i class="ph ph-caret-left"></i></button>
+                    <button class="carousel-btn"><i class="ph ph-caret-right"></i></button>
+                </div>
+            </div>
+
+            <div class="carousel-container snap-x">
+                <!-- Card 1 -->
+                <div class="rescue-card card snap-start">
+                    <div class="rescue-img-container">
+                        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=300"
+                            alt="Dog">
+                    </div>
+                    <div class="rescue-info">
+                        <div class="carousel-pet-header">
+                            <h3>Buddy</h3>
+                            <span class="carousel-species">Dog</span>
+                        </div>
+                        <p class="rescue-reason">Labrador Mix • 9 years • 1.5 km away</p>
+                        <button class="btn-text carousel-story-btn">View Full Story</button>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="rescue-card card snap-start">
+                    <div class="rescue-img-container">
+                        <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=300"
+                            alt="Dog">
+                    </div>
+                    <div class="rescue-info">
+                        <div class="carousel-pet-header">
+                            <h3>Max</h3>
+                            <span class="carousel-species">Dog</span>
+                        </div>
+                        <p class="rescue-reason">Beagle Mix • 3 years • 5.2 km away</p>
+                        <button class="btn-text carousel-story-btn">View Full Story</button>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="rescue-card card snap-start">
+                    <div class="rescue-img-container">
+                        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=300"
+                            alt="Dog">
+                    </div>
+                    <div class="rescue-info">
+                        <div class="carousel-pet-header">
+                            <h3>Snowy</h3>
+                            <span class="carousel-species">Dog</span>
+                        </div>
+                        <p class="rescue-reason">Terrier Mix • 1 year • 8.4 km away</p>
+                        <button class="btn-text carousel-story-btn">View Full Story</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Links -->
+    <div
+        style="text-align: center; padding: 40px 20px 100px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border);">
+        <p>&copy; 2026 Voice of Stray</p>
+    </div>
+
+    <!-- 9. STICKY CTA -->
+    <div class="sticky-cta-bar">
+        <div class="sticky-cta-container">
+            <div class="sticky-pet-info">
+                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=100"
+                    alt="Charlie">
+                <div class="sticky-text">
+                    <h4>Charlie</h4>
+                    <span>Golden Retriever Mix</span>
+                </div>
+            </div>
+            <div class="sticky-actions">
+                <button class="btn-secondary-large">Donate to Care</button>
+                <button class="btn-secondary-large">Foster First</button>
+                <button class="btn-primary-large">Adopt Charlie</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FAQ Toggle
+        const faqs = document.querySelectorAll('.faq-question');
+        faqs.forEach(faq => {
+            faq.addEventListener('click', () => {
+                const answer = faq.nextElementSibling;
+                const icon = faq.querySelector('i');
+                if (answer) {
+                    const isOpen = answer.style.display === 'block';
+                    answer.style.display = isOpen ? 'none' : 'block';
+                    icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                    faq.parentElement.style.borderColor = isOpen ? 'var(--border)' : 'var(--primary)';
+                }
+            });
+        });
+
+        // Sticky CTA reveal on scroll
+        window.addEventListener('scroll', () => {
+            const stickyBar = document.querySelector('.sticky-cta-bar');
+            const heroActions = document.querySelector('.hero-actions');
+
+            if (heroActions && stickyBar) {
+                const heroBottom = heroActions.getBoundingClientRect().bottom;
+                if (heroBottom < 0) {
+                    stickyBar.classList.add('visible');
+                } else {
+                    stickyBar.classList.remove('visible');
+                }
+            }
+        });
+
+        // Resolve active pet data (Preview or Default static Charlie)
+        let activePet = null;
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('preview') === 'true') {
+            const draft = localStorage.getItem('voiceOfStrayCurrentPet');
+            if (draft) {
+                try {
+                    activePet = JSON.parse(draft);
+                } catch (e) {
+                    console.error("Error parsing voiceOfStrayCurrentPet", e);
+                }
+            }
+        }
+        if (!activePet) {
+            // Default static Charlie
+            activePet = {
+                name: "Charlie",
+                breed: "Golden Retriever Mix",
+                age: "2 Years Old",
+                gender: "Male",
+                ngoName: "City Rescue NGO",
+                ngoInitials: "CR",
+                images: {
+                    main: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800"
+                }
+            };
+        }
+
+        // Dynamic Draft Preview Loading Logic
+        (function () {
+            if (params.get('preview') === 'true') {
+                const draft = localStorage.getItem('voiceOfStrayCurrentPet');
+                if (draft) {
+                    try {
+                        const data = JSON.parse(draft);
+
+                        // 2. Set titles and breadcrumbs
+                        document.title = "Meet " + (data.name || 'New Profile') + " - Voice of Stray";
+                        const petNameH1 = document.querySelector('.pet-title-area h1');
+                        if (petNameH1) petNameH1.innerText = data.name || 'Unnamed Pet';
+
+                        const breadcrumbs = document.querySelector('.breadcrumb');
+                        if (breadcrumbs) {
+                            breadcrumbs.innerHTML = `<a href="adopt.html">Adopt</a> <i class="ph ph-caret-right"></i> <span>Dogs</span> <i class="ph ph-caret-right"></i> <span>${data.name || 'New Profile'}</span>`;
+                        }
+
+                        // 3. Vitals pills
+                        const pills = document.querySelectorAll('.pet-vital-stats .stat-pill');
+                        if (pills.length >= 4) {
+                            pills[0].innerText = data.breed || 'Unknown Breed';
+                            pills[1].innerText = data.age || 'Unknown Age';
+                            pills[2].innerHTML = data.gender ? `<i class="ph ph-gender-${data.gender.toLowerCase() === 'male' ? 'male' : 'female'}"></i> ${data.gender}` : 'Unknown Gender';
+                            pills[3].innerHTML = `<i class="ph ph-map-pin"></i> ${data.location || data.distance || 'Not specified'}`;
+                        }
+
+                        // 4. Rescue Date
+                        const dateLine = document.querySelector('.rescue-date-line');
+                        if (dateLine) {
+                            dateLine.innerHTML = `<i class="ph ph-clock-counter-clockwise"></i> Rescued on ${data.rescueDate || 'Date Unspecified'}`;
+                        }
+
+                        // 5. Image Showcase & Badges
+                        const mainImg = document.querySelector('.main-image img');
+                        if (mainImg) {
+                            mainImg.src = data.images.main || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800';
+                        }
+
+                        const imgBadge = document.querySelector('.main-image .image-badge');
+                        if (imgBadge) {
+                            if (data.fosterBadge) {
+                                imgBadge.innerText = data.fosterBadge;
+                                imgBadge.style.display = 'block';
+                            } else {
+                                imgBadge.style.display = 'none';
+                            }
+                        }
+
+                        // Thumbnail gallery
+                        const thumbGrid = document.querySelector('.thumbnail-grid');
+                        if (thumbGrid) {
+                            thumbGrid.innerHTML = '';
+                            if (data.images.main) {
+                                const mainThumb = document.createElement('img');
+                                mainThumb.src = data.images.main;
+                                mainThumb.className = 'active';
+                                mainThumb.alt = 'Thumb Main';
+                                mainThumb.addEventListener('click', () => {
+                                    if (mainImg) mainImg.src = data.images.main;
+                                    document.querySelectorAll('.thumbnail-grid img').forEach(t => t.classList.remove('active'));
+                                    mainThumb.classList.add('active');
+                                });
+                                thumbGrid.appendChild(mainThumb);
+                            }
+                            data.images.thumbs.forEach((t, i) => {
+                                if (t) {
+                                    const thumb = document.createElement('img');
+                                    thumb.src = t;
+                                    thumb.alt = 'Thumb ' + (i + 2);
+                                    thumb.addEventListener('click', () => {
+                                        if (mainImg) mainImg.src = t;
+                                        document.querySelectorAll('.thumbnail-grid img').forEach(t => t.classList.remove('active'));
+                                        thumb.classList.add('active');
+                                    });
+                                    thumbGrid.appendChild(thumb);
+                                }
+                            });
+                        }
+
+                        // 6. Attributes Checkbox Badges
+                        const badgesGrid = document.querySelector('.badges-grid');
+                        if (badgesGrid) {
+                            badgesGrid.innerHTML = '';
+                            const attrs = [
+                                { key: 'vaccinated', class: 'healthy', icon: 'ph-check-circle', label: 'Vaccinated' },
+                                { key: 'vetchecked', class: 'healthy', icon: 'ph-stethoscope', label: 'Vet Checked' },
+                                { key: 'neutered', class: 'healthy', icon: 'ph-scissors', label: 'Neutered' },
+                                { key: 'goodkids', class: 'behavioral', icon: 'ph-baby', label: 'Good with Kids' },
+                                { key: 'goodpets', class: 'behavioral', icon: 'ph-paw-print', label: 'Good with Pets' },
+                                { key: 'housetrained', class: 'behavioral', icon: 'ph-house', label: 'House Trained' }
+                            ];
+                            attrs.forEach(attr => {
+                                if (data.attributes[attr.key]) {
+                                    const badge = document.createElement('div');
+                                    badge.className = 'feature-badge ' + attr.class;
+                                    badge.innerHTML = `<i class="ph-fill ${attr.icon}"></i> ${attr.label}`;
+                                    badgesGrid.appendChild(badge);
+                                }
+                            });
+                        }
+
+                        // Short desc
+                        const shortDesc = document.querySelector('.hero-short-desc');
+                        if (shortDesc) shortDesc.innerText = data.shortDesc || 'No summary overview provided yet.';
+
+                        // 7. Full Rescue Story text
+                        const storyTitle = document.querySelector('#story h2');
+                        if (storyTitle) storyTitle.innerText = `${data.name || 'Pet'}'s Rescue Story`;
+
+                        const storyText = document.querySelector('.story-text');
+                        if (storyText) storyText.innerHTML = data.story ? data.story.replace(/\n/g, '<br>') : '<i>No story content details written yet.</i>';
+
+                        // 8. Personality Profile sliders & bars
+                        const fillEnergy = document.querySelector('.personality-bars .trait-row:nth-child(1) .progress-fill');
+                        const labelEnergy = document.querySelector('.personality-bars .trait-row:nth-child(1) .trait-value');
+                        if (fillEnergy) {
+                            const val = data.personality.energy;
+                            fillEnergy.style.width = val + '%';
+                            fillEnergy.className = 'progress-fill ' + (val < 33 ? 'high' : (val < 66 ? 'medium' : 'advanced')); // high corresponds to red in details, medium yellow, advanced blue
+                            if (labelEnergy) {
+                                labelEnergy.innerText = val < 33 ? 'Low Energy' : (val < 66 ? 'Medium Energy' : 'High Energy');
+                            }
+                        }
+
+                        const fillTemp = document.querySelector('.personality-bars .trait-row:nth-child(2) .progress-fill');
+                        const labelTemp = document.querySelector('.personality-bars .trait-row:nth-child(2) .trait-value');
+                        if (fillTemp && labelTemp) {
+                            fillTemp.style.width = data.personality.temperament ? '75%' : '0%';
+                            labelTemp.innerText = data.personality.temperament || 'Not Configured';
+                        }
+
+                        const fillTrain = document.querySelector('.personality-bars .trait-row:nth-child(3) .progress-fill');
+                        const labelTrain = document.querySelector('.personality-bars .trait-row:nth-child(3) .trait-value');
+                        if (fillTrain && labelTrain) {
+                            fillTrain.style.width = data.personality.training ? '85%' : '0%';
+                            labelTrain.innerText = data.personality.training || 'Not Configured';
+                        }
+
+                        // Behaviors list
+                        const behaviorItems = document.querySelectorAll('.behavior-grid .behavior-item');
+                        if (behaviorItems.length >= 2) {
+                            behaviorItems[0].querySelector('p').innerText = data.personality.dailyNotes || 'No notes specified.';
+                            behaviorItems[1].querySelector('p').innerText = data.personality.lifestyleNotes || 'No notes specified.';
+                        }
+
+                        // 9. Medical Grid Cards
+                        const medCards = document.querySelectorAll('.medical-grid .med-card');
+                        if (medCards.length >= 4) {
+                            medCards[0].querySelector('strong').innerText = data.medical.vaccines.title || 'Vaccines';
+                            medCards[0].querySelector('p').innerText = data.medical.vaccines.desc || 'No comments written.';
+
+                            medCards[1].querySelector('strong').innerText = data.medical.treatments.title || 'Treatments';
+                            medCards[1].querySelector('p').innerText = data.medical.treatments.desc || 'No comments written.';
+
+                            medCards[2].querySelector('strong').innerText = data.medical.surgeries.title || 'Surgeries';
+                            medCards[2].querySelector('p').innerText = data.medical.surgeries.desc || 'No comments written.';
+
+                            medCards[3].querySelector('strong').innerText = data.medical.diet.title || 'Dietary Notes';
+                            medCards[3].querySelector('p').innerText = data.medical.diet.desc || 'No comments written.';
+                        }
+
+                        // 10. Adoption Requirements list
+                        const reqListItems = document.querySelectorAll('.req-list li');
+                        if (reqListItems.length >= 4) {
+                            reqListItems[0].querySelector('strong').innerText = data.requirements.family.title || 'Family Type';
+                            reqListItems[0].querySelector('span').innerText = data.requirements.family.desc || 'No criteria written.';
+
+                            reqListItems[1].querySelector('strong').innerText = data.requirements.yard.title || 'Yard / Home';
+                            reqListItems[1].querySelector('span').innerText = data.requirements.yard.desc || 'No criteria written.';
+
+                            reqListItems[2].querySelector('strong').innerText = data.requirements.exp.title || 'Experience';
+                            reqListItems[2].querySelector('span').innerText = data.requirements.exp.desc || 'No criteria written.';
+
+                            reqListItems[3].querySelector('strong').innerText = data.requirements.pets.title || 'Other Pets';
+                            reqListItems[3].querySelector('span').innerText = data.requirements.pets.desc || 'No criteria written.';
+                        }
+
+                        // 11. Overwrite Hero Actions
+                        const heroAct = document.querySelector('.hero-actions');
+                        const userRole = localStorage.getItem("role") || "user";
+                        if (heroAct) {
+                            if (userRole === "ngo") {
+                                heroAct.innerHTML = `<button class="btn-primary-large" onclick="window.location.href='ngo-pet-manage.html'"><i class="ph ph-note-pencil" style="vertical-align: middle; margin-right: 6px;"></i> Return to Editor</button>`;
+                            } else {
+                                heroAct.innerHTML = `
+                                    <button class="btn-primary-large">Adopt ${data.name || 'Pet'}</button>
+                                    <button class="btn-secondary-large">Foster First</button>
+                                `;
+                            }
+                        }
+
+                        // 12. Sticky CTA Bar preview syncing
+                        const stickyPInfo = document.querySelector('.sticky-pet-info');
+                        if (stickyPInfo) {
+                            const stickyImg = stickyPInfo.querySelector('img');
+                            if (stickyImg) stickyImg.src = data.images.main || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=100';
+
+                            const stickyTitle = stickyPInfo.querySelector('h4');
+                            if (stickyTitle) stickyTitle.innerText = data.name || 'Unnamed';
+
+                            const stickyBreed = stickyPInfo.querySelector('span');
+                            if (stickyBreed) stickyBreed.innerText = data.breed || 'Draft Breed';
+                        }
+
+                        const stickyActs = document.querySelector('.sticky-actions');
+                        if (stickyActs) {
+                            if (userRole === "ngo") {
+                                stickyActs.innerHTML = `<button class="btn-primary-large" onclick="window.location.href='ngo-pet-manage.html'"><i class="ph ph-note-pencil" style="vertical-align: middle; margin-right: 6px;"></i> Return to Editor</button>`;
+                            } else {
+                                stickyActs.innerHTML = `
+                                    <button class="btn-secondary-large">Donate to Care</button>
+                                    <button class="btn-secondary-large">Foster First</button>
+                                    <button class="btn-primary-large">Adopt ${data.name || 'Pet'}</button>
+                                `;
+                            }
+                        }
+
+                        // 13. Sync NGO Profile Card
+                        const ngoAvatar = document.querySelector('.ngo-profile-card .ngo-avatar');
+                        if (ngoAvatar && data.ngoInitials) {
+                            ngoAvatar.textContent = data.ngoInitials;
+                        }
+                        const ngoTitleName = document.querySelector('.ngo-profile-card .ngo-title h3');
+                        if (ngoTitleName && data.ngoName) {
+                            ngoTitleName.textContent = data.ngoName;
+                        }
+                    } catch (err) {
+                        console.error("Error applying preview overlay dynamic swaps", err);
+                    }
+                }
+            }
+        })();
+
+        // Visit Request and Adoption Routing Logic
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Unify Adopt Button click event handling
+            const adoptBtns = document.querySelectorAll(".btn-primary-large");
+            adoptBtns.forEach(btn => {
+                if (btn.textContent.includes("Adopt")) {
+                    btn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        localStorage.setItem("voiceOfStrayCurrentPet", JSON.stringify(activePet));
+                        // Navigate to the adopt page
+                        const isPreview = params.get('preview') === 'true';
+                        if (isPreview) {
+                            window.location.href = "adopt-apply.html?preview=true";
+                        } else {
+                            window.location.href = "adopt-apply.html";
+                        }
+                    });
+                }
+            });
+
+            // 2. Schedule Visit trigger
+            const scheduleVisitBtn = document.getElementById("btn-schedule-visit") || Array.from(document.querySelectorAll('button')).find(el => el.textContent.replace(/\s+/g, ' ').trim().includes('Schedule Visit'));
+            if (scheduleVisitBtn) {
+                scheduleVisitBtn.addEventListener("click", () => {
+                    document.getElementById("visit-modal-pet-name").textContent = activePet.name;
+
+                    const dateInput = document.getElementById("visit-date");
+                    if (dateInput) {
+                        const today = new Date().toISOString().split("T")[0];
+                        dateInput.min = today;
+                    }
+
+                    document.getElementById("visit-modal").style.display = "flex";
+                });
+            }
+
+            const closeModalBtn = document.getElementById("close-visit-modal");
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener("click", () => {
+                    document.getElementById("visit-modal").style.display = "none";
+                });
+            }
+
+            const visitModal = document.getElementById("visit-modal");
+            if (visitModal) {
+                visitModal.addEventListener("click", (e) => {
+                    if (e.target === visitModal) {
+                        visitModal.style.display = "none";
+                    }
+                });
+            }
+
+            // 3. Submit Visit Request Form
+            const visitForm = document.getElementById("visit-request-form");
+            if (visitForm) {
+                visitForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    const petName = activePet.name;
+                    let applicantName = "Arjun";
+                    let applicantEmail = "user@voiceofstray.com";
+                    const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+                    if (storedProfile) {
+                        try {
+                            const parsed = JSON.parse(storedProfile);
+                            if (parsed.fullName) applicantName = parsed.fullName;
+                            if (parsed.email) applicantEmail = parsed.email;
+                        } catch(e){}
+                    } else {
+                        applicantName = localStorage.getItem("username") || applicantName;
+                        applicantEmail = localStorage.getItem("email") || applicantEmail;
+                    }
+
+                    const preferredDate = document.getElementById("visit-date").value;
+                    const preferredTimeSelect = document.getElementById("visit-time");
+                    const preferredTime = preferredTimeSelect.options[preferredTimeSelect.selectedIndex].text;
+                    const message = document.getElementById("visit-message").value.trim();
+
+                    const visitID = "VISIT-" + Math.floor(1000 + Math.random() * 9000);
+
+                    const newVisit = {
+                        id: visitID,
+                        petName: petName,
+                        applicantName: applicantName,
+                        applicantEmail: applicantEmail,
+                        preferredDate: preferredDate,
+                        preferredTime: preferredTime,
+                        message: message,
+                        status: "Pending",
+                        scheduledDate: "",
+                        scheduledTime: "",
+                        shelterNotes: "",
+                        suggestedDate: "",
+                        suggestedTime: "",
+                        date: new Date().toLocaleDateString()
+                    };
+
+                    const visitsStr = localStorage.getItem("voiceOfStrayVisits") || "[]";
+                    let visits = [];
+                    try {
+                        visits = JSON.parse(visitsStr);
+                    } catch (err) { }
+
+                    visits.unshift(newVisit);
+                    localStorage.setItem("voiceOfStrayVisits", JSON.stringify(visits));
+
+                    // Update matching adoption status to Under Review
+                    let adoptions = [];
+                    try {
+                        adoptions = JSON.parse(localStorage.getItem("voiceOfStrayAdoptions") || "[]");
+                    } catch (err) { }
+
+                    const app = adoptions.find(a => a.petName === petName && a.applicantName === applicantName);
+                    if (app) {
+                        if (app.status === "Pending Review") {
+                            app.status = "Under Review";
+                            localStorage.setItem("voiceOfStrayAdoptions", JSON.stringify(adoptions));
+                        }
+                    }
+
+                    // Push dynamic user dashboard notification
+                    const notificationsStr = localStorage.getItem("voiceOfStrayNotifications") || "[]";
+                    let notifications = [];
+                    try {
+                        notifications = JSON.parse(notificationsStr);
+                    } catch (err) { }
+
+                    notifications.unshift({
+                        id: "NOTIF-" + Math.floor(1000 + Math.random() * 9000),
+                        icon: "ph-fill ph-calendar",
+                        message: `Visit request for **${petName}** has been submitted! Preferred Date: **${preferredDate}** at **${preferredTime}**.`,
+                        time: "Just now",
+                        unread: true
+                    });
+                    localStorage.setItem("voiceOfStrayNotifications", JSON.stringify(notifications));
+
+                    alert("Visit request submitted successfully!");
+                    document.getElementById("visit-modal").style.display = "none";
+                    visitForm.reset();
+                });
+            }
+        });
+    </script>
+
+    <!-- Schedule Visit Modal -->
+    <div id="visit-modal" class="visit-modal-overlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 10002; align-items: center; justify-content: center;">
+        <div class="visit-modal-content"
+            style="background: #fffdfb; border: 1px solid rgba(249, 115, 22, 0.2); border-radius: 16px; padding: 32px; max-width: 500px; width: 90%; box-shadow: 0 20px 40px -15px rgba(249, 115, 22, 0.15); display: flex; flex-direction: column; gap: 20px; font-family: 'Outfit', sans-serif;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(249, 115, 22, 0.1); padding-bottom: 12px;">
+                <h3
+                    style="margin: 0; font-size: 1.3rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                    <i class="ph-fill ph-calendar-plus" style="color: var(--primary);"></i> Schedule a Visit</h3>
+                <button id="close-visit-modal"
+                    style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i
+                        class="ph ph-x"></i></button>
+            </div>
+            <p style="margin: 0; font-size: 0.9rem; color: #64748b; font-weight: 500;">
+                Request a time to meet <strong id="visit-modal-pet-name">Charlie</strong> at the shelter.
+            </p>
+            <form id="visit-request-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="visit-date" style="font-size: 0.85rem; font-weight: 700; color: #475569;">Preferred Date
+                        <span style="color: #ef4444;">*</span></label>
+                    <input type="date" id="visit-date" required
+                        style="padding: 10px 14px; border: 1px solid rgba(249, 115, 22, 0.15); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background: white; color: #1e293b;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="visit-time" style="font-size: 0.85rem; font-weight: 700; color: #475569;">Preferred Time
+                        <span style="color: #ef4444;">*</span></label>
+                    <select id="visit-time" required
+                        style="padding: 10px 14px; border: 1px solid rgba(249, 115, 22, 0.15); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background: white; color: #1e293b;">
+                        <option value="" disabled selected>Select a time window...</option>
+                        <option value="10:00 AM">Morning (10:00 AM - 12:00 PM)</option>
+                        <option value="01:00 PM">Noon (12:00 PM - 2:00 PM)</option>
+                        <option value="03:00 PM">Afternoon (2:00 PM - 4:00 PM)</option>
+                        <option value="05:00 PM">Late Afternoon (4:00 PM - 6:00 PM)</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="visit-message" style="font-size: 0.85rem; font-weight: 700; color: #475569;">Message to
+                        NGO</label>
+                    <textarea id="visit-message" rows="3"
+                        placeholder="e.g. I would like to meet Charlie before finalizing my adoption decision."
+                        style="padding: 10px 14px; border: 1px solid rgba(249, 115, 22, 0.15); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background: white; color: #1e293b; resize: vertical;"></textarea>
+                </div>
+                <button type="submit"
+                    style="background: linear-gradient(135deg, var(--primary), #ea580c); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2); transition: all 0.2s; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>Submit Visit Request</span>
+                    <i class="ph-bold ph-paper-plane-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
