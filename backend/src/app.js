@@ -19,6 +19,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.post('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'Voice of Stray API received JSON payload successfully',
+    receivedData: req.body,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API Routes
 app.use('/api', apiRouter);
 

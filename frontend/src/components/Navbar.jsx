@@ -244,16 +244,16 @@ export default function Navbar() {
                         <i className="ph ph-squares-four"></i> Dashboard
                       </a>
                       {(user.accountType === 'Volunteer' || user.accountType === 'Rescuer') && (
-                        <a href="/volunteer-activities.html" className="dropdown-item">
+                        <Link to="/volunteer?view=activities" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           <i className="ph ph-squares-four"></i> Volunteer Activities
-                        </a>
+                        </Link>
                       )}
                       <a href="/user-edit-profile.html" className="dropdown-item">
                         <i className="ph ph-user-gear"></i> Edit Profile
                       </a>
-                      <a href="/adopt.html" className="dropdown-item">
+                      <Link to="/adopt" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                         <i className="ph ph-heart"></i> Saved Animals
-                      </a>
+                      </Link>
                     </>
                   )}
                   

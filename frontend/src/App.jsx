@@ -6,6 +6,8 @@ import Community from './pages/Community.jsx';
 import Report from './pages/Report.jsx';
 import Rescue from './pages/Rescue.jsx';
 import Adopt from './pages/Adopt.jsx';
+import { PetDetails } from './pages/Adopt/components/PetDetails.jsx';
+import { AdoptionApplication } from './pages/Adopt/components/AdoptionApplication.jsx';
 import Donate from './pages/Donate.jsx';
 import Volunteer from './pages/Volunteer.jsx';
 import Login from './pages/Login.jsx';
@@ -24,8 +26,12 @@ function App() {
           <Route path="report" element={<Report />} />
           <Route path="rescue" element={<Rescue />} />
           <Route path="adopt" element={<Adopt />} />
+          <Route path="adopt/pet/:petId" element={<PetDetails />} />
+          <Route path="adopt/apply/:petId" element={<AdoptionApplication />} />
           <Route path="donate" element={<Donate />} />
           <Route path="volunteer" element={<Volunteer />} />
+          <Route path="volunteer/activities" element={<Volunteer />} />
+          <Route path="volunteer-activities" element={<Volunteer />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
           <Route path="user-dashboard" element={<UserDashboard />} />
