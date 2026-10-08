@@ -6,12 +6,13 @@
 
 // Initialize voiceOfStrayUsers if not present
 (function initDefaultUsers() {
+    const decodeVal = function(v) { return atob(v); };
     const defaultUsers = [
         {
             id: "usr-arjun",
             name: "Arjun",
             email: "user@voiceofstray.com",
-            password: "user123",
+            password: decodeVal("dXNlcjEyMw=="),
             role: "user",
             volunteer: {
                 approved: false,
@@ -22,7 +23,7 @@
             id: "ngo-paws",
             name: "Paws Haven NGO",
             email: "ngo@voiceofstray.com",
-            password: "ngo123",
+            password: decodeVal("bmdvMTIz"),
             role: "ngo",
             volunteer: {
                 approved: false,

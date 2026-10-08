@@ -406,7 +406,7 @@ export function Volunteer() {
         </section>
 
         {/* 3. Impact Dashboard */}
-        <section className="fade-in">
+        <section className="impact-dashboard-section fade-in">
           <div className="section-header-split">
             <div className="header-text">
               <h2>Impact Dashboard</h2>

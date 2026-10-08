@@ -20,6 +20,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Standalone Auth Routes (without global Navbar and Footer) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* Standard App Pages (with global Navbar and Footer) */}
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="community" element={<Community />} />
@@ -32,8 +37,6 @@ function App() {
           <Route path="volunteer" element={<Volunteer />} />
           <Route path="volunteer/activities" element={<Volunteer />} />
           <Route path="volunteer-activities" element={<Volunteer />} />
-          <Route path="login" element={<Login />} />
-          <Route path="signup" element={<Signup />} />
           <Route path="user-dashboard" element={<UserDashboard />} />
           <Route path="ngo-dashboard" element={<NgoDashboard />} />
           <Route path="ui-showroom" element={<UiShowroom />} />

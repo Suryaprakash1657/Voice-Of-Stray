@@ -613,13 +613,15 @@ input:checked + .slider:before { transform: translateX(24px); }
     text-decoration: none;
 }
 
-.dashboard-grid {
+.impact-dashboard-section .dashboard-grid,
+.volunteer-main .dashboard-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 24px;
 }
 
-.dashboard-row-2 {
+.impact-dashboard-section .dashboard-row-2,
+.volunteer-main .dashboard-row-2 {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 24px;
@@ -1552,7 +1554,9 @@ input:checked + .slider:before { transform: translateX(24px); }
     .opportunities-grid, .testimonials-grid {
         grid-template-columns: 1fr 1fr;
     }
-    .dashboard-grid, .dashboard-row-2 {
+    .impact-dashboard-section .dashboard-grid, 
+    .volunteer-main .dashboard-grid, 
+    .dashboard-row-2 {
         grid-template-columns: 1fr;
     }
 }

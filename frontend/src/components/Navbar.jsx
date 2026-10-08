@@ -120,11 +120,12 @@ export default function Navbar() {
   useEffect(() => {
     syncVolunteerAndAuthSession();
     
-    // Listen for storage events (sync when login/logout/approval updates in another tab)
+    // Listen for storage and auth-change events (sync when login/logout/approval updates)
     const handleStorageChange = () => {
       syncVolunteerAndAuthSession();
     };
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('auth-change', handleStorageChange);
 
     // Outside click listener for profile dropdown
     const handleOutsideClick = (event) => {
@@ -136,6 +137,7 @@ export default function Navbar() {
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('auth-change', handleStorageChange);
       document.removeEventListener('click', handleOutsideClick);
     };
   }, []);
@@ -193,7 +195,7 @@ export default function Navbar() {
             <button 
               className="btn-premium primary nav-join-btn" 
               style={{ padding: '8px 24px', fontSize: '0.95rem' }}
-              onClick={() => window.location.href = '/signup.html'}
+              onClick={() => navigate('/signup')}
             >
               Join Now
             </button>
