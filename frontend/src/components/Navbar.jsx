@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { authStorage } from '../pages/Auth/services/authStorage.js';
+import { getSavedPetIds } from '../pages/Adopt/services/adoptionStorage.js';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [savedCount, setSavedCount] = useState(0);
   const [user, setUser] = useState({
     name: 'Arjun',
     email: 'user@voiceofstray.com',
@@ -16,94 +19,113 @@ export default function Navbar() {
 
   // Sync volunteer status against persistent global list
   const syncVolunteerAndAuthSession = () => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const loggedIn = authStorage.isLoggedIn();
     setIsLoggedIn(loggedIn);
 
+    // Sync saved animals badge count
+    try {
+      const savedIds = getSavedPetIds();
+      setSavedCount(Array.isArray(savedIds) ? savedIds.length : 0);
+    } catch (e) {
+      setSavedCount(0);
+    }
+
     if (loggedIn) {
-      const username = localStorage.getItem("username") || "Arjun";
-      const email = localStorage.getItem("email") || "user@voiceofstray.com";
-      const role = localStorage.getItem("role") || "user";
-      const avatarUrl = localStorage.getItem("avatarUrl") || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=f97316&color=fff&bold=true`;
-      
+      const username = localStorage.getItem('username') || 'Arjun';
+      const email = localStorage.getItem('email') || 'user@voiceofstray.com';
+      const role = localStorage.getItem('role') || 'user';
+      const avatarUrl =
+        localStorage.getItem('avatarUrl') ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=f97316&color=fff&bold=true`;
+
       let isApproved = false;
       let accountType = role === 'ngo' ? 'NGO Shelter Partner' : 'Regular User';
-      let status = "Not Applied";
-      let userAppRole = "";
-      let userAppAvailability = "Weekends";
+      let status = 'Not Applied';
+      let userAppRole = '';
+      let userAppAvailability = 'Weekends';
 
       if (role === 'user') {
-        const apps = JSON.parse(localStorage.getItem("voiceOfStrayVolunteerApplications") || "[]");
-        const userApp = apps.find(a => a && a.email && a.email.toLowerCase() === email.toLowerCase());
+        const apps = JSON.parse(localStorage.getItem('voiceOfStrayVolunteerApplications') || '[]');
+        const userApp = apps.find((a) => a && a.email && a.email.toLowerCase() === email.toLowerCase());
 
         if (userApp) {
-          if (userApp.status === "Approved" || userApp.status === "Active" || userApp.status === "Inactive" || userApp.status === "Unavailable") {
-            status = "Approved Volunteer";
+          if (
+            userApp.status === 'Approved' ||
+            userApp.status === 'Active' ||
+            userApp.status === 'Inactive' ||
+            userApp.status === 'Unavailable'
+          ) {
+            status = 'Approved Volunteer';
             isApproved = true;
-            accountType = userApp.role && userApp.role.includes("Rescue") ? "Rescuer" : "Volunteer";
-          } else if (userApp.status === "Rejected") {
-            status = "Rejected";
-          } else if (userApp.status === "Removed") {
-            status = "Removed";
-          } else if (userApp.status === "Pending Review" || userApp.status === "Pending") {
-            status = "Pending Review";
+            accountType = userApp.role && userApp.role.includes('Rescue') ? 'Rescuer' : 'Volunteer';
+          } else if (userApp.status === 'Rejected') {
+            status = 'Rejected';
+          } else if (userApp.status === 'Removed') {
+            status = 'Removed';
+          } else if (userApp.status === 'Pending Review' || userApp.status === 'Pending') {
+            status = 'Pending Review';
           }
-          userAppRole = userApp.role || "";
-          userAppAvailability = userApp.availability || "Weekends";
+          userAppRole = userApp.role || '';
+          userAppAvailability = userApp.availability || 'Weekends';
         }
-        
+
         // Sync voiceOfStrayVolunteer cache
         let volMeta = {};
-        const storedVolMeta = localStorage.getItem("voiceOfStrayVolunteer");
+        const storedVolMeta = localStorage.getItem('voiceOfStrayVolunteer');
         if (storedVolMeta) {
-          try { volMeta = JSON.parse(storedVolMeta); } catch(e){}
+          try {
+            volMeta = JSON.parse(storedVolMeta);
+          } catch (e) {}
         }
-        
+
         if (volMeta.status !== status || volMeta.role !== userAppRole) {
           volMeta.status = status;
           volMeta.role = userAppRole;
           volMeta.availability = userAppAvailability;
-          if (status === "Not Applied" || status === "Removed") {
-            localStorage.removeItem("voiceOfStrayVolunteer");
+          if (status === 'Not Applied' || status === 'Removed') {
+            localStorage.removeItem('voiceOfStrayVolunteer');
           } else {
-            localStorage.setItem("voiceOfStrayVolunteer", JSON.stringify(volMeta));
+            localStorage.setItem('voiceOfStrayVolunteer', JSON.stringify(volMeta));
           }
         }
-        
+
         // Sync with profile accountType
-        const storedProfile = localStorage.getItem("voiceOfStrayUserProfile");
+        const storedProfile = localStorage.getItem('voiceOfStrayUserProfile');
         if (storedProfile) {
           try {
             const profile = JSON.parse(storedProfile);
             if (profile.accountType !== accountType) {
               profile.accountType = accountType;
-              localStorage.setItem("voiceOfStrayUserProfile", JSON.stringify(profile));
+              localStorage.setItem('voiceOfStrayUserProfile', JSON.stringify(profile));
             }
-          } catch(e){}
+          } catch (e) {}
         }
 
         // Sync with currentUser and voiceOfStrayUsers
-        const currentUserRaw = localStorage.getItem("currentUser");
+        const currentUserRaw = localStorage.getItem('currentUser');
         if (currentUserRaw) {
           try {
             const currentUser = JSON.parse(currentUserRaw);
-            const userStatus = isApproved ? "Approved" : (status === "Not Applied" ? "Not Applied" : status);
-            
+            const userStatus = isApproved ? 'Approved' : status === 'Not Applied' ? 'Not Applied' : status;
+
             if (!currentUser.volunteer) {
-              currentUser.volunteer = { approved: false, status: "Not Applied" };
+              currentUser.volunteer = { approved: false, status: 'Not Applied' };
             }
             if (currentUser.volunteer.approved !== isApproved || currentUser.volunteer.status !== userStatus) {
               currentUser.volunteer.approved = isApproved;
               currentUser.volunteer.status = userStatus;
-              localStorage.setItem("currentUser", JSON.stringify(currentUser));
-              
-              const users = JSON.parse(localStorage.getItem("voiceOfStrayUsers") || "[]");
-              const userIdx = users.findIndex(u => u && u.email && u.email.toLowerCase() === currentUser.email.toLowerCase());
+              localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+              const users = JSON.parse(localStorage.getItem('voiceOfStrayUsers') || '[]');
+              const userIdx = users.findIndex(
+                (u) => u && u.email && u.email.toLowerCase() === currentUser.email.toLowerCase()
+              );
               if (userIdx !== -1) {
                 users[userIdx].volunteer = currentUser.volunteer;
-                localStorage.setItem("voiceOfStrayUsers", JSON.stringify(users));
+                localStorage.setItem('voiceOfStrayUsers', JSON.stringify(users));
               }
             }
-          } catch(e){}
+          } catch (e) {}
         }
       }
 
@@ -119,13 +141,15 @@ export default function Navbar() {
 
   useEffect(() => {
     syncVolunteerAndAuthSession();
-    
-    // Listen for storage and auth-change events (sync when login/logout/approval updates)
+
+    // Listen for storage and auth-change events
     const handleStorageChange = () => {
       syncVolunteerAndAuthSession();
     };
+
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('auth-change', handleStorageChange);
+    window.addEventListener('voiceOfStraySavedPetsUpdated', handleStorageChange);
 
     // Outside click listener for profile dropdown
     const handleOutsideClick = (event) => {
@@ -138,39 +162,32 @@ export default function Navbar() {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('auth-change', handleStorageChange);
+      window.removeEventListener('voiceOfStraySavedPetsUpdated', handleStorageChange);
       document.removeEventListener('click', handleOutsideClick);
     };
   }, []);
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out of Voice of Stray?")) {
-      // Clear ONLY session-related variables
-      localStorage.removeItem("currentUser");
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("role");
-      localStorage.removeItem("username");
-      localStorage.removeItem("email");
-      localStorage.removeItem("avatarUrl");
-      localStorage.removeItem("voiceOfStrayVolunteer"); // safe to clear as it is current-user cache
-      
+    if (window.confirm('Are you sure you want to log out of Voice of Stray?')) {
+      authStorage.logout();
       setIsLoggedIn(false);
       setDropdownOpen(false);
-      window.location.href = "/";
+      navigate('/');
     }
   };
 
-  const getDashboardUrl = () => {
-    return user.role === 'ngo' ? '/ngo-dashboard.html' : '/user-dashboard.html';
+  const handleAvatarClick = () => {
+    setDropdownOpen(!dropdownOpen);
   };
 
-  const getActiveClass = (path) => {
-    const currentPath = window.location.pathname;
-    if (path === '/' && (currentPath === '/' || currentPath === '/index.html' || currentPath === '')) {
-      return 'active';
+  const navigateToDashboard = () => {
+    setDropdownOpen(false);
+    if (user.role === 'ngo') {
+      window.location.href = '/ngo-dashboard.html';
+    } else {
+      navigate('/user-dashboard');
     }
-    return currentPath === path ? 'active' : '';
   };
-
 
   return (
     <nav className="navbar" style={{ position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
@@ -180,20 +197,34 @@ export default function Navbar() {
           <span>Voice of Stray</span>
         </Link>
         <div className="nav-links">
-          <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} end>Home</NavLink>
-          <NavLink to="/community" className={({ isActive }) => isActive ? 'active' : ''}>Community</NavLink>
-          <NavLink to="/report" className={({ isActive }) => isActive ? 'active' : ''}>Report</NavLink>
-          <NavLink to="/rescue" className={({ isActive }) => isActive ? 'active' : ''}>Rescue</NavLink>
-          <NavLink to="/adopt" className={({ isActive }) => isActive ? 'active' : ''}>Adopt</NavLink>
-          <NavLink to="/donate" className={({ isActive }) => isActive ? 'active' : ''}>Donate</NavLink>
-          <NavLink to="/volunteer" className={({ isActive }) => isActive ? 'active' : ''}>Volunteer</NavLink>
+          <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')} end>
+            Home
+          </NavLink>
+          <NavLink to="/community" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Community
+          </NavLink>
+          <NavLink to="/report" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Report
+          </NavLink>
+          <NavLink to="/rescue" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Rescue
+          </NavLink>
+          <NavLink to="/adopt" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Adopt
+          </NavLink>
+          <NavLink to="/donate" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Donate
+          </NavLink>
+          <NavLink to="/volunteer" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Volunteer
+          </NavLink>
         </div>
 
         {/* Guest Actions */}
         {!isLoggedIn ? (
           <div className="nav-actions guest-actions">
-            <button 
-              className="btn-premium primary nav-join-btn" 
+            <button
+              className="btn-premium primary nav-join-btn"
               style={{ padding: '8px 24px', fontSize: '0.95rem' }}
               onClick={() => navigate('/signup')}
             >
@@ -206,33 +237,33 @@ export default function Navbar() {
             {user.role !== 'ngo' && (
               <button className="icon-btn saved-pets-btn" onClick={() => navigate('/adopt')}>
                 <i className="ph ph-heart"></i>
-                <span className="badge-counter">3</span>
+                <span className="badge-counter">{savedCount}</span>
               </button>
             )}
 
-            <button className="icon-btn" onClick={() => window.location.href = '/notifications.html'}>
+            <button className="icon-btn" onClick={() => (window.location.href = '/notifications.html')}>
               <i className="ph ph-bell"></i>
             </button>
 
-            <div className="profile-pic" ref={dropdownRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <div className="profile-pic" ref={dropdownRef} onClick={handleAvatarClick} style={{ cursor: 'pointer' }}>
               <img src={user.avatarUrl} alt="Profile" />
-              
+
               {dropdownOpen && (
                 <div className="profile-dropdown show" style={{ display: 'flex' }} onClick={(e) => e.stopPropagation()}>
                   <div className="dropdown-header">
                     <span className="dropdown-name">{user.name}</span>
                     <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500 }}>{user.email}</span>
                     <span className={`dropdown-role-badge ${user.role === 'ngo' ? 'ngo' : 'user'}`}>
-                      {user.role === 'ngo' ? (localStorage.getItem('ngoType') || 'NGO Shelter Partner') : user.accountType}
+                      {user.role === 'ngo' ? localStorage.getItem('ngoType') || 'NGO Shelter Partner' : user.accountType}
                     </span>
                   </div>
                   <div className="dropdown-divider"></div>
-                  
+
                   {user.role === 'ngo' ? (
                     <>
-                      <a href={getDashboardUrl()} className="dropdown-item">
+                      <div className="dropdown-item" onClick={navigateToDashboard} style={{ cursor: 'pointer' }}>
                         <i className="ph ph-squares-four"></i> Dashboard
-                      </a>
+                      </div>
                       <a href="/ngo-edit-profile.html" className="dropdown-item">
                         <i className="ph ph-user-gear"></i> Edit NGO Profile
                       </a>
@@ -242,25 +273,27 @@ export default function Navbar() {
                     </>
                   ) : (
                     <>
-                      <a href={getDashboardUrl()} className="dropdown-item">
+                      {/* Exactly the 4 specified menu items */}
+                      {/* 1. Dashboard */}
+                      <div className="dropdown-item" onClick={navigateToDashboard} style={{ cursor: 'pointer' }}>
                         <i className="ph ph-squares-four"></i> Dashboard
-                      </a>
-                      {(user.accountType === 'Volunteer' || user.accountType === 'Rescuer') && (
-                        <Link to="/volunteer?view=activities" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                          <i className="ph ph-squares-four"></i> Volunteer Activities
-                        </Link>
-                      )}
-                      <a href="/user-edit-profile.html" className="dropdown-item">
+                      </div>
+
+                      {/* 2. Edit Profile */}
+                      <a href="/user-edit-profile.html" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                         <i className="ph ph-user-gear"></i> Edit Profile
                       </a>
+
+                      {/* 3. Saved Animals */}
                       <Link to="/adopt" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                         <i className="ph ph-heart"></i> Saved Animals
                       </Link>
                     </>
                   )}
-                  
+
                   <div className="dropdown-divider"></div>
-                  <div className="dropdown-item logout-btn" onClick={handleLogout}>
+                  {/* 4. Logout */}
+                  <div className="dropdown-item logout-btn" onClick={handleLogout} style={{ cursor: 'pointer' }}>
                     <i className="ph ph-sign-out"></i> Log Out
                   </div>
                 </div>
