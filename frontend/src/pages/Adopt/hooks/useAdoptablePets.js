@@ -17,7 +17,10 @@ const INITIAL_FILTERS = {
   urgent: false,
   vaccinated: false,
   trained: false,
-  savedOnly: false
+  savedOnly: false,
+  goodWithKids: false,
+  goodWithPets: false,
+  houseTrained: false
 };
 
 const ITEMS_PER_PAGE = 6;
@@ -120,6 +123,9 @@ export function useAdoptablePets() {
       if (filters.vaccinated && !pet.vaccinated && !pet.attributes?.vaccinated) return false;
       if (filters.trained && !pet.trained && !pet.attributes?.housetrained) return false;
       if (filters.savedOnly && !savedPets.includes(pet.id)) return false;
+      if (filters.goodWithKids && pet.attributes?.goodkids === false) return false;
+      if (filters.goodWithPets && pet.attributes?.goodpets === false) return false;
+      if (filters.houseTrained && !pet.trained && pet.attributes?.housetrained === false) return false;
 
       // 7. Search Query Match
       if (searchQuery.trim()) {

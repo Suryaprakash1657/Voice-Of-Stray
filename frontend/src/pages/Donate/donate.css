@@ -1106,6 +1106,7 @@
 .modal-overlay.show {
     display: flex;
     opacity: 1;
+    visibility: visible;
 }
 
 .modal-card {

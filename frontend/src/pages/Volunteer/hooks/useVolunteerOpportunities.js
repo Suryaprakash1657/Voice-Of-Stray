@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   getVolunteerOpportunities,
+  addVolunteerOpportunity,
   getAvailableRescueOpportunities,
   acceptOpportunity,
   submitRescueVolunteerRequest
@@ -29,10 +30,12 @@ export function useVolunteerOpportunities() {
 
     window.addEventListener('storage', handleUpdate);
     window.addEventListener('voiceOfStrayVolunteerUpdate', handleUpdate);
+    window.addEventListener('voiceOfStrayCasesUpdated', handleUpdate);
 
     return () => {
       window.removeEventListener('storage', handleUpdate);
       window.removeEventListener('voiceOfStrayVolunteerUpdate', handleUpdate);
+      window.removeEventListener('voiceOfStrayCasesUpdated', handleUpdate);
     };
   }, [loadData]);
 
@@ -60,6 +63,14 @@ export function useVolunteerOpportunities() {
     return res;
   }, [loadData]);
 
+  const handleAddOpportunity = useCallback((newOpp) => {
+    const res = addVolunteerOpportunity(newOpp);
+    if (res.success) {
+      loadData();
+    }
+    return res;
+  }, [loadData]);
+
   return {
     opportunities,
     availableRescueCases,
@@ -68,6 +79,7 @@ export function useVolunteerOpportunities() {
     filteredOpportunities,
     acceptOpportunity: handleAcceptOpportunity,
     submitRescueRequest: handleSubmitRescueRequest,
+    addOpportunity: handleAddOpportunity,
     refreshOpportunities: loadData,
     loading
   };

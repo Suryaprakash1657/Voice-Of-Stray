@@ -24,6 +24,7 @@ export function Donate() {
     completedDonation,
     presetAmount,
     frequency,
+    isProcessing,
     handleSelectPresetAmount,
     handleSelectFrequency,
     handleFormChange,
@@ -105,6 +106,7 @@ export function Donate() {
       <DonationConfirmation
         isOpen={modalState === 'confirm'}
         pendingDonation={pendingDonation}
+        isProcessing={isProcessing}
         onCancel={closeModal}
         onConfirm={executePayment}
       />

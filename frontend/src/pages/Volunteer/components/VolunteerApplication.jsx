@@ -8,8 +8,13 @@ export function VolunteerApplication({
   onSubmitNgo,
   currentUser,
   selectedSkills = ['First Aid'],
-  selectedAvailability = 'Weekends'
+  selectedAvailability = 'Weekends',
+  petReference = null
 }) {
+  const petDisplayName = typeof petReference === 'object' && petReference !== null
+    ? (petReference.name || petReference.id || '')
+    : (petReference || '');
+
   // Volunteer Form State
   const [volForm, setVolForm] = useState({
     name: '',
@@ -28,15 +33,17 @@ export function VolunteerApplication({
     pets: 'no'
   });
 
-  // NGO Form State
+  // NGO Form State with Document Uploads
   const [ngoForm, setNgoForm] = useState({
     name: '',
     email: '',
-    reg: ''
+    reg: '',
+    documents: []
   });
 
   const [errors, setErrors] = useState({});
   const [submittedModal, setSubmittedModal] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Autofill if user is logged in
   useEffect(() => {
@@ -55,6 +62,19 @@ export function VolunteerApplication({
         name: currentUser.name || currentUser.username || '',
         email: currentUser.email || ''
       }));
+
+      // Pre-fill NGO form if available
+      try {
+        const storedNgo = JSON.parse(localStorage.getItem('voiceOfStrayNgoProfile') || '{}');
+        if (storedNgo.name || storedNgo.email) {
+          setNgoForm(prev => ({
+            ...prev,
+            name: storedNgo.name || currentUser.name || '',
+            email: storedNgo.email || currentUser.email || '',
+            reg: storedNgo.regNumber || prev.reg
+          }));
+        }
+      } catch (e) {}
     }
   }, [currentUser, selectedAvailability, selectedSkills]);
 
@@ -76,10 +96,11 @@ export function VolunteerApplication({
     return String(phone).replace(/\D/g, '').length >= 10;
   };
 
-  const handleVolunteerSubmit = (e) => {
+  const handleVolunteerSubmit = async (e) => {
     e.preventDefault();
-    const errs = {};
+    if (isSubmitting) return;
 
+    const errs = {};
     if (!volForm.name.trim()) errs.name = 'Full Name is required';
     if (!volForm.email.trim() || !validateEmail(volForm.email)) errs.email = 'Please enter a valid email address';
     if (!volForm.phone.trim() || !validatePhone(volForm.phone)) errs.phone = 'Please enter a valid 10-digit phone number';
@@ -89,25 +110,36 @@ export function VolunteerApplication({
       return;
     }
 
-    const res = onSubmitVolunteer({
-      name: volForm.name,
-      email: volForm.email,
-      phone: volForm.phone,
-      role: volForm.role,
-      type: 'volunteer',
-      availability: volForm.availability,
-      skills: volForm.skills
-    });
+    setIsSubmitting(true);
+    try {
+      const res = await onSubmitVolunteer({
+        name: volForm.name,
+        email: volForm.email,
+        phone: volForm.phone,
+        role: volForm.role,
+        type: 'volunteer',
+        availability: volForm.availability,
+        skills: volForm.skills
+      });
 
-    if (res?.success) {
-      setSubmittedModal('volunteer');
+      if (res?.success) {
+        setSubmittedModal('volunteer');
+      } else {
+        setErrors({ general: res?.error || 'Failed to submit application. Please try again.' });
+      }
+    } catch (err) {
+      console.error('[VolunteerApplication] Submit volunteer error:', err);
+      setErrors({ general: err.message || 'An unexpected error occurred. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleFosterSubmit = (e) => {
+  const handleFosterSubmit = async (e) => {
     e.preventDefault();
-    const errs = {};
+    if (isSubmitting) return;
 
+    const errs = {};
     if (!fosterForm.name.trim()) errs.name = 'Full Name is required';
     if (!fosterForm.email.trim() || !validateEmail(fosterForm.email)) errs.email = 'Please enter a valid email address';
 
@@ -116,26 +148,85 @@ export function VolunteerApplication({
       return;
     }
 
-    const res = onSubmitVolunteer({
-      name: fosterForm.name,
-      email: fosterForm.email,
-      role: 'Foster Care Support',
-      type: 'foster',
-      availability: 'Weekends',
-      skills: ['Fostering'],
-      housing: fosterForm.housing,
-      pets: fosterForm.pets
-    });
+    setIsSubmitting(true);
+    try {
+      const res = await onSubmitVolunteer({
+        name: fosterForm.name,
+        email: fosterForm.email,
+        role: 'Foster Care Support',
+        type: 'foster',
+        availability: 'Weekends',
+        skills: ['Fostering'],
+        housing: fosterForm.housing,
+        pets: fosterForm.pets,
+        petPreference: petDisplayName
+      });
 
-    if (res?.success) {
-      setSubmittedModal('foster');
+      if (res?.success) {
+        setSubmittedModal('foster');
+      } else {
+        setErrors({ general: res?.error || 'Failed to submit application. Please try again.' });
+      }
+    } catch (err) {
+      console.error('[VolunteerApplication] Submit foster error:', err);
+      setErrors({ general: err.message || 'An unexpected error occurred. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleNgoSubmit = (e) => {
-    e.preventDefault();
-    const errs = {};
+  const handleDocumentUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
+    const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+    const maxSizeBytes = 10 * 1024 * 1024; // 10MB
+    const newDocs = [];
+    let fileError = null;
+
+    files.forEach(file => {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (!allowedExtensions.includes(ext)) {
+        fileError = `Unsupported file type for "${file.name}". Please upload PDF, PNG, JPG, or JPEG.`;
+        return;
+      }
+      if (file.size > maxSizeBytes) {
+        fileError = `File "${file.name}" exceeds the 10MB size limit.`;
+        return;
+      }
+      newDocs.push({
+        id: 'DOC-' + Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+        type: ext.toUpperCase(),
+        uploadedAt: new Date().toLocaleDateString(),
+        status: 'Pending Verification'
+      });
+    });
+
+    if (fileError) {
+      setErrors(prev => ({ ...prev, documents: fileError }));
+    } else {
+      setErrors(prev => ({ ...prev, documents: null }));
+      setNgoForm(prev => ({
+        ...prev,
+        documents: [...prev.documents, ...newDocs]
+      }));
+    }
+  };
+
+  const handleRemoveDocument = (docId) => {
+    setNgoForm(prev => ({
+      ...prev,
+      documents: prev.documents.filter(d => d.id !== docId)
+    }));
+  };
+
+  const handleNgoSubmit = async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    const errs = {};
     if (!ngoForm.name.trim()) errs.name = 'Organization Name is required';
     if (!ngoForm.email.trim() || !validateEmail(ngoForm.email)) errs.email = 'Please enter a valid official email address';
     if (!ngoForm.reg.trim()) errs.reg = 'Registration Number is required';
@@ -145,19 +236,25 @@ export function VolunteerApplication({
       return;
     }
 
-    const res = onSubmitNgo({
-      name: ngoForm.name,
-      email: ngoForm.email,
-      reg: ngoForm.reg
-    });
+    setIsSubmitting(true);
+    try {
+      const res = await onSubmitNgo({
+        name: ngoForm.name,
+        email: ngoForm.email,
+        reg: ngoForm.reg,
+        documents: ngoForm.documents
+      });
 
-    if (res?.success) {
-      setSubmittedModal('ngo');
+      if (res?.success) {
+        setSubmittedModal('ngo');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay active show" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>
           <i className="ph-bold ph-x"></i>
@@ -169,7 +266,7 @@ export function VolunteerApplication({
         {activeModal === 'volunteer-modal' && (
           <>
             {submittedModal === 'volunteer' ? (
-              <div className="modal-success-msg">
+              <div className="modal-success-msg show" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'transparent', padding: '16px 0', marginBottom: 0 }}>
                 <i className="ph-fill ph-check-circle" style={{ fontSize: '3.5rem', color: '#10b981', marginBottom: '8px' }}></i>
                 <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1e293b' }}>Application Submitted</h3>
                 <span
@@ -269,8 +366,8 @@ export function VolunteerApplication({
                     </select>
                   </div>
 
-                  <button type="submit" className="btn-full orange" style={{ marginTop: '16px' }}>
-                    Submit Registration
+                  <button type="submit" className="btn-full orange" disabled={isSubmitting} style={{ marginTop: '16px', opacity: isSubmitting ? 0.7 : 1 }}>
+                    {isSubmitting ? 'Submitting Registration...' : 'Submit Registration'}
                   </button>
                 </form>
               </>
@@ -284,7 +381,7 @@ export function VolunteerApplication({
         {activeModal === 'foster-modal' && (
           <>
             {submittedModal === 'foster' ? (
-              <div className="modal-success-msg">
+              <div className="modal-success-msg show" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'transparent', padding: '16px 0', marginBottom: 0 }}>
                 <i className="ph-fill ph-check-circle" style={{ fontSize: '3.5rem', color: '#10b981', marginBottom: '8px' }}></i>
                 <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1e293b' }}>Application Submitted</h3>
                 <span
@@ -320,6 +417,28 @@ export function VolunteerApplication({
               <>
                 <h3>Become a Foster Parent</h3>
                 <p>Give a stray a temporary home while they heal.</p>
+
+                {petDisplayName && (
+                  <div
+                    style={{
+                      background: '#fff7ed',
+                      border: '1px solid #fed7aa',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      color: '#9a3412',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      marginBottom: '12px'
+                    }}
+                  >
+                    <i className="ph-fill ph-paw-print"></i>
+                    <span>Fostering Interest for: <strong>{petDisplayName}</strong></span>
+                  </div>
+                )}
+
                 <form className="modal-form" onSubmit={handleFosterSubmit}>
                   <div className="form-group">
                     <label>Full Name *</label>
@@ -372,8 +491,8 @@ export function VolunteerApplication({
                     </select>
                   </div>
 
-                  <button type="submit" className="btn-full orange" style={{ marginTop: '16px' }}>
-                    Apply to Foster
+                  <button type="submit" className="btn-full orange" disabled={isSubmitting} style={{ marginTop: '16px', opacity: isSubmitting ? 0.7 : 1 }}>
+                    {isSubmitting ? 'Submitting Application...' : 'Apply to Foster'}
                   </button>
                 </form>
               </>
@@ -387,11 +506,28 @@ export function VolunteerApplication({
         {activeModal === 'ngo-modal' && (
           <>
             {submittedModal === 'ngo' ? (
-              <div className="modal-success-msg">
+              <div className="modal-success-msg show" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'transparent', padding: '16px 0', marginBottom: 0 }}>
                 <i className="ph-fill ph-check-circle" style={{ fontSize: '3.5rem', color: '#10b981', marginBottom: '8px' }}></i>
-                <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1e293b' }}>Application Submitted</h3>
+                <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1e293b' }}>Verification Under Review</h3>
+                <span
+                  className="status-pill pending"
+                  style={{
+                    background: '#fef9c3',
+                    color: '#854d0e',
+                    padding: '6px 16px',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    borderRadius: '9999px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    marginBottom: '12px'
+                  }}
+                >
+                  Pending Verification
+                </span>
                 <p style={{ fontSize: '0.92rem', color: 'var(--text-muted, #64748b)', textAlign: 'center', lineHeight: 1.5, marginBottom: '20px' }}>
-                  Your organization details have been submitted. You can now visit your partner dashboard.
+                  Your organization details and {ngoForm.documents.length} verification document(s) have been submitted.<br /><br />
+                  <strong>Note:</strong> Document upload does not automatically grant verified status. Our team will review your organization&apos;s legal credentials within 2–3 business days.
                 </p>
                 <Link
                   to="/ngo-dashboard"
@@ -404,8 +540,8 @@ export function VolunteerApplication({
               </div>
             ) : (
               <>
-                <h3>NGO Verification</h3>
-                <p>Partner with us for direct funding and verified rescue alerts.</p>
+                <h3>NGO Verification &amp; Onboarding</h3>
+                <p>Register and upload required documents for official verification.</p>
                 <form className="modal-form" onSubmit={handleNgoSubmit}>
                   <div className="form-group">
                     <label>Organization Name *</label>
@@ -436,15 +572,109 @@ export function VolunteerApplication({
                     <input
                       type="text"
                       name="reg"
-                      placeholder="Enter registration ID"
+                      placeholder="Enter registration ID (e.g. NGO-12345-IND)"
                       value={ngoForm.reg}
                       onChange={(e) => setNgoForm({ ...ngoForm, reg: e.target.value })}
                     />
                     {errors.reg && <span className="form-error">{errors.reg}</span>}
                   </div>
 
-                  <button type="submit" className="btn-full blue" style={{ marginTop: '16px' }}>
-                    Start Onboarding
+                  {/* Document Upload Section */}
+                  <div className="form-group" style={{ marginTop: '12px' }}>
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Required Verification Documents</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>PDF, JPG, PNG (Max 10MB)</span>
+                    </label>
+
+                    <label
+                      htmlFor="ngo-doc-upload-input"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        padding: '16px',
+                        border: '2px dashed #cbd5e1',
+                        borderRadius: '8px',
+                        background: '#f8fafc',
+                        cursor: 'pointer',
+                        transition: 'border-color 0.2s',
+                        textAlign: 'center'
+                      }}
+                    >
+                      <i className="ph-bold ph-upload-simple" style={{ fontSize: '1.5rem', color: '#0284c7' }}></i>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155' }}>
+                        Click to select Legal / Financial documents
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        501(c)(3), 80G Certificate, or Registration Docs
+                      </span>
+                    </label>
+                    <input
+                      id="ngo-doc-upload-input"
+                      type="file"
+                      multiple
+                      accept=".pdf,.png,.jpg,.jpeg"
+                      onChange={handleDocumentUpload}
+                      style={{ display: 'none' }}
+                    />
+
+                    {errors.documents && (
+                      <span className="form-error" style={{ marginTop: '6px', display: 'block' }}>
+                        {errors.documents}
+                      </span>
+                    )}
+
+                    {ngoForm.documents.length > 0 && (
+                      <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {ngoForm.documents.map((doc) => (
+                          <div
+                            key={doc.id}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '8px 12px',
+                              background: 'white',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '6px',
+                              fontSize: '0.82rem'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <i className="ph-fill ph-file-text" style={{ color: '#0284c7' }}></i>
+                              <span style={{ fontWeight: 600, color: '#0f172a' }}>{doc.name}</span>
+                              <span style={{ color: '#64748b' }}>({doc.size})</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveDocument(doc.id)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#ef4444',
+                                cursor: 'pointer',
+                                fontSize: '1.1rem',
+                                padding: '2px'
+                              }}
+                              title="Remove document"
+                            >
+                              <i className="ph ph-trash"></i>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn-full blue"
+                    disabled={isSubmitting}
+                    style={{ marginTop: '16px', opacity: isSubmitting ? 0.7 : 1 }}
+                  >
+                    {isSubmitting ? 'Submitting Details...' : 'Submit for Verification'}
                   </button>
                 </form>
               </>

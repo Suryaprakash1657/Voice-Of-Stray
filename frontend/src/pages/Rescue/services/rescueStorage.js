@@ -173,14 +173,25 @@ export function getCasesDatabase() {
 export function saveCasesDatabase(casesDb) {
   const serialized = JSON.stringify(casesDb);
   localStorage.setItem(CASES_KEY, serialized);
-  window.dispatchEvent(
-    new StorageEvent("storage", {
-      key: CASES_KEY,
-      newValue: serialized
-    })
-  );
-  // Also dispatch custom event for intra-window reactivity
-  window.dispatchEvent(new CustomEvent("voiceOfStrayCasesUpdated", { detail: casesDb }));
+  if (typeof window !== 'undefined') {
+    if (typeof StorageEvent !== 'undefined') {
+      try {
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: CASES_KEY,
+            newValue: serialized
+          })
+        );
+      } catch (e) {
+        window.dispatchEvent(new Event("storage"));
+      }
+    } else if (typeof Event !== 'undefined') {
+      window.dispatchEvent(new Event("storage"));
+    }
+    if (typeof CustomEvent !== 'undefined') {
+      window.dispatchEvent(new CustomEvent("voiceOfStrayCasesUpdated", { detail: casesDb }));
+    }
+  }
 }
 
 /**
@@ -216,7 +227,7 @@ export function getActiveRescueCases() {
  */
 export function getCaseById(caseId) {
   if (!caseId) return null;
-  const cleanId = String(caseId).replace(/^RSC-/, "").trim();
+  const cleanId = String(caseId).replace(/^RSC-/i, "").trim();
   const casesDb = getCasesDatabase();
   return casesDb[cleanId] || null;
 }
@@ -226,7 +237,7 @@ export function getCaseById(caseId) {
  */
 export function updateCase(caseId, updateFields) {
   if (!caseId) return null;
-  const cleanId = String(caseId).replace(/^RSC-/, "").trim();
+  const cleanId = String(caseId).replace(/^RSC-/i, "").trim();
   const casesDb = getCasesDatabase();
   if (!casesDb[cleanId]) return null;
 
@@ -272,21 +283,31 @@ export function getCurrentUser() {
 export function isUserAssignedVolunteer(c, user) {
   if (!user || !c) return false;
   
-  const userId = String(user.id || user.volunteerId || "");
-  const userName = (user.name || user.username || "").toLowerCase();
+  const userId = String(user.id || user.volunteerId || "").trim();
+  const userEmail = (user.email || "").toLowerCase().trim();
+  const userName = (user.name || user.username || "").toLowerCase().trim();
   
   if (c.assignedVolunteerId && userId && String(c.assignedVolunteerId) === userId) {
     return true;
   }
   
-  if (c.assignedVolunteerName && userName && c.assignedVolunteerName.toLowerCase() === userName) {
+  if (c.assignedVolunteerEmail && userEmail && c.assignedVolunteerEmail.toLowerCase() === userEmail) {
     return true;
+  }
+
+  if (c.assignedVolunteerName && userName) {
+    const assignedName = c.assignedVolunteerName.toLowerCase();
+    if (assignedName === userName || assignedName.includes(userName) || userName.includes(assignedName)) {
+      return true;
+    }
   }
 
   if (c.team?.lead) {
     const lead = c.team.lead;
-    const leadName = typeof lead === "object" ? (lead.username || lead.name) : lead;
-    if (leadName && leadName.toLowerCase() === userName) {
+    const leadName = typeof lead === "object" ? (lead.username || lead.name || "") : String(lead);
+    const leadEmail = typeof lead === "object" ? (lead.email || "") : "";
+    if (leadEmail && userEmail && leadEmail.toLowerCase() === userEmail) return true;
+    if (leadName && userName && (leadName.toLowerCase() === userName || leadName.toLowerCase().includes(userName) || userName.includes(leadName.toLowerCase()))) {
       return true;
     }
   }

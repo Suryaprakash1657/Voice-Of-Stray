@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Modal, Button, Avatar } from '../../../components/ui';
 import MediaPreview from './MediaPreview.jsx';
+import { processImageFile } from '../../../utils/imageUpload.js';
 
 export default function CreatePostModal({
   isOpen,
@@ -12,18 +13,31 @@ export default function CreatePostModal({
   const [category, setCategory] = useState('Rescue');
   const [mediaSrc, setMediaSrc] = useState(null);
   const [location, setLocation] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const fileInputRef = useRef(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setMediaSrc(event.target.result);
-      };
-      reader.readAsDataURL(file);
+  const handleFile = async (file) => {
+    if (!file) return;
+    try {
+      const dataUrl = await processImageFile(file, { maxWidth: 1200, maxHeight: 1200, quality: 0.85 });
+      setMediaSrc(dataUrl);
+    } catch (err) {
+      console.error('Error processing modal post photo:', err);
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+    if (e.target) e.target.value = '';
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFile(file);
   };
 
   const handleAddLocation = () => {
@@ -62,8 +76,13 @@ export default function CreatePostModal({
   const footer = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
       <div className="action-buttons">
-        <button type="button" className="icon-text-btn" onClick={() => fileInputRef.current?.click()}>
-          <i className="ph ph-image"></i> Photo/Video
+        <button 
+          type="button" 
+          className="icon-text-btn" 
+          onClick={() => fileInputRef.current?.click()}
+          title="Upload photo from your computer or folder"
+        >
+          <i className="ph ph-folder-open"></i> Upload from Folder
         </button>
         <button type="button" className="icon-text-btn" onClick={handleAddLocation}>
           <i className="ph ph-map-pin"></i> Location
@@ -83,69 +102,85 @@ export default function CreatePostModal({
       title="Create Community Post"
       footer={footer}
     >
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', alignItems: 'flex-start' }}>
-        <Avatar src={currentUser.avatar} alt={currentUser.name} size="sm" className="avatar" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <strong>{currentUser.name}</strong>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-            Posting as {currentUser.role}
-          </span>
-        </div>
-      </div>
-
-      <textarea
-        placeholder="Share your impact or ask for help..."
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        rows={4}
-        style={{
-          width: '100%',
-          border: 'none',
-          resize: 'none',
-          fontSize: '1.05rem',
-          fontFamily: 'inherit',
-          outline: 'none',
-          color: 'var(--text-main)',
-          background: 'transparent',
-          marginBottom: '16px'
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
         }}
-      />
-
-      <input 
-        type="file" 
-        ref={fileInputRef} 
-        onChange={handleFileChange} 
-        accept="image/*" 
-        style={{ display: 'none' }} 
-      />
-
-      <MediaPreview mediaSrc={mediaSrc} onRemove={() => setMediaSrc(null)} />
-
-      {location && (
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: '16px', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>
-          <i className="ph ph-map-pin"></i> <span>{location}</span>
-          <button 
-            type="button" 
-            onClick={() => setLocation(null)}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem', display: 'inline-flex', alignItems: 'center', marginLeft: '2px' }}
-            aria-label="Remove location tag"
-          >
-            <i className="ph ph-x-circle"></i>
-          </button>
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+        style={{
+          padding: isDragging ? '12px' : '0',
+          borderRadius: '8px',
+          border: isDragging ? '2px dashed var(--primary)' : '2px dashed transparent',
+          background: isDragging ? '#fff7ed' : 'transparent',
+          transition: 'all 0.2s ease'
+        }}
+      >
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', alignItems: 'flex-start' }}>
+          <Avatar src={currentUser.avatar} alt={currentUser.name} size="sm" className="avatar" />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <strong>{currentUser.name}</strong>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+              Posting as {currentUser.role}
+            </span>
+          </div>
         </div>
-      )}
 
-      <div className="create-post-categories" style={{ marginBottom: 0 }}>
-        {categoryOptions.map((opt) => (
-          <button 
-            key={opt}
-            type="button"
-            onClick={() => setCategory(opt)}
-            className={`category-pill ${opt === 'Alert' ? 'alert' : ''} ${category === opt ? 'active' : ''}`}
-          >
-            {opt}
-          </button>
-        ))}
+        <textarea
+          placeholder="Share your impact or ask for help... (You can also drag & drop photos here)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={4}
+          style={{
+            width: '100%',
+            border: 'none',
+            resize: 'none',
+            fontSize: '1.05rem',
+            fontFamily: 'inherit',
+            outline: 'none',
+            color: 'var(--text-main)',
+            background: 'transparent',
+            marginBottom: '16px'
+          }}
+        />
+
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={handleFileChange} 
+          accept="image/*" 
+          style={{ display: 'none' }} 
+        />
+
+        <MediaPreview mediaSrc={mediaSrc} onRemove={() => setMediaSrc(null)} />
+
+        {location && (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: '16px', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>
+            <i className="ph ph-map-pin"></i> <span>{location}</span>
+            <button 
+              type="button" 
+              onClick={() => setLocation(null)}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem', display: 'inline-flex', alignItems: 'center', marginLeft: '2px' }}
+              aria-label="Remove location tag"
+            >
+              <i className="ph ph-x-circle"></i>
+            </button>
+          </div>
+        )}
+
+        <div className="create-post-categories" style={{ marginBottom: 0 }}>
+          {categoryOptions.map((opt) => (
+            <button 
+              key={opt}
+              type="button"
+              onClick={() => setCategory(opt)}
+              className={`category-pill ${opt === 'Alert' ? 'alert' : ''} ${category === opt ? 'active' : ''}`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
       </div>
     </Modal>
   );

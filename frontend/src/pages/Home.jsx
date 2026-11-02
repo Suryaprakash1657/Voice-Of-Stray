@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import '../assets/landing.css';
 
 export default function Home() {
@@ -202,12 +203,12 @@ export default function Home() {
             <h1>Every stray deserves a <span>voice</span></h1>
             <p>Join the fastest growing community of animal lovers, rescuers, and NGOs working together to create a safer world for street animals.</p>
             <div className="hero-actions">
-              <a href="/report.html" className="btn-premium primary" style={{ textDecoration: 'none' }}>
+              <Link to="/report" className="btn-premium primary" style={{ textDecoration: 'none' }}>
                 <i className="ph-fill ph-warning-circle"></i> Report Emergency
-              </a>
-              <a href="/adopt.html" className="btn-premium secondary" style={{ textDecoration: 'none' }}>
+              </Link>
+              <Link to="/adopt" className="btn-premium secondary" style={{ textDecoration: 'none' }}>
                 <i className="ph-fill ph-heart"></i> Adopt a Pet
-              </a>
+              </Link>
             </div>
           </div>
           <div className="hero-visual animate-up" style={{ animationDelay: '0.2s' }}>

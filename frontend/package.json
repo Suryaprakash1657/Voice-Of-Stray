@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node src/tests/migrationDeepAudit.test.js && node src/tests/integrationAudit.test.js && node src/pages/Donate/services/donationStorage.test.js && node src/pages/Auth/services/authStorage.test.js && node src/pages/UserDashboard/services/userDashboardStorage.test.js && node src/pages/NgoDashboard/services/ngoDashboardStorage.test.js"
   },
   "dependencies": {
     "react": "^18.3.1",

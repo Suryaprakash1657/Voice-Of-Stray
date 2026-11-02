@@ -4,6 +4,7 @@ import DonationSummary from './DonationSummary.jsx';
 export function DonationConfirmation({
   isOpen,
   pendingDonation,
+  isProcessing = false,
   onCancel,
   onConfirm
 }) {
@@ -59,6 +60,7 @@ export function DonationConfirmation({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
             <button
               type="button"
+              disabled={isProcessing}
               onClick={onCancel}
               className="btn-premium secondary"
               style={{
@@ -68,7 +70,8 @@ export function DonationConfirmation({
                 border: '1px solid #e2e8f0',
                 borderRadius: '8px',
                 fontWeight: 700,
-                cursor: 'pointer',
+                cursor: isProcessing ? 'not-allowed' : 'pointer',
+                opacity: isProcessing ? 0.6 : 1,
                 background: 'white',
                 color: '#475569'
               }}
@@ -77,6 +80,7 @@ export function DonationConfirmation({
             </button>
             <button
               type="button"
+              disabled={isProcessing}
               onClick={onConfirm}
               className="btn-premium primary"
               style={{
@@ -86,13 +90,14 @@ export function DonationConfirmation({
                 border: 'none',
                 borderRadius: '8px',
                 fontWeight: 700,
-                cursor: 'pointer',
+                cursor: isProcessing ? 'not-allowed' : 'pointer',
+                opacity: isProcessing ? 0.7 : 1,
                 background: 'var(--primary, #f97316)',
                 color: 'white',
                 boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)'
               }}
             >
-              Pay ₹{Number(pendingDonation.amount || 0).toLocaleString('en-IN')}
+              {isProcessing ? 'Processing...' : `Pay ₹${Number(pendingDonation.amount || 0).toLocaleString('en-IN')}`}
             </button>
           </div>
         </div>

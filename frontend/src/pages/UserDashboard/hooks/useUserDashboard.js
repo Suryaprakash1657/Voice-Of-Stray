@@ -31,7 +31,7 @@ export function useUserDashboard() {
 
     // NGO user redirection
     if (user.role === 'ngo') {
-      window.location.href = '/ngo-dashboard.html';
+      navigate('/ngo-dashboard');
       return;
     }
 

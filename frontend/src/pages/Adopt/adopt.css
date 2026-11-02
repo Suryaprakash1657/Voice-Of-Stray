@@ -1113,8 +1113,12 @@
     transition: transform 0.3s;
 }
 
-.faq-answer {
-    padding: 0 24px 24px;
+.faq-answer,
+.faq-card .faq-answer {
+    padding: 0 24px 24px !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
     color: var(--text-muted);
     font-size: 1rem;
     line-height: 1.6;
@@ -1468,33 +1472,43 @@
 
 .rescue-timeline {
     display: flex;
-    justify-content: space-between;
+    width: 100%;
     position: relative;
+    margin: 24px 0 16px;
+    box-sizing: border-box;
 }
 
 .rescue-timeline::before {
     content: '';
     position: absolute;
-    top: 20px;
-    left: 40px;
-    right: 40px;
+    top: 22px;
+    left: 10%;
+    right: 10%;
     height: 3px;
+    transform: translateY(-50%);
     background-color: #e2e8f0;
     z-index: 1;
 }
 
 .timeline-item {
+    flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     z-index: 2;
     text-align: center;
+    padding: 0 4px;
+    box-sizing: border-box;
 }
 
 .tl-icon {
     width: 44px;
     height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    box-sizing: border-box;
     border-radius: 50%;
     background-color: white;
     border: 2px solid #cbd5e1;
@@ -1503,7 +1517,10 @@
     justify-content: center;
     font-size: 1.25rem;
     color: var(--text-muted);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.2s ease;
 }
 
 .timeline-item.completed .tl-icon {
@@ -1513,21 +1530,40 @@
 }
 
 .timeline-item.active .tl-icon {
-    border-color: #b45309;
+    border-color: #ea580c;
     color: white;
-    background-color: #b45309;
+    background-color: #ea580c;
+    box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.2);
+}
+
+.tl-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 .tl-content h5 {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--text-main);
-    margin-bottom: 2px;
+    margin: 0 0 3px 0;
+    line-height: 1.25;
+    white-space: normal;
+    word-break: normal;
+    text-align: center;
+}
+
+.timeline-item.active .tl-content h5 {
+    color: #ea580c;
+    font-weight: 800;
 }
 
 .tl-content span {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--text-muted);
+    line-height: 1.2;
+    text-align: center;
 }
 
 /* Sidebar Components (Pet Details) */
@@ -1879,5 +1915,13 @@
     }
     .form-group.span-2 {
         grid-column: span 1;
+    }
+    .rescue-timeline {
+        overflow-x: auto;
+        padding-bottom: 12px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .rescue-timeline .timeline-item {
+        min-width: 80px;
     }
 }

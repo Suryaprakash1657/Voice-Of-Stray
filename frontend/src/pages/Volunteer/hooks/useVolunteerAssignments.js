@@ -28,10 +28,12 @@ export function useVolunteerAssignments() {
 
     window.addEventListener('storage', handleUpdate);
     window.addEventListener('voiceOfStrayVolunteerUpdate', handleUpdate);
+    window.addEventListener('voiceOfStrayCasesUpdated', handleUpdate);
 
     return () => {
       window.removeEventListener('storage', handleUpdate);
       window.removeEventListener('voiceOfStrayVolunteerUpdate', handleUpdate);
+      window.removeEventListener('voiceOfStrayCasesUpdated', handleUpdate);
     };
   }, [loadData]);
 
