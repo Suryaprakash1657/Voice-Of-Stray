@@ -31,8 +31,8 @@ export function ApplicationStatus({
         <p style={{ fontSize: '1.05rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, marginBottom: '30px' }}>
           Your organization manages volunteers through the NGO Dashboard.
         </p>
-        <a
-          href="/ngo-volunteer-manage.html"
+        <Link
+          to="/ngo-volunteer-manage"
           className="btn-full blue"
           style={{
             display: 'inline-flex',
@@ -49,7 +49,7 @@ export function ApplicationStatus({
           }}
         >
           Go To Volunteer Management <i className="ph ph-arrow-right"></i>
-        </a>
+        </Link>
       </div>
     );
   }

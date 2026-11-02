@@ -553,13 +553,25 @@ export function getAdoptions() {
 export function saveAdoptions(adoptions) {
   const serialized = JSON.stringify(adoptions);
   localStorage.setItem(ADOPTIONS_KEY, serialized);
-  window.dispatchEvent(
-    new StorageEvent("storage", {
-      key: ADOPTIONS_KEY,
-      newValue: serialized
-    })
-  );
-  window.dispatchEvent(new CustomEvent("voiceOfStrayAdoptionsUpdated", { detail: adoptions }));
+  if (typeof window !== 'undefined') {
+    if (typeof StorageEvent !== 'undefined') {
+      try {
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: ADOPTIONS_KEY,
+            newValue: serialized
+          })
+        );
+      } catch (e) {
+        window.dispatchEvent(new Event("storage"));
+      }
+    } else if (typeof Event !== 'undefined') {
+      window.dispatchEvent(new Event("storage"));
+    }
+    if (typeof CustomEvent !== 'undefined') {
+      window.dispatchEvent(new CustomEvent("voiceOfStrayAdoptionsUpdated", { detail: adoptions }));
+    }
+  }
 }
 
 /**

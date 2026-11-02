@@ -46,6 +46,7 @@ export function DonationFundCard({
         </p>
         <button
           type="button"
+          id="btn-support-milo"
           className="btn-outline w-100"
           onClick={onButtonClick}
         >
@@ -115,6 +116,7 @@ export function DonationFundCard({
 
         <button
           type="button"
+          id="btn-support-medical"
           className="btn-primary w-100"
           style={{
             backgroundColor: '#9a3412',

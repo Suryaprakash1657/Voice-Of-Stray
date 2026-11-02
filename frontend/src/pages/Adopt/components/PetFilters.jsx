@@ -116,6 +116,35 @@ export function PetFilters({ filters, onFilterChange, onResetFilters }) {
         </label>
       </div>
 
+      {/* Behavioral Characteristics */}
+      <div className="filter-group">
+        <label className="group-label">Behavior & Traits</label>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={Boolean(filters.goodWithKids)}
+            onChange={(e) => onFilterChange('goodWithKids', e.target.checked)}
+          />
+          <span>Good with kids</span>
+        </label>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={Boolean(filters.goodWithPets)}
+            onChange={(e) => onFilterChange('goodWithPets', e.target.checked)}
+          />
+          <span>Good with pets</span>
+        </label>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={Boolean(filters.houseTrained)}
+            onChange={(e) => onFilterChange('houseTrained', e.target.checked)}
+          />
+          <span>House trained / Apartment friendly</span>
+        </label>
+      </div>
+
       {/* Distance */}
       <div className="filter-group">
         <label htmlFor="filter-distance-slider" className="group-label">Distance (km)</label>

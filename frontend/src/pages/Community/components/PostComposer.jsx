@@ -3,24 +3,38 @@ import Avatar from '../../../components/ui/Avatar.jsx';
 import Button from '../../../components/ui/Button.jsx';
 import Card from '../../../components/ui/Card.jsx';
 import MediaPreview from './MediaPreview.jsx';
+import { processImageFile } from '../../../utils/imageUpload.js';
 
 export default function PostComposer({ currentUser, onCreatePost }) {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Rescue');
   const [mediaSrc, setMediaSrc] = useState(null);
   const [location, setLocation] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   
   const fileInputRef = useRef(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setMediaSrc(event.target.result);
-      };
-      reader.readAsDataURL(file);
+  const handleFile = async (file) => {
+    if (!file) return;
+    try {
+      const dataUrl = await processImageFile(file, { maxWidth: 1200, maxHeight: 1200, quality: 0.85 });
+      setMediaSrc(dataUrl);
+    } catch (err) {
+      console.error('Error processing post photo:', err);
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+    if (e.target) e.target.value = '';
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFile(file);
   };
 
   const handleAddLocation = () => {
@@ -56,11 +70,24 @@ export default function PostComposer({ currentUser, onCreatePost }) {
   const categoryOptions = ['Rescue', 'Feeding', 'Adoption', 'Story', 'Alert'];
 
   return (
-    <Card className="create-post-card">
+    <Card 
+      className={`create-post-card ${isDragging ? 'dragover' : ''}`}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={handleDrop}
+      style={{
+        transition: 'all 0.2s ease',
+        outline: isDragging ? '2px dashed var(--primary)' : 'none',
+        background: isDragging ? '#fff7ed' : 'white'
+      }}
+    >
       <div className="create-post-top">
         <Avatar src={currentUser.avatar} alt={currentUser.name} size="sm" className="avatar" />
         <textarea 
-          placeholder="Share your impact or ask for help..."
+          placeholder="Share your impact or ask for help... (Drag & drop photo here or click Upload Photo)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           style={{
@@ -116,8 +143,13 @@ export default function PostComposer({ currentUser, onCreatePost }) {
 
       <div className="create-post-actions">
         <div className="action-buttons">
-          <button type="button" className="icon-text-btn" onClick={() => fileInputRef.current?.click()}>
-            <i className="ph ph-image"></i> Photo/Video
+          <button 
+            type="button" 
+            className="icon-text-btn" 
+            onClick={() => fileInputRef.current?.click()}
+            title="Upload photo from your folder"
+          >
+            <i className="ph ph-folder-open"></i> Upload from Folder
           </button>
           <button type="button" className="icon-text-btn" onClick={handleAddLocation}>
             <i className="ph ph-map-pin"></i> Location

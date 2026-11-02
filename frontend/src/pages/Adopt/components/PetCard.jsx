@@ -96,7 +96,10 @@ export const PetCard = memo(function PetCard({ pet, isFavorite, onToggleFavorite
           <Link to={`/adopt/apply/${targetPetId}`} className="btn-adopt">
             Adopt {shortName}
           </Link>
-          <Link to={`/adopt/apply/${targetPetId}`} className="btn-foster">
+          <Link
+            to={`/volunteer?modal=foster&petId=${encodeURIComponent(targetPetId)}&petName=${encodeURIComponent(pet.name)}`}
+            className="btn-foster"
+          >
             Foster
           </Link>
         </div>

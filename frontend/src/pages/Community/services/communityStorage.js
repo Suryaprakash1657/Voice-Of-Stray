@@ -90,6 +90,10 @@ export function getPosts() {
  */
 export function savePosts(posts) {
   localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('voiceOfStrayCommunityUpdated', { detail: posts }));
+  }
 }
 
 /**
@@ -110,6 +114,10 @@ export function getSavedPosts() {
  */
 export function saveSavedPosts(savedIds) {
   localStorage.setItem(SAVED_KEY, JSON.stringify(savedIds));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('voiceOfStraySavedPostsUpdated', { detail: savedIds }));
+  }
 }
 
 /**

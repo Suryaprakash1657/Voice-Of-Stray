@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -12,20 +13,20 @@ export default function Footer() {
         <div className="footer-links">
           <h4>Platform</h4>
           <ul>
-            <li><a href="/report.html">Report a Stray</a></li>
-            <li><a href="/rescue.html">Live Tracking</a></li>
-            <li><a href="/adopt.html">Adopt a Pet</a></li>
-            <li><a href="/community.html">Community Feed</a></li>
+            <li><Link to="/report">Report a Stray</Link></li>
+            <li><Link to="/rescue">Live Tracking</Link></li>
+            <li><Link to="/adopt">Adopt a Pet</Link></li>
+            <li><Link to="/community">Community Feed</Link></li>
           </ul>
         </div>
         
         <div className="footer-links">
           <h4>Get Involved</h4>
           <ul>
-            <li><a href="/volunteer.html">Volunteer</a></li>
-            <li><a href="/donate.html">Donate</a></li>
-            <li><a href="#">Register NGO</a></li>
-            <li><a href="#">Foster Program</a></li>
+            <li><Link to="/volunteer">Volunteer</Link></li>
+            <li><Link to="/donate">Donate</Link></li>
+            <li><Link to="/signup">Register NGO</Link></li>
+            <li><Link to="/adopt">Foster Program</Link></li>
           </ul>
         </div>
         

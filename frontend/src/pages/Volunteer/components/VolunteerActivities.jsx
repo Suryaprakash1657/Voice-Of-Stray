@@ -30,6 +30,11 @@ export function VolunteerActivities({
   const roleDisplay = statusInfo?.role || 'Emergency Rescue';
   const joinedDisplay = statusInfo?.applicationDate ? 'May 2026' : 'June 2026';
   const availDisplay = statusInfo?.availability || 'Weekends';
+  const statusBadgeText = statusInfo?.status || 'Approved Volunteer';
+  const statusUpper = statusBadgeText.toUpperCase();
+  const statusBadgeClass = (statusUpper.includes('APPROVED') || statusUpper.includes('ACTIVE'))
+    ? 'approved'
+    : (statusUpper.includes('INACTIVE') || statusUpper.includes('UNAVAILABLE') ? 'inactive' : 'pending');
 
   const handleSaveAvailability = (e) => {
     e.preventDefault();
@@ -49,7 +54,7 @@ export function VolunteerActivities({
   return (
     <div className="activities-container fade-in">
       {/* Back Navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '-8px' }}>
         {onBackToOverview ? (
           <button
             onClick={onBackToOverview}
@@ -59,10 +64,13 @@ export function VolunteerActivities({
             <i className="ph ph-arrow-left"></i> Back to Volunteer Overview
           </button>
         ) : (
-          <Link to="/user-dashboard" className="back-link">
-            <i className="ph ph-arrow-left"></i> Back to Dashboard
+          <Link to="/volunteer" className="back-link">
+            <i className="ph ph-arrow-left"></i> Back to Volunteer Overview
           </Link>
         )}
+        <Link to="/user-dashboard" className="back-link" style={{ fontSize: '0.9rem' }}>
+          <i className="ph ph-squares-four"></i> Back to Dashboard
+        </Link>
       </div>
 
       {/* Hero Welcome Banner */}
@@ -371,8 +379,8 @@ export function VolunteerActivities({
             </div>
 
             <div style={{ marginBottom: '16px' }}>
-              <span className="volunteer-status-badge approved">
-                Approved Volunteer
+              <span className={`volunteer-status-badge ${statusBadgeClass}`}>
+                {statusBadgeText}
               </span>
             </div>
             <div className="detail-row">

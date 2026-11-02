@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-export function VolunteerHero({ onOpenVolunteerModal, onOpenNgoModal, onOpenFosterModal, isNgo = false }) {
+export function VolunteerHero({
+  onOpenVolunteerModal,
+  onOpenNgoModal,
+  onOpenFosterModal,
+  onJoinEmergencyTeam,
+  isNgo = false
+}) {
   const [counts, setCounts] = useState({
     volunteers: 0,
     lives: 0,
@@ -49,12 +55,16 @@ export function VolunteerHero({ onOpenVolunteerModal, onOpenNgoModal, onOpenFost
             </p>
             <div className="emergency-actions">
               <button
+                type="button"
+                id="btn-join-emergency-team"
                 className="btn-white"
-                onClick={onOpenVolunteerModal}
+                onClick={onJoinEmergencyTeam || onOpenVolunteerModal}
               >
                 Join Emergency Team
               </button>
               <button
+                type="button"
+                id="btn-become-foster-parent"
                 className="btn-outline-white"
                 onClick={onOpenFosterModal}
               >
@@ -81,19 +91,21 @@ export function VolunteerHero({ onOpenVolunteerModal, onOpenNgoModal, onOpenFost
 
         <div className="hero-ctas">
           {!isNgo && (
-            <button
-              className="btn-hero primary"
-              onClick={onOpenVolunteerModal}
-            >
-              Join as Volunteer
-            </button>
+            <>
+              <button
+                className="btn-hero primary"
+                onClick={onOpenVolunteerModal}
+              >
+                Join as Volunteer
+              </button>
+              <button
+                className="btn-hero outline"
+                onClick={onOpenNgoModal}
+              >
+                Partner as NGO
+              </button>
+            </>
           )}
-          <button
-            className="btn-hero outline"
-            onClick={onOpenNgoModal}
-          >
-            Partner as NGO
-          </button>
         </div>
 
         <div className="hero-stats-grid">

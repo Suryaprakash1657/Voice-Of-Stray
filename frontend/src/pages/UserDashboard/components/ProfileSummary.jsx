@@ -51,7 +51,7 @@ export default function ProfileSummary({ user, profile, isVolunteerOrRescuer, is
           border: '1px solid rgba(249, 115, 22, 0.15)'
         }}
         onClick={() => {
-          window.location.href = '/user-edit-profile.html';
+          window.location.href = '/user-edit-profile';
         }}
       >
         <i className="ph ph-pencil-simple"></i> Edit Rescue Settings

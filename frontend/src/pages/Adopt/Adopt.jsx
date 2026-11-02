@@ -22,11 +22,14 @@ export function Adopt() {
     toggleFavorite
   } = useAdoptablePets();
 
-  const [activeFaq, setActiveFaq] = useState(null);
+  const [openFaqs, setOpenFaqs] = useState({ 0: true, 1: true, 2: true, 3: true, 4: true });
   const carouselRef = useRef(null);
 
   const toggleFaq = (index) => {
-    setActiveFaq(activeFaq === index ? null : index);
+    setOpenFaqs((prev) => ({
+      ...prev,
+      [index]: prev[index] !== false ? false : true
+    }));
   };
 
   const handleScrollCarousel = (dir) => {
@@ -100,12 +103,16 @@ export function Adopt() {
       a: 'Yes! We highly encourage our "Foster-to-Adopt" program. It allows you to take a pet home for 1-2 weeks to ensure they are the right fit for your family and lifestyle before making a final commitment.'
     },
     {
-      q: 'What are the basic requirements to adopt?',
-      a: 'Requirements usually include proof of residence, landlord approval (if renting), an initial video or in-person home check, and ensuring all household members are on board.'
+      q: "What is the return policy if things don't work out?",
+      a: "We understand that sometimes things don't work out. All of our NGO partners require that the pet be returned directly to them. We offer support and behavioral resources first to help resolve any issues."
     },
     {
-      q: 'What support is provided after adoption?',
-      a: 'Voice of Stray and our partner NGOs provide 30 days of post-adoption check-ins, behaviorist helpline access, and initial starter nutrition kits to ensure a smooth transition.'
+      q: 'How long does the approval timeline take?',
+      a: 'Most applications are reviewed within 48-72 hours. The entire process from application to bringing your pet home usually takes about 1 to 2 weeks, depending on the required home checks and meet-and-greets.'
+    },
+    {
+      q: "Will I receive the pet's full medical history?",
+      a: 'Absolutely. Transparency is our priority. You will receive a complete packet of the pet\'s known medical history, vaccination records, spay/neuter certificates, and any ongoing medical needs upon adoption.'
     }
   ];
 
@@ -361,24 +368,52 @@ export function Adopt() {
             <p>Everything you need to know about welcoming a new pet.</p>
           </div>
           <div className="faq-grid">
-            {faqs.map((faq, index) => (
-              <div key={index} className="faq-card card">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaqs[index] !== false;
+              return (
                 <div
-                  className="faq-question"
-                  onClick={() => toggleFaq(index)}
-                  role="button"
-                  tabIndex="0"
+                  key={index}
+                  className={`faq-card card ${isOpen ? 'active' : ''}`}
+                  style={{
+                    borderColor: isOpen ? 'var(--primary, #f97316)' : 'var(--border)',
+                    transition: 'all 0.2s ease'
+                  }}
                 >
-                  <strong>{faq.q}</strong>
-                  <i className={`ph ph-caret-${activeFaq === index ? 'up' : 'down'}`}></i>
-                </div>
-                {activeFaq === index && (
-                  <div className="faq-answer" style={{ display: 'block' }}>
-                    <p>{faq.a}</p>
+                  <div
+                    className="faq-question"
+                    onClick={() => toggleFaq(index)}
+                    role="button"
+                    tabIndex="0"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <strong>{faq.q}</strong>
+                    <i
+                      className="ph ph-caret-down"
+                      style={{
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.25s ease'
+                      }}
+                    ></i>
                   </div>
-                )}
-              </div>
-            ))}
+                  {isOpen && (
+                    <div
+                      className="faq-answer"
+                      style={{
+                        display: 'block',
+                        padding: '0 24px 24px',
+                        maxHeight: 'none',
+                        overflow: 'visible',
+                        opacity: 1
+                      }}
+                    >
+                      <p style={{ margin: 0, color: 'var(--text-muted, #64748b)', fontSize: '1rem', lineHeight: '1.6' }}>
+                        {faq.a}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
 

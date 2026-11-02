@@ -9,6 +9,7 @@ import VolunteerOpportunities from './components/VolunteerOpportunities.jsx';
 import VolunteerApplication from './components/VolunteerApplication.jsx';
 import ApplicationStatus from './components/ApplicationStatus.jsx';
 import VolunteerActivities from './components/VolunteerActivities.jsx';
+import AddTaskModal from './components/AddTaskModal.jsx';
 
 import './volunteer.css';
 
@@ -18,7 +19,10 @@ export function Volunteer() {
   const navigate = useNavigate();
 
   // Active subview: 'overview' | 'activities'
-  const isActivitiesPath = location.pathname.endsWith('/activities') || location.pathname === '/volunteer-activities';
+  const isActivitiesPath =
+    location.pathname.endsWith('/activities') ||
+    location.pathname === '/volunteer-activities' ||
+    location.pathname === '/volunteer-activities.html';
   const viewParam = searchParams.get('view');
   const [activeView, setActiveView] = useState((isActivitiesPath || viewParam === 'activities') ? 'activities' : 'overview');
 
@@ -44,8 +48,11 @@ export function Volunteer() {
     filter,
     setFilter,
     acceptOpportunity,
-    submitRescueRequest
+    submitRescueRequest,
+    addOpportunity
   } = useVolunteerOpportunities();
+
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 
   // Assignments hook
   const {
@@ -60,6 +67,45 @@ export function Volunteer() {
 
   // Modals state
   const [activeModal, setActiveModal] = useState(null); // 'volunteer-modal' | 'foster-modal' | 'ngo-modal' | null
+
+  // URL modal shortcuts (e.g. from Foster button on Adopt page)
+  const modalParam = searchParams.get('modal');
+  const petNameParam = searchParams.get('petName');
+  const petIdParam = searchParams.get('petId');
+  const petReference = petNameParam ? { id: petIdParam, name: petNameParam } : null;
+
+  // Track NGO partner verification status
+  const [ngoVerificationStatus, setNgoVerificationStatus] = useState(() => {
+    try {
+      const stored = localStorage.getItem("voiceOfStrayNgoProfile");
+      if (stored) {
+        const p = JSON.parse(stored);
+        return p.verificationStatus || null;
+      }
+      const userProf = localStorage.getItem("voiceOfStrayUserProfile");
+      if (userProf) {
+        const up = JSON.parse(userProf);
+        if (up.accountType === "NGO Partner") return up.verificationStatus || "Pending Verification";
+      }
+    } catch (e) {}
+    return null;
+  });
+
+  useEffect(() => {
+    if (modalParam === 'foster') {
+      setActiveView('overview');
+      setActiveModal('foster-modal');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (modalParam === 'volunteer' || modalParam === 'rescuer') {
+      setActiveView('overview');
+      setActiveModal('volunteer-modal');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (modalParam === 'ngo') {
+      setActiveView('overview');
+      setActiveModal('ngo-modal');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [modalParam]);
 
   // Role section interactive states
   const [selectedSkills, setSelectedSkills] = useState(['First Aid']);
@@ -105,6 +151,23 @@ export function Volunteer() {
     setActiveModal('ngo-modal');
   };
 
+  const handleJoinEmergencyTeam = () => {
+    if (!currentUser.isLoggedIn) {
+      navigate('/login?redirect=/volunteer');
+      return;
+    }
+    if (isApproved) {
+      handleGoToActivities();
+    } else if (isPending) {
+      alert("Your volunteer application is currently pending review by our team. You will be assigned emergency alerts once approved.");
+      const roleSection = document.getElementById('role-selection-section');
+      if (roleSection) roleSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      setSelectedSkills(prev => prev.includes('First Aid') ? prev : [...prev, 'First Aid']);
+      setActiveModal('volunteer-modal');
+    }
+  };
+
   const handleGoToActivities = () => {
     setActiveView('activities');
     setSearchParams({ view: 'activities' });
@@ -142,8 +205,124 @@ export function Volunteer() {
     }
   ];
 
-  // If approved and viewing activities dashboard
+  // If activities view requested
   if (activeView === 'activities') {
+    // 1. Session Guard
+    if (!currentUser.isLoggedIn) {
+      return (
+        <div className="activities-page-wrapper">
+          <div className="activities-container fade-in">
+            <div className="glass-card" style={{ padding: '48px 32px', textAlign: 'center', maxWidth: '600px', margin: '40px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#ffedd5', color: '#ea580c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+                <i className="ph-fill ph-lock-key"></i>
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1e293b', margin: '0 0 12px 0' }}>Login Required</h2>
+                <p style={{ fontSize: '1.05rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: 0, fontWeight: 600 }}>Please log in to access your volunteer workspace.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '16px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+                <button className="btn-full orange" onClick={() => navigate('/login')}>Go to Login</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 2. NGO Account Guard
+    if (isNgo) {
+      return (
+        <div className="activities-page-wrapper">
+          <div className="activities-container fade-in">
+            <div className="glass-card" style={{ padding: '48px 32px', textAlign: 'center', maxWidth: '600px', margin: '40px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+                <i className="ph-fill ph-buildings"></i>
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1e293b', margin: '0 0 12px 0' }}>NGO Account Detected</h2>
+                <p style={{ fontSize: '1.05rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: 0, fontWeight: 600 }}>NGO partners manage rescue operations from the NGO Dashboard.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '16px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+                <button className="btn-full orange" onClick={() => navigate('/ngo-dashboard')}>Go to NGO Dashboard</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 3. Approval Status Guard
+    if (!isApproved) {
+      return (
+        <div className="activities-page-wrapper">
+          <div className="activities-container fade-in">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <button
+                onClick={handleBackToOverview}
+                className="back-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                <i className="ph ph-arrow-left"></i> Back to Volunteer Overview
+              </button>
+              <button
+                onClick={() => navigate('/user-dashboard')}
+                className="back-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                Back to Dashboard
+              </button>
+            </div>
+
+            {isRemoved ? (
+              <div className="glass-card" style={{ padding: '48px 32px', textAlign: 'center', maxWidth: '600px', margin: '40px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+                  <i className="ph-fill ph-x-circle"></i>
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1e293b', margin: '0 0 12px 0' }}>Volunteer Access Revoked</h2>
+                  <p style={{ fontSize: '1.05rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: 0, fontWeight: 600 }}>Your volunteer membership is currently inactive.</p>
+                  <p style={{ fontSize: '0.95rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: '8px 0 0 0' }}>Please contact the NGO if you believe this was a mistake or submit a new application.</p>
+                </div>
+                <div style={{ display: 'flex', gap: '16px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+                  <button className="btn-view-details" onClick={() => setActiveView('overview')} style={{ padding: '12px 28px', fontWeight: 700, borderRadius: '9999px', fontSize: '0.95rem', background: 'var(--primary, #f97316)', color: 'white', border: 'none' }}>Apply Again</button>
+                  <button className="btn-view-details" onClick={() => navigate('/user-dashboard')} style={{ padding: '12px 28px', fontWeight: 700, borderRadius: '9999px', fontSize: '0.95rem', background: 'white', border: '1px solid #e2e8f0', color: 'var(--text-muted, #64748b)' }}>Back to Dashboard</button>
+                </div>
+              </div>
+            ) : isRejected ? (
+              <div className="glass-card" style={{ padding: '48px 32px', textAlign: 'center', maxWidth: '600px', margin: '40px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+                  <i className="ph-fill ph-x-circle"></i>
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1e293b', margin: '0 0 12px 0' }}>Volunteer Application Rejected</h2>
+                  <p style={{ fontSize: '1.05rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: 0, fontWeight: 600 }}>Your application was not approved.</p>
+                  <p style={{ fontSize: '0.95rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: '8px 0 0 0' }}>You may submit a new application in the future.</p>
+                </div>
+                <div style={{ display: 'flex', gap: '16px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+                  <button className="btn-view-details" onClick={() => setActiveView('overview')} style={{ padding: '12px 28px', fontWeight: 700, borderRadius: '9999px', fontSize: '0.95rem', background: 'var(--primary, #f97316)', color: 'white', border: 'none' }}>Apply Again</button>
+                  <button className="btn-view-details" onClick={() => navigate('/user-dashboard')} style={{ padding: '12px 28px', fontWeight: 700, borderRadius: '9999px', fontSize: '0.95rem', background: 'white', border: '1px solid #e2e8f0', color: 'var(--text-muted, #64748b)' }}>Back to Dashboard</button>
+                </div>
+              </div>
+            ) : (
+              <div className="glass-card" style={{ padding: '48px 32px', textAlign: 'center', maxWidth: '600px', margin: '40px auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#ffedd5', color: '#ea580c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+                  <i className="ph-fill ph-hourglass"></i>
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1e293b', margin: '0 0 12px 0' }}>Application Under Review</h2>
+                  <p style={{ fontSize: '1.05rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: 0, fontWeight: 600 }}>Your volunteer application is currently being reviewed by the NGO.</p>
+                  <p style={{ fontSize: '0.95rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.6, margin: '8px 0 0 0' }}>Please wait for approval.</p>
+                </div>
+                <div style={{ display: 'flex', gap: '16px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+                  <button className="btn-view-details" onClick={() => navigate('/user-dashboard')} style={{ padding: '12px 28px', fontWeight: 700, borderRadius: '9999px', fontSize: '0.95rem', background: 'white', border: '1px solid #e2e8f0', color: 'var(--text-muted, #64748b)' }}>Back to Dashboard</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="activities-page-wrapper">
         {/* Background sparkles */}
@@ -205,6 +384,7 @@ export function Volunteer() {
         onOpenVolunteerModal={handleOpenVolunteerModal}
         onOpenNgoModal={handleOpenNgoModal}
         onOpenFosterModal={handleOpenFosterModal}
+        onJoinEmergencyTeam={handleJoinEmergencyTeam}
         isNgo={isNgo}
       />
 
@@ -359,11 +539,31 @@ export function Volunteer() {
                 </div>
 
                 <button
+                  type="button"
+                  id="btn-upload-ngo-docs"
                   className="btn-upload"
-                  onClick={() => alert("Document upload module is accessible through NGO Onboarding.")}
+                  onClick={handleOpenNgoModal}
                 >
                   <i className="ph-bold ph-upload-simple"></i> Upload Required Documents
                 </button>
+
+                {ngoVerificationStatus && (
+                  <div style={{
+                    marginTop: '10px',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: '#fef3c7',
+                    border: '1px solid #fde68a',
+                    color: '#92400e',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <i className="ph-fill ph-hourglass"></i> Status: {ngoVerificationStatus} (Under Review)
+                  </div>
+                )}
 
                 <div className="ngo-benefits">
                   <ul>
@@ -395,6 +595,8 @@ export function Volunteer() {
                 </div>
 
                 <button
+                  type="button"
+                  id="btn-begin-ngo-verification"
                   className="btn-full blue open-modal-btn"
                   onClick={handleOpenNgoModal}
                 >
@@ -541,6 +743,8 @@ export function Volunteer() {
           filter={filter}
           onFilterChange={setFilter}
           onAcceptOpportunity={acceptOpportunity}
+          isNgo={isNgo}
+          onAddTask={() => setIsAddTaskModalOpen(true)}
         />
 
         {/* 6. Testimonials */}
@@ -611,19 +815,21 @@ export function Volunteer() {
             <p>Join thousands of everyday heroes making our streets safer for animals in need.</p>
             <div className="cta-buttons">
               {!isNgo && (
-                <button
-                  className="btn-hero primary open-modal-btn"
-                  onClick={handleOpenVolunteerModal}
-                >
-                  Start as Volunteer
-                </button>
+                <>
+                  <button
+                    className="btn-hero primary open-modal-btn"
+                    onClick={handleOpenVolunteerModal}
+                  >
+                    Start as Volunteer
+                  </button>
+                  <button
+                    className="btn-hero outline open-modal-btn"
+                    onClick={handleOpenNgoModal}
+                  >
+                    Register NGO
+                  </button>
+                </>
               )}
-              <button
-                className="btn-hero outline open-modal-btn"
-                onClick={handleOpenNgoModal}
-              >
-                Register NGO
-              </button>
             </div>
           </div>
         </section>
@@ -660,12 +866,35 @@ export function Volunteer() {
       {/* Application Modals */}
       <VolunteerApplication
         activeModal={activeModal}
-        onClose={() => setActiveModal(null)}
+        onClose={() => {
+          setActiveModal(null);
+          if (modalParam) {
+            searchParams.delete('modal');
+            searchParams.delete('petId');
+            searchParams.delete('petName');
+            setSearchParams(searchParams);
+          }
+        }}
         onSubmitVolunteer={submitApplication}
-        onSubmitNgo={submitNgoApplication}
+        onSubmitNgo={(payload) => {
+          const res = submitNgoApplication(payload);
+          setNgoVerificationStatus("Pending Verification");
+          return res;
+        }}
         currentUser={currentUser}
         selectedSkills={selectedSkills}
         selectedAvailability={selectedAvailability}
+        petReference={petReference}
+      />
+
+      {/* NGO Add Task Modal */}
+      <AddTaskModal
+        isOpen={isAddTaskModalOpen}
+        onClose={() => setIsAddTaskModalOpen(false)}
+        onAddTask={(taskData) => {
+          addOpportunity(taskData);
+        }}
+        ngoName={currentUser?.name || 'Voice of Stray Partner NGO'}
       />
     </>
   );

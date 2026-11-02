@@ -1,5 +1,5 @@
 // frontend/src/pages/Donate/hooks/useDonation.js
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import donationStorage, { CAMPAIGN_GOALS } from '../services/donationStorage.js';
 
 export function useDonation() {
@@ -12,6 +12,8 @@ export function useDonation() {
   // Selected quick preset amount / frequency on the hero
   const [presetAmount, setPresetAmount] = useState(1000);
   const [frequency, setFrequency] = useState('Monthly'); // 'Monthly' | 'One-time'
+  const [isProcessing, setIsProcessing] = useState(false);
+  const isExecutingRef = useRef(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -22,7 +24,8 @@ export function useDonation() {
     amount: 1000,
     donationType: 'Monthly',
     paymentMethod: 'Credit Card (Mock)',
-    anonymous: false
+    anonymous: false,
+    campaignNote: ''
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -55,8 +58,8 @@ export function useDonation() {
     setFormData(prev => ({ ...prev, donationType: freq }));
   };
 
-  // Open donation modal with prefilled campaign/amount
-  const openDonationModal = useCallback((campaignName = null, customAmt = null) => {
+  // Open donation modal with prefilled campaign/amount/explanation
+  const openDonationModal = useCallback((campaignName = null, customAmt = null, campaignNote = null) => {
     const user = donationStorage.getCurrentUser();
     let name = user?.name || user?.username || '';
     let email = user?.email || '';
@@ -67,8 +70,9 @@ export function useDonation() {
       donorEmail: email || prev.donorEmail,
       campaign: campaignName || prev.campaign || 'Emergency Medical Fund',
       amount: customAmt !== null ? customAmt : (prev.amount || presetAmount || 1000),
-      donationType: frequency || 'Monthly',
-      anonymous: false
+      donationType: frequency || prev.donationType || 'Monthly',
+      anonymous: false,
+      campaignNote: campaignNote || ''
     }));
 
     setFormErrors({});
@@ -76,6 +80,7 @@ export function useDonation() {
   }, [frequency, presetAmount]);
 
   const closeModal = useCallback(() => {
+    if (isExecutingRef.current) return;
     setModalState('closed');
     setPendingDonation(null);
     setFormErrors({});
@@ -122,18 +127,27 @@ export function useDonation() {
     setModalState('confirm');
   };
 
-  // Execute simulated payment
+  // Execute simulated payment with duplicate submission prevention
   const executePayment = () => {
-    if (!pendingDonation) return;
+    if (!pendingDonation || isExecutingRef.current) return;
 
+    isExecutingRef.current = true;
+    setIsProcessing(true);
     setModalState('processing');
 
     // 2.5s simulation matching prototype MockPaymentGateway
     setTimeout(() => {
-      const donation = donationStorage.createDonation(pendingDonation);
-      setCompletedDonation(donation);
-      setPendingDonation(null);
-      setModalState('success');
+      try {
+        const donation = donationStorage.createDonation(pendingDonation);
+        setCompletedDonation(donation);
+        setPendingDonation(null);
+        setModalState('success');
+      } catch (err) {
+        console.error('Payment processing failed:', err);
+      } finally {
+        isExecutingRef.current = false;
+        setIsProcessing(false);
+      }
     }, 2500);
   };
 
@@ -154,6 +168,7 @@ export function useDonation() {
     completedDonation,
     presetAmount,
     frequency,
+    isProcessing,
     handleSelectPresetAmount,
     handleSelectFrequency,
     handleFormChange,

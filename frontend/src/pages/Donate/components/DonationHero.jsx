@@ -134,6 +134,7 @@ export function DonationHero({
 
         <button
           type="button"
+          id="btn-donate-hero"
           className="btn-donate-now fade-in"
           style={{ transitionDelay: '0.6s' }}
           onClick={() => onOpenDonationModal()}

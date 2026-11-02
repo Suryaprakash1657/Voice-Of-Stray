@@ -18,7 +18,12 @@ export function getReports() {
  * Save reports list to localStorage
  */
 export function saveReports(reports) {
-  localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
+  const serialized = JSON.stringify(reports);
+  localStorage.setItem(REPORTS_KEY, serialized);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('voiceOfStrayReportsUpdated', { detail: reports }));
+  }
 }
 
 /**

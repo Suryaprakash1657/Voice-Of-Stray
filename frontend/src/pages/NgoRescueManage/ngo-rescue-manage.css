@@ -1,0 +1,224 @@
+/* NGO Rescue Case Management Styles */
+.ngo-rescue-page-wrapper {
+  background-color: #fff9f5;
+  background-image: radial-gradient(circle at 30% 20%, #fffdfb 0%, #fff7f2 35%, #ffd8be 100%);
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.workspace-container {
+  max-width: 1300px;
+  margin: 32px auto 64px;
+  padding: 0 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.workspace-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 28px 36px;
+  background: linear-gradient(135deg, #fff2e8 0%, #ffe3d1 100%);
+  border: 1.5px solid rgba(249, 115, 22, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 15px 35px -10px rgba(249, 115, 22, 0.1);
+}
+
+.header-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-title-section h1 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1e293b;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.header-title-section h1 span.case-badge {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary);
+  background: white;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.meta-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.meta-badge.emergency {
+  background: #fee2e2;
+  border: 1.5px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.meta-badge.in-progress {
+  background: #e0f2fe;
+  border: 1.5px solid rgba(2, 132, 199, 0.3);
+  color: #0284c7;
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 1.65fr 1.35fr;
+  gap: 28px;
+}
+
+@media (max-width: 992px) {
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.main-column,
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.detail-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.stepper-progress-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-node-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.step-node-row.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.step-node-row.completed {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.step-num-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  background: white;
+  border: 1.5px solid var(--border);
+}
+
+.step-node-row.active .step-num-icon {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.step-node-row.completed .step-num-icon {
+  background: #15803d;
+  color: white;
+  border-color: #15803d;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  padding-left: 16px;
+  border-left: 2px solid rgba(249, 115, 22, 0.2);
+}
+
+.timeline-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+
+.timeline-entry::before {
+  content: '';
+  position: absolute;
+  left: -21px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+}

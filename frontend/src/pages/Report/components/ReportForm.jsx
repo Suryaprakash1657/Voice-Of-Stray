@@ -86,6 +86,7 @@ export default function ReportForm({
               value={formValues.observedCondition}
               onChange={(val) => updateField('observedCondition', val)}
               error={errors.observedCondition}
+              photo={formValues.photo}
             />
           </div>
         </div>

@@ -48,7 +48,13 @@ export function DonationFunds({ stats, onOpenDonationModal }) {
           type="small"
           isMilo={true}
           buttonText="Support Dogs Like Milo"
-          onButtonClick={() => onOpenDonationModal('General Fund')}
+          onButtonClick={() =>
+            onOpenDonationModal(
+              'General Fund',
+              null,
+              "Milo's recovery is 100% funded! Your contribution to the General Fund directly sponsors urgent rescue operations and medical treatments for other dogs in need."
+            )
+          }
         />
       </div>
     </section>

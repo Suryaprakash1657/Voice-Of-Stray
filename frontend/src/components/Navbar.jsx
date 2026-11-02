@@ -183,7 +183,7 @@ export default function Navbar() {
   const navigateToDashboard = () => {
     setDropdownOpen(false);
     if (user.role === 'ngo') {
-      window.location.href = '/ngo-dashboard.html';
+      navigate('/ngo-dashboard');
     } else {
       navigate('/user-dashboard');
     }
@@ -241,7 +241,7 @@ export default function Navbar() {
               </button>
             )}
 
-            <button className="icon-btn" onClick={() => (window.location.href = '/notifications.html')}>
+            <button className="icon-btn" onClick={() => navigate('/notifications')}>
               <i className="ph ph-bell"></i>
             </button>
 
@@ -264,12 +264,12 @@ export default function Navbar() {
                       <div className="dropdown-item" onClick={navigateToDashboard} style={{ cursor: 'pointer' }}>
                         <i className="ph ph-squares-four"></i> Dashboard
                       </div>
-                      <a href="/ngo-edit-profile.html" className="dropdown-item">
+                      <Link to="/ngo-edit-profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                         <i className="ph ph-user-gear"></i> Edit NGO Profile
-                      </a>
-                      <a href="/ngo-settings.html" className="dropdown-item">
+                      </Link>
+                      <Link to="/ngo-settings" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                         <i className="ph ph-gear"></i> NGO Settings
-                      </a>
+                      </Link>
                     </>
                   ) : (
                     <>
@@ -280,9 +280,9 @@ export default function Navbar() {
                       </div>
 
                       {/* 2. Edit Profile */}
-                      <a href="/user-edit-profile.html" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                      <Link to="/user-edit-profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                         <i className="ph ph-user-gear"></i> Edit Profile
-                      </a>
+                      </Link>
 
                       {/* 3. Saved Animals */}
                       <Link to="/adopt" className="dropdown-item" onClick={() => setDropdownOpen(false)}>

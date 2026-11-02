@@ -122,6 +122,7 @@ export const DEFAULT_APPLICATIONS = [
 function notifyStorageChange() {
   window.dispatchEvent(new Event("storage"));
   window.dispatchEvent(new CustomEvent("voiceOfStrayVolunteerUpdate"));
+  window.dispatchEvent(new CustomEvent("voiceOfStrayCasesUpdated"));
 }
 
 // --------------------------------------------------------
@@ -144,9 +145,22 @@ export function getCurrentUser() {
       } catch (e) {}
     }
 
+    let id = "";
+    const currentUserRaw = localStorage.getItem(CURRENT_USER_KEY);
+    if (currentUserRaw) {
+      try {
+        const cu = JSON.parse(currentUserRaw);
+        if (cu.id) id = cu.id;
+      } catch (e) {}
+    }
+    if (!id && username === "Arjun") {
+      id = "usr-arjun";
+    }
+
     const accountType = profile.accountType || (role === "ngo" ? "NGO Partner" : "Regular User");
 
     return {
+      id,
       isLoggedIn,
       username,
       name: profile.fullName || username,
@@ -161,6 +175,7 @@ export function getCurrentUser() {
   } catch (e) {
     console.error("[volunteerStorage] Error getting current user:", e);
     return {
+      id: "usr-arjun",
       isLoggedIn: false,
       username: "Guest",
       name: "Guest",
@@ -386,7 +401,7 @@ export function submitVolunteerApplication({
   }
 }
 
-export function submitNgoPartnerApplication({ name, email, reg }) {
+export function submitNgoPartnerApplication({ name, email, reg, documents = [] }) {
   try {
     localStorage.setItem("role", "ngo");
     localStorage.setItem("ngoType", "NGO Shelter Partner");
@@ -402,7 +417,22 @@ export function submitNgoPartnerApplication({ name, email, reg }) {
     profile.email = email;
     profile.accountType = "NGO Partner";
     profile.regNumber = reg;
+    profile.verificationStatus = "Pending Verification";
+    profile.documents = documents;
     localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
+
+    // Also update voiceOfStrayNgoProfile
+    let ngoProfile = {};
+    const storedNgoProfile = localStorage.getItem("voiceOfStrayNgoProfile");
+    if (storedNgoProfile) {
+      try { ngoProfile = JSON.parse(storedNgoProfile); } catch (e) {}
+    }
+    ngoProfile.name = name;
+    ngoProfile.email = email;
+    ngoProfile.regNumber = reg;
+    ngoProfile.verificationStatus = "Pending Verification";
+    ngoProfile.documents = documents;
+    localStorage.setItem("voiceOfStrayNgoProfile", JSON.stringify(ngoProfile));
 
     notifyStorageChange();
     return { success: true };
@@ -440,13 +470,129 @@ export function saveVolunteerOpportunities(opportunities) {
   }
 }
 
+export function addVolunteerOpportunity(newOpp) {
+  try {
+    const opps = getVolunteerOpportunities();
+    const cat = (newOpp.category || "rescue").toLowerCase();
+    const tag = newOpp.tag || (cat === "rescue" ? "Emergency Rescue" : cat === "foster" ? "Foster Needed" : "Feeding Drive");
+    const opportunity = {
+      id: newOpp.id || `opp-${Date.now()}`,
+      title: newOpp.title || "Volunteer Task",
+      category: cat,
+      tag: tag,
+      tagClass: cat,
+      time: newOpp.time || "Now (Urgent)",
+      location: newOpp.location || "City Area",
+      ngo: newOpp.ngo || "Voice of Stray Partner NGO",
+      volunteersNeeded: newOpp.volunteersNeeded || "0 / 1 Volunteers",
+      urgent: Boolean(newOpp.urgent),
+      description: newOpp.description || ""
+    };
+    const updated = [opportunity, ...opps];
+    saveVolunteerOpportunities(updated);
+    return { success: true, opportunity };
+  } catch (e) {
+    console.error("[volunteerStorage] Error adding opportunity:", e);
+    return { success: false, error: e.message };
+  }
+}
+
 // --------------------------------------------------------
 // RESCUE CASE OPPORTUNITIES & ASSIGNMENTS
 // --------------------------------------------------------
 
+export function ensureCasesDatabase() {
+  try {
+    const existing = localStorage.getItem(CASES_KEY);
+    if (!existing || existing === "{}" || existing === "[]") {
+      const defaultCases = {
+        "4902": {
+          id: "4902",
+          animal: "Dog (Golden Retriever Mix)",
+          animalType: "Dog",
+          breed: "Golden Retriever Mix",
+          breedDesc: "Golden Retriever Mix",
+          estimatedAge: "Puppy / Kitten",
+          issueCategory: "Injury",
+          location: "Linking Road, Bandra West",
+          reportedTime: "10:25 AM",
+          condition: "Fractured Leg, Dehydrated",
+          observedCondition: "Fractured Leg, Dehydrated",
+          severity: "Emergency",
+          status: "Reported",
+          statusStep: 0,
+          reporter: { name: "Anjali Sharma", phone: "+91 98200 12345", notes: "Puppy unable to walk. Seen near roadside." },
+          team: { ngo: "Paws Haven NGO", lead: null, volunteers: [] },
+          timeline: [{ time: "10:25 AM", text: "Rescue report received." }],
+          notes: "Possible fracture. Requires X-ray evaluation.",
+          photos: { before: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+        },
+        "4888": {
+          id: "4888",
+          animal: "Dog (Other / Unknown)",
+          animalType: "Dog",
+          breed: "Other / Unknown",
+          breedDesc: "Other / Unknown",
+          estimatedAge: "Adult",
+          issueCategory: "Injury",
+          location: "Anna Nagar Area",
+          reportedTime: "09:15 AM",
+          condition: "Bleeding near paw, whimpering",
+          observedCondition: "Bleeding near paw, whimpering",
+          severity: "Emergency",
+          status: "Volunteer Assigned",
+          statusStep: 2,
+          assignedVolunteerId: "vol-priya-01",
+          assignedVolunteerName: "Priya",
+          assignedVolunteerEmail: "priya@example.com",
+          assignedVolunteerRole: "Emergency Rescue",
+          assignedAt: "14 Jun 2026",
+          reporter: { name: "Rohan Sharma", phone: "+91 98765 43210", notes: "Dog is sitting under the green dustbin. Limping and whimpering." },
+          team: { ngo: "Paws Haven NGO", lead: { username: "Priya", email: "priya@example.com", role: "Emergency Rescue", assignedDate: "14 Jun 2026", status: "Assigned" }, volunteers: [] },
+          timeline: [{ time: "09:20 AM", text: "Case accepted by Paws Haven NGO." }, { time: "09:15 AM", text: "Rescue report received." }],
+          notes: "Volunteer Priya en-route with ambulance.",
+          photos: { before: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=300", during: "", treatment: "", recovery: "" }
+        },
+        "4871": {
+          id: "4871",
+          animal: "Cat (Other / Unknown)",
+          animalType: "Cat",
+          breed: "Other / Unknown",
+          breedDesc: "Other / Unknown",
+          estimatedAge: "Young",
+          issueCategory: "Injury",
+          location: "Metro Vet Center",
+          reportedTime: "08:30 AM",
+          condition: "Fractured hind leg, skin scabs",
+          observedCondition: "Fractured hind leg, skin scabs",
+          severity: "High Priority",
+          status: "Treatment",
+          statusStep: 5,
+          assignedVolunteerId: "vol-akash-01",
+          assignedVolunteerName: "Akash",
+          assignedVolunteerEmail: "akash@example.com",
+          assignedVolunteerRole: "Transport Assistance",
+          assignedAt: "13 Jun 2026",
+          reporter: { name: "Meera Nair", phone: "+91 87654 32109", notes: "Found limping near Andheri subway under a parked car." },
+          team: { ngo: "Paws Haven NGO", lead: { username: "Akash", email: "akash@example.com", role: "Transport Assistance", assignedDate: "13 Jun 2026", status: "Assigned" }, volunteers: [] },
+          timeline: [{ time: "09:00 AM", text: "Treatment started at Metro Vet Center." }, { time: "08:50 AM", text: "Animal safely reached Metro Vet clinic." }, { time: "08:45 AM", text: "Cat successfully rescued and placed in carrier." }, { time: "08:30 AM", text: "Rescue report received." }],
+          notes: "Hind leg splinted. Antibiotics started.",
+          photos: { before: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300", during: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&q=80&w=300", treatment: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=300", recovery: "" }
+        }
+      };
+      localStorage.setItem(CASES_KEY, JSON.stringify(defaultCases));
+      return defaultCases;
+    }
+    const parsed = JSON.parse(existing);
+    return typeof parsed === "object" && parsed !== null ? parsed : {};
+  } catch (e) {
+    return {};
+  }
+}
+
 export function getAvailableRescueOpportunities() {
   try {
-    const casesDb = JSON.parse(localStorage.getItem(CASES_KEY) || "{}");
+    const casesDb = ensureCasesDatabase();
     const availCases = [];
 
     Object.keys(casesDb).forEach(id => {
@@ -465,17 +611,29 @@ export function getAvailableRescueOpportunities() {
 
 export function getVolunteerAssignments() {
   try {
-    const casesDb = JSON.parse(localStorage.getItem(CASES_KEY) || "{}");
+    const casesDb = ensureCasesDatabase();
     const user = getCurrentUser();
     const assignedCases = [];
+    const userEmail = (user.email || "").toLowerCase().trim();
+    const userName = (user.name || user.username || "").toLowerCase().trim();
+    const userId = user.id ? String(user.id).trim() : (user.username === "Arjun" ? "usr-arjun" : "");
 
     Object.keys(casesDb).forEach(id => {
       const c = casesDb[id];
       if (c) {
+        const assignedName = (c.assignedVolunteerName || "").toLowerCase().trim();
+        const lead = c.team?.lead;
+        const leadName = (typeof lead === "object" && lead !== null) ? (lead.username || lead.name || "").toLowerCase().trim() : String(lead || "").toLowerCase().trim();
+        const leadEmail = (typeof lead === "object" && lead !== null) ? (lead.email || "").toLowerCase().trim() : "";
+        const assignedId = c.assignedVolunteerId ? String(c.assignedVolunteerId).trim() : "";
+
         const isAssigned =
-          (user.isLoggedIn && c.assignedVolunteerEmail && c.assignedVolunteerEmail.toLowerCase() === user.email.toLowerCase()) ||
-          (user.isLoggedIn && c.assignedVolunteerName && c.assignedVolunteerName.toLowerCase() === user.name.toLowerCase()) ||
-          (user.username === "Arjun" && c.assignedVolunteerName === "Arjun");
+          (userId && assignedId && assignedId === userId) ||
+          (user.isLoggedIn && userEmail && c.assignedVolunteerEmail && c.assignedVolunteerEmail.toLowerCase().trim() === userEmail) ||
+          (user.isLoggedIn && userEmail && leadEmail && leadEmail === userEmail) ||
+          (user.isLoggedIn && userName && assignedName && (assignedName === userName || assignedName.includes(userName) || userName.includes(assignedName))) ||
+          (user.isLoggedIn && userName && leadName && (leadName === userName || leadName.includes(userName) || userName.includes(leadName))) ||
+          (user.username === "Arjun" && (assignedName.includes("arjun") || leadName.includes("arjun")));
 
         if (isAssigned && c.statusStep >= 1 && c.statusStep < 8 && c.status !== "Completed") {
           assignedCases.push(c);

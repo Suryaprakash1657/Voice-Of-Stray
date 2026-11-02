@@ -7,7 +7,9 @@ export function VolunteerOpportunities({
   filter = 'all',
   onFilterChange,
   onAcceptOpportunity,
-  onOpenDetails
+  onOpenDetails,
+  isNgo = false,
+  onAddTask
 }) {
   const filterOptions = [
     { key: 'all', label: 'All Needs' },
@@ -18,11 +20,36 @@ export function VolunteerOpportunities({
 
   return (
     <section className="fade-in">
-      <div className="section-header-split">
+      <div className="section-header-split" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div className="header-text">
           <h2>Volunteer Opportunities</h2>
           <p>Real-time help needed in your area.</p>
         </div>
+        {isNgo && (
+          <button
+            type="button"
+            className="btn-add-task"
+            onClick={onAddTask}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 22px',
+              backgroundColor: 'var(--primary, #f97316)',
+              color: '#ffffff',
+              borderRadius: '9999px',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(249, 115, 22, 0.3)',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <i className="ph-bold ph-plus" style={{ fontSize: '1.1rem' }}></i>
+            Add Task
+          </button>
+        )}
       </div>
 
       <div className="opportunities-filter">

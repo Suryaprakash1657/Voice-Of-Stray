@@ -574,56 +574,56 @@
                 <p>Everything you need to know about welcoming a new pet.</p>
             </div>
             <div class="faq-grid">
-                <div class="faq-card card">
+                <div class="faq-card card" style="border-color: var(--primary);">
                     <div class="faq-question">
                         <strong>What are the standard adoption fees?</strong>
-                        <i class="ph ph-caret-down"></i>
+                        <i class="ph ph-caret-down" style="transform: rotate(180deg);"></i>
                     </div>
-                    <div class="faq-answer">
+                    <div class="faq-answer" style="display: block;">
                         <p>Adoption fees vary by NGO and the animal's medical history. Generally, fees cover
                             vaccinations, spay/neuter surgery, and microchipping. They typically range from $50 to $200.
                         </p>
                     </div>
                 </div>
-                <div class="faq-card card">
+                <div class="faq-card card" style="border-color: var(--primary);">
                     <div class="faq-question">
                         <strong>Can I foster a pet before fully adopting?</strong>
-                        <i class="ph ph-caret-down"></i>
+                        <i class="ph ph-caret-down" style="transform: rotate(180deg);"></i>
                     </div>
-                    <div class="faq-answer">
+                    <div class="faq-answer" style="display: block;">
                         <p>Yes! We highly encourage our "Foster-to-Adopt" program. It allows you to take a pet home for
                             1-2 weeks to ensure they are the right fit for your family and lifestyle before making a
                             final commitment.</p>
                     </div>
                 </div>
-                <div class="faq-card card">
+                <div class="faq-card card" style="border-color: var(--primary);">
                     <div class="faq-question">
                         <strong>What is the return policy if things don't work out?</strong>
-                        <i class="ph ph-caret-down"></i>
+                        <i class="ph ph-caret-down" style="transform: rotate(180deg);"></i>
                     </div>
-                    <div class="faq-answer">
+                    <div class="faq-answer" style="display: block;">
                         <p>We understand that sometimes things don't work out. All of our NGO partners require that the
                             pet be returned directly to them. We offer support and behavioral resources first to help
                             resolve any issues.</p>
                     </div>
                 </div>
-                <div class="faq-card card">
+                <div class="faq-card card" style="border-color: var(--primary);">
                     <div class="faq-question">
                         <strong>How long does the approval timeline take?</strong>
-                        <i class="ph ph-caret-down"></i>
+                        <i class="ph ph-caret-down" style="transform: rotate(180deg);"></i>
                     </div>
-                    <div class="faq-answer">
+                    <div class="faq-answer" style="display: block;">
                         <p>Most applications are reviewed within 48-72 hours. The entire process from application to
                             bringing your pet home usually takes about 1 to 2 weeks, depending on the required home
                             checks and meet-and-greets.</p>
                     </div>
                 </div>
-                <div class="faq-card card">
+                <div class="faq-card card" style="border-color: var(--primary);">
                     <div class="faq-question">
                         <strong>Will I receive the pet's full medical history?</strong>
-                        <i class="ph ph-caret-down"></i>
+                        <i class="ph ph-caret-down" style="transform: rotate(180deg);"></i>
                     </div>
-                    <div class="faq-answer">
+                    <div class="faq-answer" style="display: block;">
                         <p>Absolutely. Transparency is our priority. You will receive a complete packet of the pet's
                             known medical history, vaccination records, spay/neuter certificates, and any ongoing
                             medical needs upon adoption.</p>
@@ -677,10 +677,10 @@
                     const answer = faq.nextElementSibling;
                     const icon = faq.querySelector('i');
                     if (answer) {
-                        const isOpen = answer.style.display === 'block';
-                        answer.style.display = isOpen ? 'none' : 'block';
-                        icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-                        faq.parentElement.style.borderColor = isOpen ? 'var(--border)' : 'var(--primary)';
+                        const isHidden = window.getComputedStyle(answer).display === 'none' || answer.style.display === 'none';
+                        answer.style.display = isHidden ? 'block' : 'none';
+                        if (icon) icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+                        if (faq.parentElement) faq.parentElement.style.borderColor = isHidden ? 'var(--primary)' : 'var(--border)';
                     }
                 });
             });

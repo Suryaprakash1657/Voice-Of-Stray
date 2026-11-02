@@ -118,6 +118,26 @@ export function DonorInformation({
         </div>
       </div>
 
+      {formData.campaignNote && (
+        <div
+          style={{
+            padding: '10px 14px',
+            borderRadius: '8px',
+            backgroundColor: '#fff7ed',
+            border: '1px solid #fed7aa',
+            color: '#9a3412',
+            fontSize: '0.85rem',
+            lineHeight: 1.45,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '8px'
+          }}
+        >
+          <i className="ph-fill ph-info" style={{ fontSize: '1.1rem', flexShrink: 0, marginTop: '1px', color: 'var(--primary, #f97316)' }}></i>
+          <span>{formData.campaignNote}</span>
+        </div>
+      )}
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#475569' }}>Payment Method (Prototype)</label>
         <select

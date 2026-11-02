@@ -1139,6 +1139,24 @@ button {
     font-size: 2.5rem;
     color: var(--primary);
 }
+.photo-upload-area .btn-premium.primary i {
+    color: #ffffff !important;
+    font-size: 1.25rem !important;
+}
+.photo-upload-area .btn-premium.secondary i {
+    font-size: 1.25rem !important;
+}
+
+/* FAQ Answer Visibility */
+.faq-card .faq-answer {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 24px 24px !important;
+    color: var(--text-muted) !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+}
 
 /* AI Preview */
 .ai-preview-card {
@@ -1665,7 +1683,3 @@ input:checked + .slider:before {
     max-width: 320px;
     line-height: 1.5;
 }
-
-
- 
- 
